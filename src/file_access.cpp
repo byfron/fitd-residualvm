@@ -29,7 +29,7 @@ namespace Fitd {
 void theEnd(int type, const char *name) {
 	//  freeScene();
 	freeAll();
-	error("Error: %s\n", name);
+	error("File Access Error: %s\n", name);
 }
 
 } // end of namespace Fitd

@@ -20,10 +20,10 @@
  *
  */
 
-#ifndef _TIME_H_
-#define _TIME_H_
+#ifndef __TIME_H__
+#define __TIME_H__
 namespace Fitd {
-
+typedef unsigned int uint32;
 extern volatile uint32 timeGlobal;
 
 void freezeTime(void);

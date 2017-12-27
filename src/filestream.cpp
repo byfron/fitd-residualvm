@@ -40,10 +40,14 @@ ReadFileStream::~ReadFileStream() {
 
 bool ReadFileStream::open(const char *filename) {
 	_fileHandle = (void*)fopen(filename, "rb");
-	if(_fileHandle)
+	if(_fileHandle) {
+		printf("%s opened\n", filename);
 		return true;
-	else
+	}
+	else {
+		printf("%s failed\n");
 		return false;
+	}
 }
 
 uint32 ReadFileStream::read(byte *target, uint32 size) {
@@ -55,8 +59,10 @@ void ReadFileStream::seek(int32 offset, int whence) {
 }
 
 void ReadFileStream::close() {
-	if (_fileHandle)
+	if (_fileHandle) {
 		fclose((FILE*)_fileHandle);
+		_fileHandle = NULL;
+	}
 }
 
 uint32 ReadFileStream::readUint32LE() {

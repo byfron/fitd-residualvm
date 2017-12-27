@@ -22,7 +22,7 @@
 
 #ifndef COMMON_SCUMMSYS_H
 #define COMMON_SCUMMSYS_H
-
+#include <SDL/SDL_byteorder.h>
 
 #if defined(_WIN32_WCE) && _WIN32_WCE < 300
 	#define NONSTANDARD_PORT

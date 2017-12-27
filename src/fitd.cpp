@@ -24,7 +24,7 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_rand
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include <ctime>
+//#include <ctime>
 #include "SDL.h"
 #include "common/textconsole.h"
 #include "fitd.h"
@@ -325,7 +325,7 @@ void FitdEngine::sysInit(void) {
 
 	// time( &ltime );
 
-	srand(time(NULL));
+//	srand(time(NULL));
 
 	if(!initMusicDriver()) {
 		musicConfigured = 0;

@@ -54,7 +54,7 @@
  * the compiler will hopefully print along with its own error message),
  * we try to make clear what is causing the error.
  */
-#define FORBIDDEN_SYMBOL_REPLACEMENT	FORBIDDEN_look_at_common_forbidden_h_for_more_info SYMBOL !%*
+#define FORBIDDEN_SYMBOL_REPLACEMENT FORBIDDEN_look_at_common_forbidden_h_for_more_info_
 
 
 #ifndef FORBIDDEN_SYMBOL_EXCEPTION_printf
@@ -291,6 +291,7 @@
 //
 // Disable various symbols from unistd.h
 //
+/*
 #ifndef FORBIDDEN_SYMBOL_EXCEPTION_unistd_h
 
 	#ifndef FORBIDDEN_SYMBOL_EXCEPTION_chdir
@@ -314,7 +315,7 @@
 	#endif
 
 #endif // FORBIDDEN_SYMBOL_EXCEPTION_unistd_h
-
+*/
 #ifndef FORBIDDEN_SYMBOL_EXCEPTION_mkdir
 #undef mkdir
 #define mkdir(a,b)	FORBIDDEN_SYMBOL_REPLACEMENT

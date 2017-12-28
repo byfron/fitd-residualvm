@@ -291,7 +291,7 @@ void rotateModel(int x, int y, int z, int alpha, int beta, int gamma, int time) 
 }
 
 void playSound(int num) {
-	int size = getPakSize("listsamp", num);
+	int size = getPakSize("LISTSAMP", num);
 	char *ptr = g_fitd->_listSamp->get(num);
 
 #ifndef NO_SOUND

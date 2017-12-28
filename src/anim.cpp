@@ -345,13 +345,14 @@ int16 setInterAnimObjet(int frame, char *animPtr, char *bodyPtr) {
 
 	timeOfKeyframeStart = *(uint16 *)(bodyPtr + 4); // time of start of keyframe
 
-	animBufferPtr = *(int16 **)(bodyPtr);
+	animBufferPtr = (int16 *)(bodyPtr);
 
 	if (!animBufferPtr) {
 		animBufferPtr = animVar1;
 	}
 
 	// animVar4 = ptr to previous key frame
+	// printf("anim4 initialized %d\n", *animBufferPtr);
 	animVar4 = animBufferPtr;
 
 	bodyPtr += *(int16 *)(bodyPtr - 2);

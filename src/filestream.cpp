@@ -31,6 +31,7 @@ ReadFileStream::ReadFileStream() {
 }
 ReadFileStream::ReadFileStream(const char *filename) {
 	_fileHandle = NULL;
+	printf("ReadFilestream:%s\n", filename);
 	open(filename);
 }
 
@@ -41,11 +42,9 @@ ReadFileStream::~ReadFileStream() {
 bool ReadFileStream::open(const char *filename) {
 	_fileHandle = (void*)fopen(filename, "rb");
 	if(_fileHandle) {
-		printf("%s opened\n", filename);
 		return true;
 	}
 	else {
-		printf("%s failed\n");
 		return false;
 	}
 }

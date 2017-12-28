@@ -406,10 +406,10 @@ void FitdEngine::sysInit(void) {
 
 	//  if(musicConfigured)
 	{
-		_listMus = new hqrEntryStruct("ListMus", 110000, 40);
+		_listMus = new hqrEntryStruct("LISTMUS", 110000, 40);
 	}
 
-	_listSamp = new hqrEntryStruct("ListSamp", 64000, 30);
+	_listSamp = new hqrEntryStruct("LISTSAMP", 64000, 30);
 
 	hqrUnk = new hqrEntryStruct(10000, 50);
 }

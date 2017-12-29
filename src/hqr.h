@@ -23,6 +23,8 @@
 #ifndef FITD_HQR_H
 #define FITD_HQR_H
 
+#include <common/scummsys.h>
+
 namespace Fitd {
 
 struct hqrSubEntryStruct;

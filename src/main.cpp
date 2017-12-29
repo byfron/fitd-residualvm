@@ -2307,11 +2307,7 @@ void cleanupAndExit(void) {
 	error("Exiting");
 }
 
-} // end of namespace Fitd
-
-using namespace Fitd;
-
-int main(int argc, char **argv) {
+int run() {
 	//  int protectionToBeDone = 1;
 	char version[256];
 
@@ -2327,4 +2323,8 @@ int main(int argc, char **argv) {
 
 	return(0);
 }
+
+	
+
+} // end of namespace Fitd
 

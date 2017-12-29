@@ -1,19 +1,21 @@
 #pragma once
 
 #include "GraphicsEngine.hpp"
-#include <spdlog/spdlog.h>
+#include "AITModel.hpp"
 
-namespace spd = spdlog;
+namespace Fitd {
 
+struct hqrEntryStruct;
+	
 class ModelViewer : public pumpkin::GraphicsEngine {
 public:
 
-	ModelViewer(const char* name, const char* desc) : GraphicsEngine(name, desc) {
-		auto console = spd::stdout_logger_mt("Client");
-	}
+	ModelViewer(const char* name, const char* desc);
 
 	~ModelViewer() {}
 
+	void loadModel(int body_index);
+	
 	void init_engine() override {
 
 	}
@@ -24,4 +26,7 @@ public:
 
 private:
 
+	hqrEntryStruct *list_body;
 };
+
+}

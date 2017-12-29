@@ -27,7 +27,7 @@ namespace Fitd {
 struct hqrEntryStruct;
 
 extern int input5;
-
+int run();
 void menuWaitVSync();
 void printTextSub5(int x, int y, int param, char *gfx);
 void flipScreen();

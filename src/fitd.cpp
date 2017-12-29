@@ -449,5 +449,6 @@ int FitdEngine::getNumCVars() {
 uint32 FitdEngine::randRange(int min, int max) {
 	return((rand() % (max - min)) + min);
 }
-	
+
 } // end of namespace Fitd
+

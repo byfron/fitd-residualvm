@@ -13,6 +13,7 @@ include_directories(${ROOT_DIR}/bimg/include/)
 include_directories(${ROOT_DIR}/bx/include/)
 include_directories(${ROOT_DIR}/bgfx/examples/common/)
 include_directories(${ROOT_DIR}/bgfx/3rdparty)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../src)
 
 SET(IMGUI_SRC
   ${ROOT_DIR}/bgfx/3rdparty/ocornut-imgui/imgui_draw.cpp
@@ -78,24 +79,32 @@ SET(SHADER_COMPILER ${ROOT_DIR}/bgfx/.build/linux64_gcc/bin/shadercRelease)
 
 add_executable(model_viewer
   model_viewer.cpp
+  ModelViewer.hpp
+  ModelViewer.cpp
   GraphicsEngine.hpp
   GraphicsEngine.cpp
   Shader.hpp
-  Shader.cpp
+  Shader.cpp  
   Camera.hpp
   Camera.cpp
   InputManager.hpp
   InputManager.cpp
   ResourceManager.hpp
-  ResourceManager.cpp)
+  ResourceManager.cpp
+  )
 
 target_link_libraries(model_viewer
-   ${BGFX_LIBRARIES}
-   rt
-   pthread
-   GL
-   X11
-   dl)
+  fitd
+  ${BGFX_LIBRARIES}
+  ${SDL_LIBRARY}
+  rt
+  pthread
+  GL
+  X11
+  dl)
+
+target_include_directories(model_viewer PUBLIC
+  ${SDL_INCLUDE_DIR})
 
  add_dependencies(model_viewer shaders)
 

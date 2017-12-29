@@ -34,7 +34,6 @@ struct PosColorVertex
 bgfx::VertexDecl PosColorVertex::ms_decl;
 
 
-namespace pumpkin {
 /*
 
 
@@ -237,27 +236,25 @@ void GraphicsEngine::run() {
 					
 	bgfx::touch(0);
 
-	//frame(deltaTime);
+	frame(deltaTime);
 
-	// Set vertex and index buffer.
-	bgfx::setVertexBuffer(0, m_vbh);
-	bgfx::setIndexBuffer(m_ibh);
+	// // Set vertex and index buffer.
+	// bgfx::setVertexBuffer(0, m_vbh);
+	// bgfx::setIndexBuffer(m_ibh);
 
-	// Set render states.
-	bgfx::setState(0
-				   | BGFX_STATE_DEFAULT
-				   | BGFX_STATE_PT_TRISTRIP
-		);
+	// // Set render states.
+	// bgfx::setState(0
+	// 			   | BGFX_STATE_DEFAULT
+	// 			   | BGFX_STATE_PT_TRISTRIP
+	// 	);
 
-	// Submit primitive for rendering to view 0.
-	bgfx::submit(RENDER_PASS_GEOMETRY, m_program);
+	// // Submit primitive for rendering to view 0.
+	// bgfx::submit(RENDER_PASS_GEOMETRY, m_program);
 	bgfx::frame();
 
 	m_camera.update(deltaTime);
 }
 
 void GraphicsEngine::stop() {
-
-}
 
 }

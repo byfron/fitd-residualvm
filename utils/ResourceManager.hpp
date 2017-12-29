@@ -5,7 +5,6 @@
 #include <assert.h>
 #include <Eigen/Dense>
 
-namespace pumpkin {
 class Resource {
 public:
 	virtual void init() = 0;
@@ -60,4 +59,3 @@ private:
 							  std::unordered_map<uint32_t, Resource::Ptr>> _resource_map;
 };
 
-}

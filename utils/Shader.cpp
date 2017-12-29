@@ -2,8 +2,6 @@
 //#include "ShaderFactory.hpp"
 #include <bx/readerwriter.h>
 
-namespace pumpkin {
-
 //////////////// Replicates shader loading utils with custom paths //////////////
 
 const bgfx::Memory* loadMem(bx::FileReaderI* _reader, const char* _filePath)
@@ -26,7 +24,7 @@ bgfx::ShaderHandle pumpkinLoadShader(bx::FileReaderI* _reader, const char* _name
 {
 	char filePath[512];
 
-	std::string shaderPath = "";//SHADER_FILE_PATH;
+	std::string shaderPath = "shaders/";//SHADER_FILE_PATH;
 
 	switch (bgfx::getRendererType() )
 	{
@@ -86,4 +84,3 @@ void Shader::init() {
 	m_initialized = true;
 }
 
-};

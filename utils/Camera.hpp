@@ -6,8 +6,6 @@
 #include <memory>
 #include "math.hpp"
 
-namespace pumpkin {
-
 #define CAMERA_KEY_ROTATE_LEFT   UINT8_C(0x01)
 #define CAMERA_KEY_ROTATE_RIGHT  UINT8_C(0x02)
 #define CAMERA_KEY_LEFT      UINT8_C(0x04)
@@ -85,6 +83,5 @@ private:
 //void createCamera();
 //void destroyCamera();
 
-}
 
 #endif

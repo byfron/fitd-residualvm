@@ -5,8 +5,7 @@
 #include <common/entry/cmd.h>
 #include <common/common.h>
 #include <limits>
-
-namespace pumpkin {
+#include <iostream>
 
 #define FLT_MIN std::numeric_limits<float>::min()
 
@@ -198,7 +197,7 @@ void Camera::update(float _dt)
 	if (InputManager::m_keys & CAMERA_KEY_ROTATE_LEFT)
 	{
 		m_dir_angle = m_rotateSpeed * _dt;
-		Eigen::Vector3f axis = Eigen::Vector3f(0.0, 0.0, 1.0);
+		Eigen::Vector3f axis = Eigen::Vector3f(0.0, 1.0, 0.0);
 
 		//rotate direction vector wrt the up vector
 		Eigen::Matrix3f rot =  Eigen::AngleAxisf(m_dir_angle, axis).toRotationMatrix();
@@ -216,7 +215,7 @@ void Camera::update(float _dt)
 	{
 
 		m_dir_angle = -m_rotateSpeed * _dt;
-		Eigen::Vector3f axis = Eigen::Vector3f(0.0, 0.0, 1.0);
+		Eigen::Vector3f axis = Eigen::Vector3f(0.0, 1.0, 0.0);
 
 		//rotate direction vector wrt the up vector
 		Eigen::Matrix3f rot =  Eigen::AngleAxisf(m_dir_angle, axis).toRotationMatrix();
@@ -309,7 +308,4 @@ Eigen::MatrixXf Camera::getTowardsCameraRotation(Vec3f pos) {
 	 	Eigen::AngleAxisf(1.2 + M_PI/2, Eigen::Vector3f(0.0, -1.0, 0.0)));
 
 	return (rot * rot_up).matrix();
-}
-
-
 }

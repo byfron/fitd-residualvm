@@ -9,8 +9,6 @@
 #include <bx/bx.h>
 #include <bx/macros.h>
 
-namespace pumpkin {
-
 class Camera;
 	
 // Views
@@ -37,6 +35,8 @@ public:
 	GraphicsEngine(const char*name, const char*desc)
 		: entry::AppI(name, desc) {
 	}
+
+	virtual ~GraphicsEngine() {}
 	
 	void init(int32_t _argc, const char* const* _argv, uint32_t width, uint32_t height) {
 		start(_argc, _argv);
@@ -64,7 +64,7 @@ public:
 	void initResources();
 
 	virtual void frame(const float) {};
-	virtual void init_engine() {};
+	virtual void init_engine() = 0;
 
 	void run();
 	void start(int _argc, const char* const* _argv);
@@ -93,6 +93,5 @@ protected:
 	bgfx::ProgramHandle m_program;
 };
 
-}
 
 #endif

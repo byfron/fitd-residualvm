@@ -8,9 +8,6 @@
 #include <common/bgfx_utils.h>
 //#include <shader.pb.h>
 
-namespace pumpkin {
-
-class ShaderFactory;
 class Shader : public Resource{
 public:
 
@@ -42,5 +39,3 @@ protected:
 	std::string m_fs_shader;
 	bgfx::ProgramHandle m_program;
 };
-
-}

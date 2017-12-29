@@ -20,14 +20,22 @@
  *
  */
 
-#ifndef _MAIN_
-#define _MAIN_
+#ifndef _MAIN__
+#define _MAIN__
+
+
 namespace Fitd {
 
+
+struct ZVStruct;
+struct roomDataStruct;
+struct rotateStruct;
 struct hqrEntryStruct;
 
 extern int input5;
-int run();
+
+int runFitd();
+void init();
 void menuWaitVSync();
 void printTextSub5(int x, int y, int param, char *gfx);
 void flipScreen();

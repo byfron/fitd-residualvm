@@ -3,10 +3,6 @@
 #include "GraphicsEngine.hpp"
 #include "AITModel.hpp"
 
-namespace Fitd {
-
-struct hqrEntryStruct;
-	
 class ModelViewer : public pumpkin::GraphicsEngine {
 public:
 
@@ -26,7 +22,6 @@ public:
 
 private:
 
-	hqrEntryStruct *list_body;
 };
 
-}
+

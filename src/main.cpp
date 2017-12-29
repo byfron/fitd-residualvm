@@ -2307,7 +2307,12 @@ void cleanupAndExit(void) {
 	error("Exiting");
 }
 
-int run() {
+void init() {
+	g_fitd = new FitdEngine();
+	startThreadTimer();
+}
+	
+int runFitd() {
 	//  int protectionToBeDone = 1;
 	char version[256];
 
@@ -2315,9 +2320,7 @@ int run() {
 
 	warning(version);
 
-	g_fitd = new FitdEngine();
-
-	startThreadTimer();
+	init();
 
 	g_fitd->run();
 

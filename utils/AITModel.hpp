@@ -1,6 +1,7 @@
 #pragma once
 
 #include "GraphicsEngine.hpp"
+#include "AITDDataLoader.hpp"
 #include "Shader.hpp"
 #include <bgfx/bgfx.h>
 
@@ -68,10 +69,12 @@ public:
 
 class Polygon : public Primitive {
 public:
-	Polygon(const std::vector<Vector3f>& p, int c) :
+	Polygon(const std::vector<Vector3f>& p, int t, int c) :
 		Primitive(c, PRIM_TYPE_POLYGON),
+		poly_type(t),
 		points(p) {}
 	std::vector<Vector3f> points;
+	int poly_type = 0;
 };
 
 class Mesh {
@@ -89,8 +92,11 @@ public:
 
 		// Set render states.
 		bgfx::setState(0
-				   | BGFX_STATE_DEFAULT
-		);
+					   | BGFX_STATE_RGB_WRITE
+					   | BGFX_STATE_ALPHA_WRITE
+					   | BGFX_STATE_DEPTH_WRITE
+					   | BGFX_STATE_DEPTH_TEST_LESS
+					   | BGFX_STATE_MSAA);
 		
 		bgfx::submit(RENDER_PASS_GEOMETRY,
 					 m_shader->getHandle());
@@ -202,6 +208,8 @@ public:
 			
 			int primitive_type = *(ptr + idx);
 			idx++;
+
+			//printf("primitive %d\n", primitive_type);
 			
 			switch(primitive_type) {
 				
@@ -211,39 +219,38 @@ public:
 				int color_index = *(ptr + idx);
 				idx += 2;
 				
-				//Color32 color = getColorFromIndex(color_index);//paletteColors[color_index];
-				
 				int point_idxA = *(int16 *)(ptr + idx + 0) / 6;
 				int point_idxB = *(int16 *)(ptr + idx + 2) / 6;
 				
 				idx += 4;
 
-				Geometry::Primitive::Ptr primitive_ptr = Geometry::Primitive::Ptr(new Geometry::Line(vertices[point_idxA],
-																	   vertices[point_idxB],
-																	   color_index));
+				Geometry::Primitive::Ptr primitive_ptr =
+					Geometry::Primitive::Ptr(new Geometry::Line(vertices[point_idxA],
+																vertices[point_idxB],
+																color_index));
 				primitives.push_back(primitive_ptr);					
-				
-				
+								
 				break;
 			}
 			case 1: //poly
 			{
 				int num_points_poly = *(ptr + idx);
-				int poly_type = *(ptr + idx + 1);
-				int color_index = *(ptr + idx + 2);
+				uint8 poly_type = *(ptr + idx + 1);
+				uint8 color_index = *(ptr + idx + 2);
 				idx += 3;
 
 				std::vector<Vector3f> poly_points;
-				
-				for (int m = 0; m < num_points_poly; m++) {
-					
+
+				for (int m = 0; m < num_points_poly; m++) {					
 					int point_index = *(int16 *)(ptr + idx) / 6;
-					idx += 2;
-					
+					idx += 2;					
 					poly_points.push_back(vertices[point_index]);
 				}
 
-				Geometry::Primitive::Ptr primitive_ptr = Geometry::Primitive::Ptr(new Geometry::Polygon(poly_points, color_index));
+				Geometry::Primitive::Ptr primitive_ptr =
+					Geometry::Primitive::Ptr(new Geometry::Polygon(poly_points,
+																   poly_type,
+																   color_index));
 				primitives.push_back(primitive_ptr);				
 				
 				break;
@@ -278,6 +285,27 @@ public:
 		}
 	}
 
+	uint32_t getColor(int color_index, int poly_type) {
+
+		ColorPalette::Ptr palette = ResourceManager::getResource<ColorPalette>(0);		
+		Color c = palette->getColor(color_index);
+
+		//TODO noise material
+		// if (poly_type == 1) {
+		// 	c.a = 254;
+		// 	c.r = (unsigned char)((color_index % 16) * 16);
+		// 	c.g = (unsigned char)((color_index / 16) * 16);
+		// }
+		// if (poly_type == 4 || poly_type == 5) {
+		// 	c.a = 253;
+		// 	c.r = 0;
+		// 	c.g = 255;
+		// 	c.b = (unsigned char)((color_index / 16) * 16);
+		// }
+		
+		return Color::toABGR32(c);	
+	}
+	
 	void generateMesh() {
 
 		PosColorVertex::init();
@@ -285,6 +313,7 @@ public:
 		std::vector<PosColorVertex> vertices;
 		std::vector<uint16_t> indices;
 		int verticesCount = 0;
+
 		
 		for (auto prim : primitives) {
 
@@ -292,12 +321,15 @@ public:
 			
 			if (prim->type == PRIM_TYPE_POLYGON) {
 				auto poly_ptr = std::dynamic_pointer_cast<Geometry::Polygon>(prim);
+				
+				uint32_t color = getColor(poly_ptr->color, poly_ptr->poly_type);				
+				
 				for (auto p : poly_ptr->points) {
 					PosColorVertex pcv;
 					pcv.m_x = p(0);
 					pcv.m_y = p(1);
-					pcv.m_z = p(2);
-					pcv.m_abgr = 0;						
+					pcv.m_z = p(2);										
+					pcv.m_abgr = color;
 					vertices.push_back(pcv);
 				}
 

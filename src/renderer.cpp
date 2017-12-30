@@ -1244,6 +1244,14 @@ int renderModel(int x, int y, int z, int alpha, int beta, int gamma, void *model
 		return(1); // model ok, but out of screen
 	}
 
+	// for (int i = 0; i < 256; i++) {
+	// 	printf("%d,%d,%d\n",
+	// 		   (unsigned char)g_driver->_palette[i*3],
+	// 		   (unsigned char)g_driver->_palette[i*3+1],
+	// 		   (unsigned char)g_driver->_palette[i*3+2]);
+	// }
+	printf("-----\n");
+	
 	//  source += 10 * 1;
 	for(i = 0; i < numOfPolyToRender; i++) {
 		renderFunctions[primTable[i].type](&primTable[i]);

@@ -415,7 +415,7 @@ void FitdEngine::sysInit(void) {
 }
 
 void FitdEngine::preloadResource() {
-	char localPalette[768];
+	unsigned char localPalette[768];
 	
 	if(g_fitd->getGameType() == GType_AITD2) {
 		loadPakToPtr("ITD_RESS", 59, aux);
@@ -424,7 +424,13 @@ void FitdEngine::preloadResource() {
 	}
 	copyPalette(aux, g_driver->_palette);
 	
-	copyPalette(g_driver->_palette, localPalette);
+	copyPalette(g_driver->_palette, (char*)localPalette);
+
+
+
+
+
+	
 	//  fadeInSub1(localPalette);
 	
 	// to finish

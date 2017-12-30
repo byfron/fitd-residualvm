@@ -1,4 +1,5 @@
 #include "ModelViewer.hpp"
+#include "AITDDataLoader.hpp"
 
 #include <hqr.h>
 #include <fitd.h>
@@ -12,11 +13,15 @@ ModelViewer::ModelViewer(const char* name, const char* desc) : GraphicsEngine(na
 }
 
 void ModelViewer::init_engine() {
-	
+
+	// Maybe eventually we can get rid of this part
  	Fitd::init();
+
+	AITDDataLoader::loadColorPalette();
+	
  	hqrEntryStruct *list_body;
  	list_body = new Fitd::hqrEntryStruct("LISTBODY", 100000, 50); // was calculated from free mem size
- 	char *ptr = list_body->get(15);	
+ 	char *ptr = list_body->get(45);	
  	model.loadBody(ptr);
  	model.generateMesh();
 }

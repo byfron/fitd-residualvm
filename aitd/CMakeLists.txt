@@ -91,6 +91,12 @@ add_executable(model_viewer
   InputManager.cpp
   ResourceManager.hpp
   ResourceManager.cpp
+  Floor.hpp
+  Floor.cpp
+  Room.hpp
+  Room.cpp
+  RoomCamera.hpp
+  RoomCamera.cpp
   )
 
 target_link_libraries(model_viewer

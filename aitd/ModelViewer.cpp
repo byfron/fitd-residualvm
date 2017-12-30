@@ -1,5 +1,6 @@
 #include "ModelViewer.hpp"
 #include "AITDDataLoader.hpp"
+#include "Floor.hpp"
 
 #include <hqr.h>
 #include <fitd.h>
@@ -24,6 +25,11 @@ void ModelViewer::init_engine() {
  	char *ptr = list_body->get(45);	
  	model.loadBody(ptr);
  	model.generateMesh();
+
+	Floor floor;
+	floor.load(0);
+	
+	
 }
 
 void ModelViewer::loadModel(int body_index) {

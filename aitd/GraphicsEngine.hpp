@@ -10,12 +10,53 @@
 #include <bx/macros.h>
 
 class Camera;
-	
+
+
+struct PosTexCoordVertex
+{
+	float m_x;
+	float m_y;
+	float m_z;
+	float m_u;
+	float m_v;
+
+
+	static void init()
+	{
+		ms_decl
+			.begin()
+			.add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
+			.add(bgfx::Attrib::TexCoord0, 2, bgfx::AttribType::Float)
+			.end();
+	};
+
+	static bgfx::VertexDecl ms_decl;
+};
+
+struct PosColorVertex
+{
+	float m_x;
+	float m_y;
+	float m_z;
+	uint32_t m_abgr;
+
+	static void init()
+	{
+		ms_decl
+			.begin()
+			.add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
+			.add(bgfx::Attrib::Color0,   4, bgfx::AttribType::Uint8, true)
+			.end();
+	};
+
+	static bgfx::VertexDecl ms_decl;
+};
+
+
 // Views
 enum RenderPasses {
-	RENDER_PASS_VISIBILITY = 0,
+	RENDER_PASS_BACKGROUND = 0,
 	RENDER_PASS_GEOMETRY,
-	RENDER_PASS_POSTPROCESS
 };
 
 
@@ -71,7 +112,6 @@ public:
 	void stop();
 
 
-	void  screenSpaceQuad(float _textureWidth, float _textureHeight, float _texelHalf, bool _originBottomLeft, float _width, float _height);
 	static Camera & camera() { return m_camera; }
 	static bool debugEnabled() { return m_debug; }
 protected:
@@ -85,12 +125,6 @@ protected:
 
 	InputManager m_input_manager;
 
-	// Refactor this in a PostProcessor
-	bgfx::VertexBufferHandle m_vbh;
-	bgfx::IndexBufferHandle m_ibh;
-
-
-	bgfx::ProgramHandle m_program;
 };
 
 

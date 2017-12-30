@@ -32,6 +32,7 @@ public:
 	typedef std::shared_ptr<RoomCamera> Ptr;
 	RoomCamera(const char*);
 	void load(const char*);
+	void loadBackgroundImage(const char*);
 	
 protected:
 	std::vector<CameraZone::Ptr> zone_vector;

@@ -75,3 +75,9 @@ void RoomCamera::load(const char *data) {
 		zone_vector.push_back(zone);		
 	}
 }
+
+void RoomCamera::loadBackgroundImage(const char* data) {
+
+	
+	
+}

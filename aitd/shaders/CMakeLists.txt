@@ -5,6 +5,8 @@ set(FSHADER_FILES "")
 set(VSHADER_FILES "")
 list(APPEND FSHADER_FILES "fs_cubes.sc")
 list(APPEND VSHADER_FILES "vs_cubes.sc")
+list(APPEND FSHADER_FILES "fs_backg.sc")
+list(APPEND VSHADER_FILES "vs_backg.sc")
 
 function(compileShader SHADER_FILE TYPE)
 

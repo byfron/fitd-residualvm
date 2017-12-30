@@ -1,5 +1,6 @@
 #include "Floor.hpp"
 #include "Room.hpp"
+#include <file_access.h>
 #include <fitd.h>
 #include <resource.h>
 #include <pak.h>
@@ -45,15 +46,28 @@ void Floor::load(int floor_idx) {
 		room_vector.push_back(room);
 	}
 
+	char camera_file[256];
+	sprintf(camera_file, "CAMERA%02d", floor_idx);
+
+	
 	// Load cameras
-	int num_cameras = getNumCameras(camera_data);
-	for (int i = 0; i < num_cameras; i++) {
-		uint32 offset = READ_LE_UINT32(camera_data + i * 4);
-		if (offset < camera_data_size) {
-			char *current_camera_data = camera_data + offset;
-			RoomCamera::Ptr camera = RoomCamera::Ptr(new RoomCamera(current_camera_data));
-			camera_vector.push_back(camera);
-		}
-	}
+	// int num_cameras = getNumCameras(camera_data);
+	// for (int i = 0; i < num_cameras; i++) {
+	// 	uint32 offset = READ_LE_UINT32(camera_data + i * 4);
+	// 	if (offset < camera_data_size) {
+	// 		char *current_camera_data = camera_data + offset;
+	// 		RoomCamera::Ptr camera = RoomCamera::Ptr(new RoomCamera(current_camera_data));
+			
+	// 		char *camera_bg_data;
+	// 		if(!loadPakToPtr(camera_file, i, camera_bg_data)) {
+	// 			theEnd(0, camera_file);
+	// 		}
+	// 		else {
+	// 			camera->loadBackgroundImage(camera_bg_data);
+	// 		}
+			
+	// 		camera_vector.push_back(camera);
+	// 	}
+	// }
 	
 }

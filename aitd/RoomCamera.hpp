@@ -29,10 +29,15 @@ protected:
 	
 class RoomCamera {
 public:
+	~RoomCamera();
 	typedef std::shared_ptr<RoomCamera> Ptr;
 	RoomCamera(const char*);
 	void load(const char*);
 	void loadBackgroundImage(const char*);
+
+	unsigned char* getBackgroundImagePtr() {
+		return background_image;
+	}
 	
 protected:
 	std::vector<CameraZone::Ptr> zone_vector;
@@ -49,4 +54,6 @@ protected:
 	int16 focal2;
 	int16 focal3;
 
+	unsigned char* background_image;
+	
 };

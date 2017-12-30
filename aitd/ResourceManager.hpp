@@ -7,10 +7,14 @@
 
 #define TEXTURE_ATLAS_RESOURCE_TYPE 0
 #define SHADER_RESOURCE_TYPE 1
-#define COLOR_PALETTE_RESOURCE_TYPE 1
+#define COLOR_PALETTE_RESOURCE_TYPE 2
+
+#define OBJECT_PALETTE_ID 0
+#define BACKGROUND_PALETTE_ID 1
 
 class Resource {
 public:
+	Resource(uint32_t id) : m_id(id) {}
 	virtual void init() = 0;
 	typedef std::shared_ptr<Resource> Ptr;
 

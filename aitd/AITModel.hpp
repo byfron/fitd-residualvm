@@ -267,7 +267,7 @@ public:
 
 	uint32_t getColor(int color_index, int poly_type) {
 
-		ColorPalette::Ptr palette = ResourceManager::getResource<ColorPalette>(0);		
+		ColorPalette::Ptr palette = ResourceManager::getResource<ColorPalette>(OBJECT_PALETTE_ID);
 		Color c = palette->getColor(color_index);
 
 		//TODO noise material

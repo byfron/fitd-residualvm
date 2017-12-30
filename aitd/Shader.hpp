@@ -16,7 +16,7 @@ public:
 
 //	Shader(const voyage::ShaderCfg & cfg);
 	Shader(std::string fs,
-	       std::string vs) : m_vs_shader(vs), m_fs_shader(fs) {
+	       std::string vs) :  Resource(-1), m_vs_shader(vs), m_fs_shader(fs) {
 	}
 
 	~Shader() {

@@ -89,12 +89,18 @@ void ModelViewer::init_engine() {
 	Floor floor;
 	floor.load(0);
 
-	test_tex = loadTexture("textures/test.dds"
-				, 0
-				| BGFX_TEXTURE_U_CLAMP
-				| BGFX_TEXTURE_V_CLAMP
-				| BGFX_TEXTURE_W_CLAMP
-				);
+	
+	RoomCamera::Ptr room_cam = floor.getCamera(0);
+	const bgfx::Memory* mem = bgfx::alloc(320*200*3);
+	memcpy((unsigned char*)mem->data, room_cam->getBackgroundImagePtr(), 320*200*3);
+
+	const uint32_t flags = 0
+		| BGFX_TEXTURE_U_CLAMP
+		| BGFX_TEXTURE_V_CLAMP
+		| BGFX_TEXTURE_MIN_POINT
+		| BGFX_TEXTURE_MAG_POINT;
+
+	test_tex = bgfx::createTexture2D(320, 200, false, 1, bgfx::TextureFormat::RGB8, flags, mem);
 	
 	bgProgram = Shader::Ptr(new Shader("vs_backg", "fs_backg"));
 	bgProgram->init();

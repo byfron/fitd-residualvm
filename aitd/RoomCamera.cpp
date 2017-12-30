@@ -1,4 +1,5 @@
 #include "RoomCamera.hpp"
+#include "AITDDataLoader.hpp"
 #include <common/endian.h>
 
 typedef Eigen::Matrix<int,2,1> Vector2i;
@@ -51,6 +52,10 @@ RoomCamera::RoomCamera(const char* data) {
 	load(data);
 }
 
+RoomCamera::~RoomCamera() {
+	delete [] background_image;
+}
+
 void RoomCamera::load(const char *data) {
 
 	alpha = READ_LE_UINT16(data + 0x00);
@@ -72,12 +77,24 @@ void RoomCamera::load(const char *data) {
 	
 	for(int k = 0; k < num_camera_zone_def; k++) {
 		CameraZone::Ptr zone = CameraZone::Ptr(new CameraZone(data, base_data));
-		zone_vector.push_back(zone);		
+		zone_vector.push_back(zone);	
 	}
 }
 
 void RoomCamera::loadBackgroundImage(const char* data) {
+	ColorPalette::Ptr color_palette =
+		ResourceManager::getResource<ColorPalette>(OBJECT_PALETTE_ID);
+	background_image = new unsigned char[320*200*3];
 
-	
-	
+	for (int i = 0; i < 320; i++) {
+		for (int j = 0; j < 200; j++) {
+
+			const unsigned char color_index = data[i*200 + j];
+			Color c = color_palette->getColor(color_index);
+
+			background_image[(i*200 + j)*3 + 0] = c.r;
+			background_image[(i*200 + j)*3 + 1] = c.g;
+			background_image[(i*200 + j)*3 + 2] = c.b;
+		}
+	}
 }

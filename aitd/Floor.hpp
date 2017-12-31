@@ -7,6 +7,8 @@ class Floor {
 
 public:
 
+	typedef std::shared_ptr<Floor> Ptr;
+	
 	void load(int floor_idx);
 
 	RoomCamera::Ptr getCamera(int cam_idx) {

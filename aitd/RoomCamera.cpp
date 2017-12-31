@@ -1,6 +1,7 @@
 #include "RoomCamera.hpp"
-#include "AITDDataLoader.hpp"
+#include <utils/Color.hpp>
 #include <common/endian.h>
+
 
 typedef Eigen::Matrix<int,2,1> Vector2i;
 

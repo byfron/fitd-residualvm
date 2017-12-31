@@ -1,12 +1,75 @@
 #include "GraphicsEngine.hpp"
 #include "ResourceManager.hpp"
+#include "DebugManager.hpp"
 #include <iostream>
 #include <common/common.h>
 	
 Camera GraphicsEngine::m_camera;
 bool GraphicsEngine::m_debug = false;
+std::vector<Aabb> DebugManager::aabb_vec;
+std::vector<Cylinder> DebugManager::cyl_vec;
+std::vector<std::vector<Vec3f>> DebugManager::poly_vec;
 bgfx::VertexDecl PosColorVertex::ms_decl;
 bgfx::VertexDecl PosTexCoordVertex::ms_decl;
+
+//TODO: put in utils
+void screenSpaceQuad(float _textureWidth, float _textureHeight, bool _originBottomLeft = false, float _width = 1.0f, float _height = 1.0f)
+{
+	if (3 == bgfx::getAvailTransientVertexBuffer(3, PosTexCoordVertex::ms_decl) )
+	{
+		bgfx::TransientVertexBuffer vb;
+		bgfx::allocTransientVertexBuffer(&vb, 3, PosTexCoordVertex::ms_decl);
+		PosTexCoordVertex* vertex = (PosTexCoordVertex*)vb.data;
+
+		const float zz = 0.0f;
+
+		const float minx = -_width;
+		const float maxx =  _width;
+		const float miny = 0.0f;
+		const float maxy = _height*2.0f;
+
+		const bgfx::Caps* caps = bgfx::getCaps();
+		const float s_texelHalf = bgfx::RendererType::Direct3D9 == caps->rendererType ? 0.5f : 0.0f;
+		const float texelHalfW = s_texelHalf/_textureWidth;
+		const float texelHalfH = s_texelHalf/_textureHeight;
+		const float minu = -1.0f + texelHalfW;
+		const float maxu =  1.0f + texelHalfW;
+
+		float minv = texelHalfH;
+		float maxv = 2.0f + texelHalfH;
+
+		if (_originBottomLeft)
+		{
+			float temp = minv;
+			minv = maxv;
+			maxv = temp;
+
+			minv -= 1.0f;
+			maxv -= 1.0f;
+		}
+
+		vertex[0].m_x = minx;
+		vertex[0].m_y = miny;
+		vertex[0].m_z = zz;
+		vertex[0].m_u = minu;
+		vertex[0].m_v = minv;
+
+		vertex[1].m_x = maxx;
+		vertex[1].m_y = miny;
+		vertex[1].m_z = zz;
+		vertex[1].m_u = maxu;
+		vertex[1].m_v = minv;
+
+		vertex[2].m_x = maxx;
+		vertex[2].m_y = maxy;
+		vertex[2].m_z = zz;
+		vertex[2].m_u = maxu;
+		vertex[2].m_v = maxv;
+
+		bgfx::setVertexBuffer(0, &vb);
+	}
+}
+
 
 float getDeltaTime() {
 	int64_t now = bx::getHPCounter();
@@ -29,28 +92,44 @@ void GraphicsEngine::start(int _argc, const char* const* _argv) {
 
 	// Set palette color for index 0
 	bgfx::setPaletteColor(0, UINT32_C(0x000000000) );
-
+	
 	// Set palette color for index 1
 	bgfx::setPaletteColor(1, UINT32_C(0x303030ff) );
 
 	bgfx::setViewClear(RENDER_PASS_BACKGROUND
-			   , BGFX_CLEAR_COLOR|BGFX_CLEAR_DEPTH|BGFX_CLEAR_STENCIL
-			   , 1.0f
-			   , 0
-			   , 1);
+					   , BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH);
+//	bgfx::setViewClear(RENDER_PASS_GEOMETRY);
+//					   , BGFX_CLEAR_COLOR);//| BGFX_CLEAR_DEPTH|BGFX_CLEAR_STENCIL);
+//					   , 0
+//					   , 1.0f
+//					   , 0);
 	
-	bgfx::setViewClear(RENDER_PASS_GEOMETRY
-			   , BGFX_CLEAR_COLOR|BGFX_CLEAR_DEPTH|BGFX_CLEAR_STENCIL
-			   , 1.0f
-			   , 0
-			   , 1);
-
 	initResources();
 
 	init_engine();
+	ddInit();
+	ddSetColor(0xff00ff00);
+	ddSetWireframe(true);
 
 	m_camera.init();
 	m_input_manager.init();
+
+
+	//TODO remove this ========================================================
+	// Floor floor;
+	// floor.load(0);
+	// RoomCamera::Ptr room_cam = floor.getCamera(0);
+	// const bgfx::Memory* mem = bgfx::alloc(320*200*3);
+	// memcpy((unsigned char*)mem->data, room_cam->getBackgroundImagePtr(), 320*200*3);
+	// const uint32_t flags = 0
+	// 	| BGFX_TEXTURE_U_CLAMP
+	// 	| BGFX_TEXTURE_V_CLAMP
+	// 	| BGFX_TEXTURE_MIN_POINT
+	// 	| BGFX_TEXTURE_MAG_POINT;
+	// test_tex = bgfx::createTexture2D(320, 200, false, 1, bgfx::TextureFormat::RGB8, flags, mem);	
+	// bgProgram = Shader::Ptr(new Shader("vs_backg", "fs_backg"));
+	// bgProgram->init();
+	//TODO remove this ========================================================
 }
 
 void GraphicsEngine::initResources() {
@@ -62,7 +141,9 @@ void GraphicsEngine::run() {
 
 	const float deltaTime = getDeltaTime();
 
-	// If the size of the window changes, update the size of framebuffers
+	DebugManager::push_polygon({Vec3f(0.f,0.f,0.f), Vec3f(1.f,1.f,1.f), Vec3f(0.f,2.f,1.f)});
+	
+	// If the size of the window changes, update the size of.framebuffers
 	if (m_oldWidth  != m_width  ||  m_oldHeight != m_height) {
 		m_oldWidth = m_width;
 		m_oldHeight = m_height;
@@ -76,28 +157,41 @@ void GraphicsEngine::run() {
 			| BGFX_TEXTURE_V_CLAMP;
 	}
 
-	// Default view
-	bgfx::setViewRect(RENDER_PASS_BACKGROUND, 0, 0, m_width, m_height);
-	bgfx::setViewRect(RENDER_PASS_GEOMETRY, 0, 0, m_width, m_height);
 
+
+
+/////////////////////////// All this has to go away ////////////////////
+	
 	// Set geometry view
 	float view[16];
 	float proj[16];
 
-
-	// draw texture in background
-	bx::mtxOrtho(proj, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 100.0f, 0.0f, bgfx::getCaps()->homogeneousDepth);
-	bgfx::setViewTransform(RENDER_PASS_BACKGROUND, NULL, proj);
-	bgfx::setViewRect(RENDER_PASS_BACKGROUND, 0, 0, m_width, m_height);
-
-	
-	// m_camera.mtxLookAt(view);
-	// bx::mtxProj(proj, 60.0f, float(m_width)/float(m_height), 0.1f, 100.0f, bgfx::getCaps()->homogeneousDepth);
-	// bgfx::setViewTransform(RENDER_PASS_GEOMETRY, view, proj);
-	// bgfx::setViewRect(RENDER_PASS_GEOMETRY, 0, 0, uint16_t(m_width), uint16_t(m_height) );
-					
 	bgfx::touch(0);
 
+
+	
+	// background render pass
+	bx::mtxOrtho(proj, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 100.0f, 0.0f, bgfx::getCaps()->homogeneousDepth);
+	bgfx::setViewRect(RENDER_PASS_BACKGROUND, 0, 0, m_width, m_height);
+	bgfx::setViewTransform(RENDER_PASS_BACKGROUND, NULL, proj);
+
+	// geometry render pass
+	bgfx::setViewRect(RENDER_PASS_GEOMETRY, 0, 0, uint16_t(m_width), uint16_t(m_height) );	
+	m_camera.mtxLookAt(view);
+	bx::mtxProj(proj, 60.0f, float(m_width)/float(m_height), 0.1f, 100.0f, bgfx::getCaps()->homogeneousDepth);
+	bgfx::setViewTransform(RENDER_PASS_GEOMETRY, view, proj);
+
+	////////// test background image
+	// bgfx::setTexture(0, s_texUniform, test_tex);
+	// bgfx::setState(0
+	//  			   | BGFX_STATE_RGB_WRITE
+	//  			   | BGFX_STATE_ALPHA_WRITE);	
+	// screenSpaceQuad( (float)m_width, (float)m_height, false, 1.0f, 1.0f);
+	// bgfx::submit(RENDER_PASS_BACKGROUND, bgProgram->getHandle());
+    ///////////////
+/////////////////////////// All this has to go away ////////////////////
+	
+	DebugManager::update(deltaTime);
 	frame(deltaTime);
 
 	bgfx::frame();
@@ -106,5 +200,7 @@ void GraphicsEngine::run() {
 }
 
 void GraphicsEngine::stop() {
+	ddShutdown();
+	bgfx::shutdown();
 
 }

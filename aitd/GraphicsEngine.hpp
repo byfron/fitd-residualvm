@@ -55,8 +55,9 @@ struct PosColorVertex
 
 // Views
 enum RenderPasses {
+	
 	RENDER_PASS_BACKGROUND = 0,
-	RENDER_PASS_GEOMETRY,
+	RENDER_PASS_GEOMETRY
 };
 
 
@@ -124,6 +125,11 @@ protected:
 	static bool m_debug;
 
 	InputManager m_input_manager;
+
+	//background
+	bgfx::TextureHandle test_tex;
+	bgfx::UniformHandle s_texUniform;
+	Shader::Ptr bgProgram;
 
 };
 

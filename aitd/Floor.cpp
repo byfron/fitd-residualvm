@@ -25,6 +25,8 @@ int getNumRooms(char* data, int data_size) {
 using namespace Fitd;
 void Floor::load(int floor_idx) {
 
+	// TODO: Refactor loading code into Factories!!
+
 	char floor_file[256];
 	sprintf(floor_file, "ETAGE%02d", floor_idx);
 	char *floor_data = g_resourceLoader->loadPakSafe(floor_file, 0);
@@ -35,7 +37,7 @@ void Floor::load(int floor_idx) {
 
 	int num_rooms = getNumRooms(floor_data, floor_data_size);
 
-	//TODO: spdlog
+	//TODO: add spdlog
 	printf("Found %d rooms in floor %d\n", num_rooms, floor_idx);
 
 	// Load rooms

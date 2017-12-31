@@ -14,15 +14,16 @@
 #define PRIM_TYPE_POLYGON 1
 #define PRIM_TYPE_SPHERE 2
 
+//TODO: refactor this file
+
 using namespace Eigen;
 
 class Bone {
 public:
-
-	Bone* parent;
+	typedef std::shared_ptr<Bone> Ptr;
+	Bone* parent = nullptr;
 	Eigen::Quaternionf local_rot;
-	Eigen::Vector3f local_pos;
-	
+	Eigen::Vector3f local_pos;	
 };
 
 namespace Geometry {
@@ -77,9 +78,10 @@ public:
 					   | BGFX_STATE_DEPTH_WRITE
 					   | BGFX_STATE_DEPTH_TEST_LESS
 					   | BGFX_STATE_MSAA);
-		
+	   		
 		bgfx::submit(RENDER_PASS_GEOMETRY,
 					 m_shader->getHandle());
+
 	}
 	
 	bgfx::DynamicVertexBufferHandle m_dvbh;
@@ -167,6 +169,8 @@ public:
 					//blending_weights[start_index] = bone_index;
 					start_index++;
 				}
+
+//				bones.push_back(Bone::Ptr(new Bone(*bone));
 
 				idx += 0x10;				
 			}
@@ -293,8 +297,7 @@ public:
 		std::vector<PosColorVertex> vertices;
 		std::vector<uint16_t> indices;
 		int verticesCount = 0;
-
-		
+	   
 		for (auto prim : primitives) {
 
 			verticesCount = vertices.size();
@@ -350,9 +353,21 @@ public:
 		mesh->m_shader->init();
 	}
 
-	void draw() {
+	void draw() {		
 
-		mesh->submit();
+		if (show_mesh) {
+			mesh->submit();
+		}
+
+		if (show_bones) {
+			draw_bones();
+		}
+		
+	}
+
+
+	void draw_bones() {
+
 		
 	}
 	
@@ -364,8 +379,12 @@ protected:
 	
 	std::vector<Eigen::Vector3f> vertices;
 	std::vector<Geometry::Primitive::Ptr> primitives;
-	std::vector<Bone> bones;
+	std::vector<Bone::Ptr> bones;
 	Geometry::Mesh::Ptr mesh;
+
+
+	bool show_mesh = true;
+	bool show_bones = true;
 	
 	
 };

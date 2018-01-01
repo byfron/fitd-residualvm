@@ -16,6 +16,7 @@ public:
 	typedef std::shared_ptr<Actor> Ptr;
 	void generateMesh();
 	void draw(float delta);
+	Geometry::Mesh::Ptr getMesh() { return mesh; }
 	
 protected:
 

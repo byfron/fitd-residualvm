@@ -16,24 +16,24 @@ public:
 	
 	template <typename S>
 	void add(std::shared_ptr<S> system) {
-		systemManager->add<S>(system);
+		system_manager->add<S>(system);
 	}
 	
 	void run_frame(float dt) {
-//		systemManager->update_all(dt);
+		system_manager->update_all(dt);
 
-		for (auto id_actor : actor_map) {
-			id_actor.second->draw(dt);
-		}
+		// for (auto id_actor : actor_map) {
+		// 	id_actor.second->draw(dt);
+		// }
 	}
 	
 protected:
 
 	bool running = false;
 	
-	EntityManager::Ptr entityManager;
-	EventManager::Ptr eventManager;
-	SystemManager::Ptr systemManager;
+	EntityManager::Ptr entity_manager;
+	EventManager::Ptr event_manager;
+	SystemManager::Ptr system_manager;
 	
 	std::map<int, Floor::Ptr> floor_map;
 	std::map<int, Actor::Ptr> actor_map;

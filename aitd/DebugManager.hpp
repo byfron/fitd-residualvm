@@ -1,7 +1,7 @@
 #pragma once
 
 #include "math.hpp"
-#include "GraphicsEngine.hpp"
+#include "graphics/GraphicsEngine.hpp"
 #include <common/bgfx_utils.h>
 #include <common/debugdraw/debugdraw.h>
 

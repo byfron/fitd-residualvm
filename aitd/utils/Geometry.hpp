@@ -1,6 +1,6 @@
 #pragma once
 
-#include "GraphicsEngine.hpp"
+#include <graphics/GraphicsEngine.hpp>
 #include <Eigen/Dense>
 #include <bgfx/bgfx.h>
 #include "Shader.hpp"

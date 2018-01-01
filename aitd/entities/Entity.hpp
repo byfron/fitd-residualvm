@@ -190,6 +190,9 @@ public:
 		assert(index < EntityManager::max_networked_ids);
 		Entity::Id id(index);
 		Entity entity(this, id);
+
+		printf("%d\n",_valid_entities.size());
+		
 		_valid_entities[id.index()] = true;
 		EntityManager::entity_count++;
 		return entity;

@@ -4,7 +4,7 @@
 #include <common/common.h>
 #include <common/entry/input.h>
 #include <common/entry/cmd.h>
-#include "Camera.hpp"
+#include <graphics/Camera.hpp>
 
 #define KEY_ROTATE_CAM_LEFT   UINT8_C(0x01)
 #define KEY_ROTATE_CAM_RIGHT  UINT8_C(0x02)

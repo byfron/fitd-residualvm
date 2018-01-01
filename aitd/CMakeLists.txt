@@ -47,12 +47,8 @@ SET(BGFX_COMMON_LIBRARIES ${ROOT_DIR}/bgfx/.build/linux64_gcc/bin/libexample-com
 SET(SHADER_COMPILER ${ROOT_DIR}/bgfx/.build/linux64_gcc/bin/shadercRelease)
 
 add_library(AITDCore
-  GraphicsEngine.hpp
-  GraphicsEngine.cpp
   Shader.hpp
   Shader.cpp  
-  Camera.hpp
-  Camera.cpp
   InputManager.hpp
   InputManager.cpp
   ResourceManager.hpp
@@ -72,6 +68,7 @@ add_library(AITDCore
 
 target_link_libraries(AITDCore
   ${SDL_LIBRARY}
+  GraphicsCore
   fitd
   pthread
   GL
@@ -102,5 +99,6 @@ target_include_directories(aitd PUBLIC
 
 add_dependencies(aitd shaders)
 
+add_subdirectory(graphics)
 add_subdirectory(entities)
 add_subdirectory(shaders)

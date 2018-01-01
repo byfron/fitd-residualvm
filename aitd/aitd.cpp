@@ -1,5 +1,5 @@
-#include "GraphicsEngine.hpp"
 #include "AITDEngine.hpp"
+#include <graphics/GraphicsEngine.hpp>
 
 class AITD : public GraphicsEngine {
 public:

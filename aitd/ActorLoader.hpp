@@ -3,7 +3,7 @@
 #include "Actor.hpp"
 #include <hqr.h>
 
-class ActorFactory {
+class ActorLoader {
 public:
 
 	static Actor::Ptr create(int idx);

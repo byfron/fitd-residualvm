@@ -1,14 +1,14 @@
-#include "ActorFactory.hpp"
+#include "ActorLoader.hpp"
 #include <common/endian.h>
 #include <fitd.h>
 #include <map>
 
-Fitd::hqrEntryStruct* ActorFactory::list_body = new Fitd::hqrEntryStruct("LISTBODY", 100000, 50); // was calculated from free mem size
+Fitd::hqrEntryStruct* ActorLoader::list_body = new Fitd::hqrEntryStruct("LISTBODY", 100000, 50); // was calculated from free mem size
 
-Actor::Ptr ActorFactory::create(int actor_idx) {
+Actor::Ptr ActorLoader::create(int actor_idx) {
 
 	Actor::Ptr actor = Actor::Ptr(new Actor());
-	char *buffer = ActorFactory::list_body->get(actor_idx);
+	char *buffer = ActorLoader::list_body->get(actor_idx);
 
 	// put here all the creation related code!!!
 	

@@ -4,6 +4,12 @@
 #include <Eigen/Dense>
 #include <common/scummsys.h>
 
+class BgImage {
+
+	
+	unsigned char* background_image;
+};
+
 class CameraZoneEntry {
 public:
 	typedef std::shared_ptr<CameraZoneEntry> Ptr;
@@ -53,7 +59,6 @@ protected:
 	int16 focal1;
 	int16 focal2;
 	int16 focal3;
-
-	unsigned char* background_image;
 	
+	BgImage image;
 };

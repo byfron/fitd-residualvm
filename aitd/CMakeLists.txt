@@ -63,8 +63,8 @@ add_library(AITDCore
   Actor.cpp
   AITDEngine.hpp
   AITDEngine.cpp
-  ActorFactory.hpp
-  ActorFactory.cpp)
+  ActorLoader.hpp
+  ActorLoader.cpp)
 
 target_link_libraries(AITDCore
   ${SDL_LIBRARY}

@@ -21,10 +21,6 @@ public:
 	
 	void run_frame(float dt) {
 		system_manager->update_all(dt);
-
-		// for (auto id_actor : actor_map) {
-		// 	id_actor.second->draw(dt);
-		// }
 	}
 	
 protected:

@@ -20,7 +20,7 @@ public:
 	
 protected:
 
-	friend class ActorFactory;
+	friend class ActorLoader;
 	
 	int num_vertices = 0;
 	int num_bones = 0;

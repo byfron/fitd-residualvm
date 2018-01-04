@@ -61,6 +61,8 @@ add_library(AITDCore
   RoomCamera.cpp
   Actor.hpp
   Actor.cpp
+  World.hpp
+  World.cpp
   AITDEngine.hpp
   AITDEngine.cpp
   ActorLoader.hpp

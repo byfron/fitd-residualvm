@@ -50,7 +50,7 @@ protected:
 
 	int16 alpha;
 	int16 beta;
-	int16 gamma;
+ 	int16 gamma;
 
 	int16 x;
 	int16 y;
@@ -60,5 +60,5 @@ protected:
 	int16 focal2;
 	int16 focal3;
 	
-	BgImage image;
+	unsigned char * background_image;
 };

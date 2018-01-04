@@ -1,13 +1,14 @@
 #pragma once
 
-#include "Floor.hpp"
-#include "Actor.hpp"
+#include "World.hpp"
 #include "entities/Entity.hpp"
 #include "entities/System.hpp"
 #include <map>
 
 class AITDEngine {
 public:
+	
+	AITDEngine();
 	~AITDEngine();
 	void init();
 	void createSubsystems();
@@ -31,7 +32,6 @@ protected:
 	EventManager::Ptr event_manager;
 	SystemManager::Ptr system_manager;
 	
-	std::map<int, Floor::Ptr> floor_map;
-	std::map<int, Actor::Ptr> actor_map;
+	World::Ptr world;
 	
 };

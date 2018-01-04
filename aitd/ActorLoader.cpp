@@ -5,7 +5,7 @@
 
 Fitd::hqrEntryStruct* ActorLoader::list_body = new Fitd::hqrEntryStruct("LISTBODY", 100000, 50); // was calculated from free mem size
 
-Actor::Ptr ActorLoader::create(int actor_idx) {
+Actor::Ptr ActorLoader::load(int actor_idx) {
 
 	Actor::Ptr actor = Actor::Ptr(new Actor());
 	char *buffer = ActorLoader::list_body->get(actor_idx);

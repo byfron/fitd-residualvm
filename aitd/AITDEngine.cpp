@@ -1,20 +1,25 @@
 #include "AITDEngine.hpp"
-#include "ActorFactory.hpp"
+#include "ActorLoader.hpp"
 #include "utils/Color.hpp"
 #include <graphics/RenderSystem.hpp>
 
 //#include "FloorFactory.hpp"
 #include <main.h>
 
-void AITDEngine::init() {
-
-	Fitd::init();
-	createSubsystems();
-	loadGameData();
+AITDEngine::AITDEngine() {
+	world = World::Ptr(new World());
 }
 
 AITDEngine::~AITDEngine() {
-	ActorFactory::cleanBuffers();
+	ActorLoader::cleanBuffers();
+}
+
+
+void AITDEngine::init() {
+
+	Fitd::init();	
+	createSubsystems();
+	loadGameData();
 }
 
 void AITDEngine::createSubsystems() {
@@ -40,17 +45,8 @@ void AITDEngine::loadGameData() {
 	Entity actor = entity_manager->createLocal();
 	entity_manager->assign<MeshComponent>(actor.id(), actor_data->getMesh());
 
-
 	//create world
 	world->load();
-	
-	//create camera entity
-	// Floor:Ptr floor_data = FloorFactory::create(0);
-	
-	// Entity camera_entity = entity_manager->createLocal();
-	// AITDEngine::push_camera_id(camera_entity.id());
-	// entity_manager->assign<BgImageComponent>(camera_entity.id(), floor_data->getRoomCamera()->);
-	
 	
 }
 

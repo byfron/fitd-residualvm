@@ -6,7 +6,7 @@
 class ActorLoader {
 public:
 
-	static Actor::Ptr create(int idx);
+	static Actor::Ptr load(int idx);
 	static void cleanBuffers() { if (list_body) delete list_body; }
 	static Fitd::hqrEntryStruct *list_body;
 };

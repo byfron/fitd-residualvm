@@ -4,6 +4,7 @@
 #include <Eigen/Dense>
 #include <bgfx/bgfx.h>
 #include "Shader.hpp"
+#include <vector>
 
 
 #define PRIM_TYPE_LINE 0

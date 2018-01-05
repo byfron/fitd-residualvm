@@ -3,6 +3,7 @@
 #include <memory>
 #include <Eigen/Dense>
 #include <common/scummsys.h>
+#include <vector>
 
 class BgImage {
 

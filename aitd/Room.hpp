@@ -4,6 +4,7 @@
 #include <Eigen/Dense>
 #include <common/scummsys.h>
 #include <common/endian.h>
+#include <vector>
 
 typedef Eigen::Matrix<int,3,1> Vector3i;
 

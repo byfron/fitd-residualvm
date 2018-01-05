@@ -4,6 +4,7 @@
 #include "graphics/GraphicsEngine.hpp"
 #include <common/bgfx_utils.h>
 #include <common/debugdraw/debugdraw.h>
+#include <vector>
 
 class DebugManager {
 

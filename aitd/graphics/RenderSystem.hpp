@@ -8,11 +8,28 @@
 
 class CameraComponent {
 public:
-	CameraComponent() {}
+	CameraComponent(const Eigen::Matrix4f& camera_view) {
+
+		//initialize matrices
+		memcpy(view, camera_view.data(), sizeof(float)*16);
+
+		m_camera.init();
+		
+		//TODO query resolution from engine
+		bx::mtxProj(proj, 60.0f, float(1280)/float(720), 0.1f, 100.0f,					
+					bgfx::getCaps()->homogeneousDepth);		
+	}
 
 	void render(float delta) {
 
+		m_camera.mtxLookAt(view);
+		bgfx::setViewTransform(RENDER_PASS_GEOMETRY, view, proj);
+		m_camera.update(delta);
 	}
+
+	float view[16];
+	float proj[16];
+	Camera m_camera;
 };
 
 class BgImageComponent {

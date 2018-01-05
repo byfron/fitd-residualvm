@@ -1,0 +1,3 @@
+add_library(ParsingUtils
+  DataParsing.hpp
+  DataParsing.cpp)

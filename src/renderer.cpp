@@ -1250,7 +1250,7 @@ int renderModel(int x, int y, int z, int alpha, int beta, int gamma, void *model
 	// 		   (unsigned char)g_driver->_palette[i*3+1],
 	// 		   (unsigned char)g_driver->_palette[i*3+2]);
 	// }
-	printf("-----\n");
+//	printf("-----\n");
 	
 	//  source += 10 * 1;
 	for(i = 0; i < numOfPolyToRender; i++) {

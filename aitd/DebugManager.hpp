@@ -54,6 +54,10 @@ public:
 			drawLine(line.first, line.second);
 		}
 
+		for (auto sphere : sphere_vec) {
+			draw(sphere);
+		}
+
 		ddPop();
 		ddEnd();
 
@@ -88,17 +92,23 @@ public:
 		aabb_vec.push_back(box);
 	}
 
+	static void push_sphere(const Sphere& s) {
+		sphere_vec.push_back(s);
+	}
+
 	static void clear() {
 		cyl_vec.clear();
 		aabb_vec.clear();
 		poly_vec.clear();
 		line_vec.clear();
+		sphere_vec.clear();
 	}
 
 protected:
 
 	static std::vector<Aabb> aabb_vec;
 	static std::vector<Cylinder> cyl_vec;
+	static std::vector<Sphere> sphere_vec;
 	static std::vector<std::pair<Vec3f, Vec3f>> line_vec;
 	static std::vector<std::vector<Vec3f>> poly_vec;
 

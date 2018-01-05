@@ -64,9 +64,11 @@ void RoomCamera::load(const char *data) {
 	beta  = READ_LE_UINT16(data + 0x02);
 	gamma = READ_LE_UINT16(data + 0x04);
 	
-	x = READ_LE_UINT16(data + 0x06);
-	y = READ_LE_UINT16(data + 0x08);
-	z = READ_LE_UINT16(data + 0x0A);
+	int16 x = READ_LE_UINT16(data + 0x06); // (x - world_x) * 10
+	int16 y = READ_LE_UINT16(data + 0x08); // (world_y - y) * 10
+	int16 z = -READ_LE_UINT16(data + 0x0A); // (world_z - z) * 10
+
+	position = Vec3f(float(x), float(y), float(z))/100.0f; //(1/1000 * 10)
 	
 	focal1 = READ_LE_UINT16(data + 0x0C);
 	focal2 = READ_LE_UINT16(data + 0x0E);
@@ -79,18 +81,29 @@ void RoomCamera::load(const char *data) {
 	float cosz = DataParsing::computeCos(gamma);
 	float sinz = DataParsing::computeSin(gamma);
 
-	transform = Eigen::Matrix4d::Identity();
-	transform.topLeftCorner(3,3) =
-		Geometry::getZRotMat(cosz, sinz) *
-		Geometry::getYRotMat(cosy, siny) *
-		Geometry::getXRotMat(cosx, sinx);
+	transform = Eigen::Matrix4f::Identity();
+	// transform.topLeftCorner(3,3) =
+	// 	Geometry::getZRotMat(cosx, sinx) *
+	// 	Geometry::getYRotMat(cosy, siny) *
+	// 	Geometry::getXRotMat(cosz, sinz);
+
+	Eigen::Matrix3f t = Eigen::Matrix3f(AngleAxisf(acosf(cosx), Vector3f::UnitZ())
+										* AngleAxisf(acosf(cosy), Vector3f::UnitY())
+										* AngleAxisf(acosf(cosz), Vector3f::UnitX()));
+
+	transform.topLeftCorner(3,3) = t;
+	transform.col(3).head(3) = position;
+		
+	//look_at = t * Vec3f(0.0, 1.0, 0.0);
+	look_at = transform.topLeftCorner(3,3).cast<float>() * Vec3f(0.0, 0.0, 1.0);
 	
 	int num_camera_zone_def = READ_LE_UINT16(data + 0x12);
 
 
-	std::cout << "Room Camera loaded: " << std::endl;
-	std::cout << "x: " << x << ", y: " << y << ", z: " << z << std::endl;
-	std::cout << "rot: " << transform << std::endl;
+	// std::cout << "Room Camera loaded: " << std::endl;
+	// std::cout << "x: " << position(0x << ", y: " << y << ", z: " << z << std::endl;
+	// std::cout << "f1: " << focal1 << ", f2: " << focal2 << ", f3: " << focal3 << std::endl;
+	// std::cout << "rot: " << transform << std::endl;
 	
 	const char* base_data = data;
 	data += 0x14;

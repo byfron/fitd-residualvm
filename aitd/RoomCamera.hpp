@@ -1,5 +1,6 @@
 #pragma once
 
+#include "math.hpp"
 #include <memory>
 #include <Eigen/Dense>
 #include <common/scummsys.h>
@@ -48,22 +49,19 @@ public:
 	
 	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 	
-protected:
 	std::vector<CameraZone::Ptr> zone_vector;
 
 	int16 alpha;
 	int16 beta;
  	int16 gamma;
 
-	int16 x;
-	int16 y;
-	int16 z;
-
 	int16 focal1;
 	int16 focal2;
 	int16 focal3;
 
-	Eigen::Matrix4d transform;
+	Vec3f position;
+	Vec3f look_at;
+	Eigen::Matrix4f transform;
 	
 	unsigned char * background_image;
 };

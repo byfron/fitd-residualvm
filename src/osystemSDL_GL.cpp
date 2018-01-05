@@ -771,7 +771,7 @@ void GFXSystem::fillPoly(float *buffer, int numPoint, unsigned char color, uint8
 		GLdouble projMatrix[16];
 		GLint viewMatrix[4];
 
-		printf("polygon - npoints: %d, col: %d\n", numPoint, color); 
+//		printf("polygon - npoints: %d, col: %d\n", numPoint, color); 
 
 		glBindTexture(GL_TEXTURE_2D, ditherTexture);
 		glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_BLEND);

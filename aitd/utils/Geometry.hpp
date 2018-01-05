@@ -56,7 +56,25 @@ protected:
 	Vec3f point_a;
 	Vec3f point_b;	
 };
+
+class DebugSphere : public DebugMesh {
+public:
+	DebugSphere(const Vec3f& c, float r) {
+
+		sphere.m_center[0] = c(0);
+		sphere.m_center[1] = c(1);
+		sphere.m_center[2] = c(2);
+		sphere.m_radius = r;
+	}
 	
+	void render(float dt) override {
+		DebugManager::push_sphere(sphere);
+	}
+protected:
+	
+	Sphere sphere;
+};
+
 	
 class Primitive {
 public:

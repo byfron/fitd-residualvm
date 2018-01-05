@@ -9,6 +9,7 @@ bool GraphicsEngine::m_debug = false;
 
 std::vector<Aabb> DebugManager::aabb_vec;
 std::vector<Cylinder> DebugManager::cyl_vec;
+std::vector<Sphere> DebugManager::sphere_vec;
 std::vector<std::vector<Vec3f>> DebugManager::poly_vec;
 std::vector<std::pair<Vec3f, Vec3f>> DebugManager::line_vec;
 
@@ -157,11 +158,13 @@ void GraphicsEngine::run() {
 	bgfx::setViewRect(RENDER_PASS_BACKGROUND, 0, 0, m_width, m_height);
 	bgfx::setViewTransform(RENDER_PASS_BACKGROUND, NULL, proj);
 
-	// geometry render pass
 	bgfx::setViewRect(RENDER_PASS_GEOMETRY, 0, 0, uint16_t(m_width), uint16_t(m_height) );	
-	m_camera.mtxLookAt(view);
-	bx::mtxProj(proj, 60.0f, float(m_width)/float(m_height), 0.1f, 100.0f, bgfx::getCaps()->homogeneousDepth);
-	bgfx::setViewTransform(RENDER_PASS_GEOMETRY, view, proj);
+	
+	// geometry render pass
+	// bgfx::setViewRect(RENDER_PASS_GEOMETRY, 0, 0, uint16_t(m_width), uint16_t(m_height) );	
+	// m_camera.mtxLookAt(view);
+	// bx::mtxProj(proj, 60.0f, float(m_width)/float(m_height), 0.1f, 100.0f, bgfx::getCaps()->homogeneousDepth);
+	// bgfx::setViewTransform(RENDER_PASS_GEOMETRY, view, proj);
 	
 	DebugManager::update(deltaTime);
 	frame(deltaTime);

@@ -8,13 +8,13 @@ BBox::BBox(const char* data) {
 void BBox::load(const char* data) {
 	p1(0) = (int16)READ_LE_UINT16(data + 0x00);
 	p2(0) = (int16)READ_LE_UINT16(data + 0x02);
-	p1(1) = (int16)READ_LE_UINT16(data + 0x04);
-	p2(1) = (int16)READ_LE_UINT16(data + 0x06);
+	p1(1) = -(int16)READ_LE_UINT16(data + 0x04);
+	p2(1) = -(int16)READ_LE_UINT16(data + 0x06);
 	p1(2) = (int16)READ_LE_UINT16(data + 0x08);
 	p2(2) = (int16)READ_LE_UINT16(data + 0x0A);
 
-	p1 /= 2000.0f;
-	p2 /= 2000.0f;
+	p1 /= 1000.0f;
+	p2 /= 1000.0f;
 	
 	parameter = READ_LE_UINT16(data + 0x0C);
 	type = READ_LE_UINT16(data + 0x0E);
@@ -23,9 +23,9 @@ void BBox::load(const char* data) {
 // TODO: All these eventually become Loaders and all the logic stays into components
 void Room::load(const char *data) {
 
-	world_pos(0) = static_cast<float>((int16)READ_LE_UINT16(data + 4))/100.0f;
-	world_pos(1) = static_cast<float>((int16)READ_LE_UINT16(data + 6))/100.0f;
-	world_pos(2) = static_cast<float>(-(int16)READ_LE_UINT16(data + 8))/100.0f;
+	world_pos(0) = static_cast<float>((int16)READ_LE_UINT16(data + 4));
+	world_pos(1) = static_cast<float>((int16)READ_LE_UINT16(data + 6));
+	world_pos(2) = static_cast<float>(-(int16)READ_LE_UINT16(data + 8));
 
 	std::cout << "Room Loaded: " << std::endl;
 	std::cout << "wpos: " << world_pos.transpose() << std::endl;

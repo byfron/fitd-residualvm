@@ -96,8 +96,8 @@ void Camera::reset()
 	m_orbit[1] = 0.0f;
 
 	m_eye[0] =   0.0f;
-	m_eye[1] =   0.0f;
-	m_eye[2] = -6.5f;
+	m_eye[1] =  -9.0f;
+	m_eye[2] =   0.0f;
 	m_at[0]  =   0.0f;
 	m_at[1]  =   0.0f;
 	m_at[2]  =   0.0f;

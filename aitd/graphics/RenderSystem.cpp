@@ -3,7 +3,7 @@
 
 void RenderSystem::update(EntityManager & em, EventManager &evm, float delta ) {
 
-	world->render(delta);
+	world->render(delta);	
 
 	// Render debug elements
 	em.each<DebugComponent>(

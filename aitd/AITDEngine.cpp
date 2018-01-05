@@ -2,12 +2,10 @@
 #include "ActorLoader.hpp"
 #include "utils/Color.hpp"
 #include <graphics/RenderSystem.hpp>
-
-//#include "FloorFactory.hpp"
+#include <utils/DataParsing.hpp>
 #include <main.h>
 
-AITDEngine::AITDEngine() {
-	world = World::Ptr(new World());
+AITDEngine::AITDEngine() {	
 }
 
 AITDEngine::~AITDEngine() {
@@ -17,7 +15,9 @@ AITDEngine::~AITDEngine() {
 
 void AITDEngine::init() {
 
-	Fitd::init();	
+	Fitd::init();
+	DataParsing::init();
+	
 	createSubsystems();
 	loadGameData();
 }
@@ -29,6 +29,8 @@ void AITDEngine::createSubsystems() {
 	event_manager = EventManager::Ptr(new EventManager());
 	system_manager = SystemManager::Ptr(new SystemManager(*entity_manager, *event_manager));
 
+	world = World::Ptr(new World(entity_manager));
+	
 	// Add Render system
 	add<RenderSystem>(std::make_shared<RenderSystem>(world));
 	

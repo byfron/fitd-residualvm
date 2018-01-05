@@ -3,7 +3,6 @@
 
 void RenderSystem::update(EntityManager & em, EventManager &evm, float delta ) {
 
-	// Render current room
 	world->render(delta);
 	
 	// Render all meshes

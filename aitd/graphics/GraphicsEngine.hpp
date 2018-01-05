@@ -11,6 +11,8 @@
 
 class Camera;
 
+void screenSpaceQuad(float _textureWidth, float _textureHeight, bool _originBottomLeft,
+					 float _width, float _height);
 
 struct PosTexCoordVertex
 {
@@ -125,11 +127,6 @@ protected:
 	static bool m_debug;
 
 	InputManager m_input_manager;
-
-	//background
-	bgfx::TextureHandle test_tex;
-	bgfx::UniformHandle s_texUniform;
-	Shader::Ptr bgProgram;
 
 };
 

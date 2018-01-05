@@ -1,7 +1,8 @@
 #include "RoomCamera.hpp"
-#include <utils/Color.hpp>
 #include <common/endian.h>
-
+#include <utils/Color.hpp>
+#include <utils/DataParsing.hpp>
+#include <utils/Geometry.hpp>
 
 typedef Eigen::Matrix<int,2,1> Vector2i;
 
@@ -70,6 +71,19 @@ void RoomCamera::load(const char *data) {
 	focal1 = READ_LE_UINT16(data + 0x0C);
 	focal2 = READ_LE_UINT16(data + 0x0E);
 	focal3 = READ_LE_UINT16(data + 0x10);
+
+	float cosx = DataParsing::computeCos(alpha);
+	float sinx = DataParsing::computeSin(alpha);
+	float cosy = DataParsing::computeCos(beta);
+	float siny = DataParsing::computeSin(beta);
+	float cosz = DataParsing::computeCos(gamma);
+	float sinz = DataParsing::computeSin(gamma);
+
+	transform = Eigen::Matrix4d::Identity();
+	transform.topLeftCorner(3,3) =
+		Geometry::getZRotMat(cosz, sinz) *
+		Geometry::getYRotMat(cosy, siny) *
+		Geometry::getXRotMat(cosx, sinx);
 	
 	int num_camera_zone_def = READ_LE_UINT16(data + 0x12);
 

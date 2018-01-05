@@ -70,6 +70,8 @@ add_library(AITDCore
 
 target_link_libraries(AITDCore
   ${SDL_LIBRARY}
+  ParsingUtils
+  GeometryUtils
   GraphicsCore
   fitd
   pthread
@@ -85,7 +87,7 @@ target_include_directories(AITDCore PUBLIC
 add_executable(aitd aitd.cpp)
 
 target_link_libraries(aitd
-  fitd
+  fitd  
   AITDCore
   EntitiesCore
   ${BGFX_LIBRARIES}
@@ -103,4 +105,5 @@ add_dependencies(aitd shaders)
 
 add_subdirectory(graphics)
 add_subdirectory(entities)
+add_subdirectory(utils)
 add_subdirectory(shaders)

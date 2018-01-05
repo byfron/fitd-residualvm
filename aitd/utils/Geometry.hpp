@@ -15,6 +15,10 @@ using namespace Eigen;
 
 namespace Geometry {
 
+Eigen::Matrix3d getXRotMat(float, float);
+Eigen::Matrix3d getYRotMat(float, float);
+Eigen::Matrix3d getZRotMat(float, float);
+	
 class Primitive {
 public:
 	virtual ~Primitive() = default;

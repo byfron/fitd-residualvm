@@ -46,6 +46,8 @@ public:
 		return background_image;
 	}
 	
+	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+	
 protected:
 	std::vector<CameraZone::Ptr> zone_vector;
 
@@ -60,6 +62,8 @@ protected:
 	int16 focal1;
 	int16 focal2;
 	int16 focal3;
+
+	Eigen::Matrix4d transform;
 	
 	unsigned char * background_image;
 };

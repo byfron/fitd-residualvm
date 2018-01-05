@@ -48,6 +48,18 @@ protected:
 	bgfx::UniformHandle texture_uniform;
 };
 
+class DebugComponent {
+public:
+	DebugComponent(Geometry::DebugMesh::Ptr d) : debug_mesh(d) {}
+
+	void render(float delta) {	
+		debug_mesh->render(delta);
+	}
+protected:
+
+	Geometry::DebugMesh::Ptr debug_mesh;
+};
+
 class MeshComponent {
 
 public:

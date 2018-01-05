@@ -6,9 +6,12 @@
 	
 Camera GraphicsEngine::m_camera;
 bool GraphicsEngine::m_debug = false;
+
 std::vector<Aabb> DebugManager::aabb_vec;
 std::vector<Cylinder> DebugManager::cyl_vec;
 std::vector<std::vector<Vec3f>> DebugManager::poly_vec;
+std::vector<std::pair<Vec3f, Vec3f>> DebugManager::line_vec;
+
 bgfx::VertexDecl PosColorVertex::ms_decl;
 bgfx::VertexDecl PosTexCoordVertex::ms_decl;
 
@@ -125,7 +128,7 @@ void GraphicsEngine::run() {
 
 	const float deltaTime = getDeltaTime();
 
-	DebugManager::push_polygon({Vec3f(0.f,0.f,0.f), Vec3f(1.f,1.f,1.f), Vec3f(0.f,2.f,1.f)});
+//	DebugManager::push_polygon({Vec3f(0.f,0.f,0.f), Vec3f(1.f,1.f,1.f), Vec3f(0.f,2.f,1.f)});
 	
 	// If the size of the window changes, update the size of.framebuffers
 	if (m_oldWidth  != m_width  ||  m_oldHeight != m_height) {
@@ -141,9 +144,6 @@ void GraphicsEngine::run() {
 			| BGFX_TEXTURE_V_CLAMP;
 	}
 
-
-
-
 /////////////////////////// All this has to go away ////////////////////
 	
 	// Set geometry view
@@ -151,8 +151,6 @@ void GraphicsEngine::run() {
 	float proj[16];
 
 	bgfx::touch(0);
-
-
 	
 	// background render pass
 	bx::mtxOrtho(proj, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 100.0f, 0.0f, bgfx::getCaps()->homogeneousDepth);
@@ -164,16 +162,6 @@ void GraphicsEngine::run() {
 	m_camera.mtxLookAt(view);
 	bx::mtxProj(proj, 60.0f, float(m_width)/float(m_height), 0.1f, 100.0f, bgfx::getCaps()->homogeneousDepth);
 	bgfx::setViewTransform(RENDER_PASS_GEOMETRY, view, proj);
-
-	////////// test background image
-	// bgfx::setTexture(0, s_texUniform, test_tex);
-	// bgfx::setState(0
-	//  			   | BGFX_STATE_RGB_WRITE
-	//  			   | BGFX_STATE_ALPHA_WRITE);	
-	// screenSpaceQuad( (float)m_width, (float)m_height, false, 1.0f, 1.0f);
-	// bgfx::submit(RENDER_PASS_BACKGROUND, bgProgram->getHandle());
-    ///////////////
-/////////////////////////// All this has to go away ////////////////////
 	
 	DebugManager::update(deltaTime);
 	frame(deltaTime);

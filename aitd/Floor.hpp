@@ -15,6 +15,11 @@ public:
 		assert(cam_idx < camera_vector.size());
 		return camera_vector[cam_idx];
 	}
+
+	Room::Ptr getRoom(int room_idx) {
+		assert(room_idx < room_vector.size());
+		return room_vector[room_idx];
+	}
 	
 protected:
 

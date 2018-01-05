@@ -13,7 +13,19 @@ void World::load() {
 	entity_manager->assign<CameraComponent>(camera.id());
 	entity_manager->assign<BgImageComponent>(camera.id(), room_cam->getBackgroundImagePtr());
 	current_camera_id = camera.id();
+
+
+	for (auto &box : floor_data->getRoom(0)->colision_vector) {
+		//Add debug objects for each colision vector
+		Entity debug_obj1 = entity_manager->createLocal();
+		entity_manager->assign<DebugComponent>(
+			debug_obj1.id(),
+			Geometry::DebugMesh::Ptr(new Geometry::DebugBox(box->p1.cast<float>(),
+															box->p2.cast<float>()))
+			);	
+	}
 	
+
 }
 
 void World::render(float dt) {

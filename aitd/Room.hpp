@@ -8,13 +8,10 @@
 
 typedef Eigen::Matrix<int,3,1> Vector3i;
 
-class BBox {
-public:
+struct BBox {
 	typedef std::shared_ptr<BBox> Ptr;
 	BBox(const char*);
 	void load(const char*);	
-
-protected:
 	Vector3i p1;
 	Vector3i p2;
 	int16 parameter;
@@ -28,12 +25,10 @@ public:
 
 	void load(const char *data);
 
-protected:
-
 	std::vector<BBox::Ptr> colision_vector;
 	std::vector<BBox::Ptr> sce_zone_vector;
 	std::vector<int> camera_indices;
-	Vector3i world_pos;
+	Eigen::Matrix<float,3,1> world_pos;
 	
    
 };

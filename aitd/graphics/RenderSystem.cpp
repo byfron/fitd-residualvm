@@ -4,6 +4,13 @@
 void RenderSystem::update(EntityManager & em, EventManager &evm, float delta ) {
 
 	world->render(delta);
+
+	// Render debug elements
+	em.each<DebugComponent>(
+		[delta](Entity entity,
+				DebugComponent &dc) {
+			dc.render(delta);
+		});		
 	
 	// Render all meshes
 	em.each<MeshComponent>(

@@ -87,6 +87,11 @@ void RoomCamera::load(const char *data) {
 	
 	int num_camera_zone_def = READ_LE_UINT16(data + 0x12);
 
+
+	std::cout << "Room Camera loaded: " << std::endl;
+	std::cout << "x: " << x << ", y: " << y << ", z: " << z << std::endl;
+	std::cout << "rot: " << transform << std::endl;
+	
 	const char* base_data = data;
 	data += 0x14;
 	

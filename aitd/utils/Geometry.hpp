@@ -4,6 +4,7 @@
 #include <Eigen/Dense>
 #include <bgfx/bgfx.h>
 #include "Shader.hpp"
+#include <DebugManager.hpp>
 #include <vector>
 
 
@@ -18,6 +19,44 @@ namespace Geometry {
 Eigen::Matrix3d getXRotMat(float, float);
 Eigen::Matrix3d getYRotMat(float, float);
 Eigen::Matrix3d getZRotMat(float, float);
+
+class DebugMesh {
+public:
+	typedef std::shared_ptr<DebugMesh> Ptr;
+	virtual ~DebugMesh() {}
+	virtual void render(float dt) = 0;			
+};
+
+class DebugBox : public DebugMesh {
+public:
+	DebugBox(const Vec3f& pa, const Vec3f& pb ) :
+		point_a(pa),
+		point_b(pb) {}
+
+	void render(float dt) override {
+		DebugManager::push_aabb(point_a, point_b);
+	}
+protected:
+
+	Vec3f point_a;
+	Vec3f point_b;	
+};
+
+class DebugLine : public DebugMesh {
+public:
+	DebugLine(const Vec3f& pa, const Vec3f& pb ) :
+		point_a(pa),
+		point_b(pb) {}
+
+	void render(float dt) override {
+		DebugManager::push_line(point_a, point_b);
+	}
+protected:
+
+	Vec3f point_a;
+	Vec3f point_b;	
+};
+	
 	
 class Primitive {
 public:

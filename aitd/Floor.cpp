@@ -50,7 +50,6 @@ void Floor::load(int floor_idx) {
 
 	char camera_file[256];
 	sprintf(camera_file, "CAMERA%02d", floor_idx);
-
 	
 	// Load cameras
 	int num_cameras = getNumCameras(camera_data);

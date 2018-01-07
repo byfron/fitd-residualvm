@@ -23,6 +23,7 @@
 #include "common/textconsole.h"
 #include "osystem.h"
 #include "common.h"
+#include <iostream>
 
 namespace Fitd {
 
@@ -627,7 +628,12 @@ int computeModel(int x, int y, int z, int alpha, int beta, int gamma, void *mode
 			Z = *(int16 *)ptr;
 			ptr += 2;
 
+			std::cout << "Z += cameraX" << std::endl;
+			std::cout << Z << "+=" << cameraX << std::endl;
 			Z += cameraX;
+
+
+
 
 			if(Z <= 50) { // clipping
 				*(outPtr2++) = -10000;
@@ -636,6 +642,9 @@ int computeModel(int x, int y, int z, int alpha, int beta, int gamma, void *mode
 			} else {
 				float transformedX = ((X * cameraY) / Z) + cameraCenterX;
 				float transformedY;
+
+				std::cout << "transformedX = ((X * cameraY) / Z) + cameraCenterX" << std::endl;
+				std::cout << transformedX << "= ((" << X << "*" <<  cameraY <<") / " << Z << ") + " << cameraCenterX << std::endl;
 
 				*(outPtr2++) = transformedX;
 

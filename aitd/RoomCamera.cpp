@@ -68,61 +68,49 @@ void RoomCamera::load(const char *data) {
 	int16 y = READ_LE_UINT16(data + 0x08); // (world_y - y) * 10
 	int16 z = -READ_LE_UINT16(data + 0x0A); // (world_z - z) * 10
 
-	position = Vec3f(float(x), float(y), float(z))/100.0f; //(1/1000 * 10)
+	position = Vec3f(float(x), float(y), float(z))*10;///100.0f; //(1/1000 * 10)
 	
 	focal1 = READ_LE_UINT16(data + 0x0C);
 	focal2 = READ_LE_UINT16(data + 0x0E);
 	focal3 = READ_LE_UINT16(data + 0x10);
 
-/*
-	0.974279        0       -0        0
-       0  1.73205       -0        0
-       0        0    1.002  -0.2002
-       0        0        1
-*/		
-	float scale = 1000.0;
+	// Build projection matrix!
+	float fx = focal2;
+	float fy = focal3;
+	float fz = focal1; // no idea where this param comes from!
+	float s = 0;
+	float zmin = 0;
+	float zmax = 1000000;	
+	float W = GraphicsEngine::WIDTH;
+	float H = GraphicsEngine::HEIGHT;
+	float cx = GraphicsEngine::WIDTH/2;
+	float cy = GraphicsEngine::HEIGHT/2;
 	
 	projection = Eigen::Matrix4f::Zero();
-	projection(0,0) = 1.0*5*float(focal2)/scale;
-	projection(1,1) = 1.7*5*float(focal3)/scale;
-	projection(2,3) = -float(focal1)/scale;
-	projection(0,3) = 0.0;//1280.0 / 2;
-	projection(1,3) = 0.0;//720.0 / 2;
-	projection(2,2) = 1;
+	projection(0,0) = 2*fx/W;
+	projection(0,1) = 2*s/W;
+	projection(1,1) = 2*fy/H;
+	projection(0,2) = 2*(cx/W)-1;
+	projection(1,2) = 2*(cy/H)-1;
+	projection(2,2) = (zmax+zmin)/(zmax-zmin);
 	projection(3,2) = 1;
+	projection(2,3) = 2*zmax*zmin/(zmin-zmax);
+	projection(3,3) = fz;
 
-
-	std::cout << "custom proj: " << projection;
-	
+	// Build view matrix
 	float cosx = DataParsing::computeCos(alpha);
 	float sinx = DataParsing::computeSin(alpha);
 	float cosy = DataParsing::computeCos(beta);
 	float siny = DataParsing::computeSin(beta);
 	float cosz = DataParsing::computeCos(gamma);
 	float sinz = DataParsing::computeSin(gamma);
-
-	std::cout << "setup float cam: " << std::endl;
-	std::cout << "xcos:" << cosx << " xsin:" << sinx << std::endl;
-	std::cout << acos(cosx) << " == " << asin(sinx) << std::endl;
 	
 	transform = Eigen::Matrix4f::Identity();
-	// transform.topLeftCorner(3,3) =
-	// 	Geometry::getZRotMat(cosz, sinz) *
-	// 	Geometry::getXRotMat(cosx, sinx) *
-	// 	Geometry::getYRotMat(cosy, siny);
-
-	// cancel rotation if a/b/g invalid
-
+	
+	// The angles are shifted!! Use the arcsin instead.
 	float angle_x = asinf(cosx);
 	float angle_y = asinf(cosy);
 	float angle_z = asinf(cosz);
-
-	std::cout << "abg:" << alpha << ", " << beta << "," << gamma << std::endl;
-
-	Eigen::Matrix3f rotX, rotY, rotZ;
-	//rotX = Geometry::getXRotMat(sinx, cosx); AngleAxisf(angle_x, Vector3f::UnitX());
-	//rotY = Geometry::getYRotMat(siny, cosy); //AngleAxisf(angle_y, Vector3f::UnitY());
-	//rotZ = Geometry::getZRotMat(sinz, cosz); //AngleAxisf(angle_z, Vector3f::UnitZ());
 
 	rotX = AngleAxisf(angle_x, Vector3f::UnitX());
 	rotY = AngleAxisf(angle_y, Vector3f::UnitY());
@@ -144,27 +132,11 @@ void RoomCamera::load(const char *data) {
 		rotZ = Eigen::Matrix3f::Identity();
 	}
 
-	std::cout << "X:";
-	std::cout << rotX << std::endl;
-	std::cout << "Y:";
-	std::cout << rotY << std::endl;
-	std::cout << "Z:";
-	std::cout << rotZ << std::endl;	
-	
 	Eigen::Matrix3f t = Eigen::Matrix3f(rotY * rotX);	
 	transform.topLeftCorner(3,3) = t;
 	transform.col(3).head(3) = position;
-		
-	//look_at = t * Vec3f(0.0, 1.0, 0.0);
-	look_at = transform.topLeftCorner(3,3).cast<float>() * Vec3f(0.0, 0.0, 1.0);
 	
 	int num_camera_zone_def = READ_LE_UINT16(data + 0x12);
-	
-	std::cout << "Room Camera loaded: " << std::endl;
-	std::cout << "x: " << x << ", y: " << y << ", z: " << z << std::endl;
-	std::cout << "f1: " << focal1 << ", f2: " << focal2 << ", f3: " << focal3 << std::endl;
-	std::cout << "rot: " << transform << std::endl;
-	
 	const char* base_data = data;
 	data += 0x14;
 	

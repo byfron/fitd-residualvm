@@ -26,6 +26,8 @@
 
 namespace Fitd {
 
+extern GFXSystem *g_driver;
+	
 void loadCamera(int cameraIdx) {
 	char name[16];
 	int useSpecial = -1;
@@ -724,6 +726,9 @@ void drawProjectedLine(int x1, int y1, int z1, int x2, int y2, int z2, int c)
 	transformedY1 = ((y1 * cameraZ) / z1) + cameraCenterY;
 	transformedY2 = ((y2 * cameraZ) / z2) + cameraCenterY;
 #endif
+
+	std::cout << "transformedX1 = ((x1 * cameraY) / (float)z1) + cameraCenterX" << std::endl;
+	std::cout << transformedX1 << "= ((" << x1 << "*" <<  cameraY <<") / (float)" << z1 << ") + " << cameraCenterX << std::endl;
 
 #ifdef USE_GL
 	if(z1 > 0 && z2 > 0)

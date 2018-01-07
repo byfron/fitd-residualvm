@@ -39,7 +39,7 @@ Actor::Ptr ActorLoader::load(int actor_idx) {
 		float y =  *(int16 *)(ptr + idx + 2);
 		float z =  *(int16 *)(ptr + idx + 4);
 
-		actor->vertices.push_back(Eigen::Vector3f(x, -y, z)/1000.0f);
+		actor->vertices.push_back(Eigen::Vector3f(x, -y, z));///1000.0f);
 		idx += 6;
 	}
 

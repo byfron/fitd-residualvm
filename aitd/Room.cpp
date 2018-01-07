@@ -13,8 +13,8 @@ void BBox::load(const char* data) {
 	p1(2) = (int16)READ_LE_UINT16(data + 0x08);
 	p2(2) = (int16)READ_LE_UINT16(data + 0x0A);
 
-	p1 /= 1000.0f;
-	p2 /= 1000.0f;
+//	p1 /= 1000.0f;
+//	p2 /= 1000.0f;
 	
 	parameter = READ_LE_UINT16(data + 0x0C);
 	type = READ_LE_UINT16(data + 0x0E);

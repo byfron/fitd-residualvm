@@ -23,11 +23,18 @@
 #ifndef FITD_GFX_H
 #define FITD_GFX_H
 
+
+
 namespace Fitd {
 
 int setupCameraSub1Sub1(int value);
 void mainDraw(int mode);
 void setupCamera();
+
+
+void drawHardCol(int roomNumber);
+void drawSceZone(int roomNumber);
+void drawConverZones();
 
 } // end of Namespace
 

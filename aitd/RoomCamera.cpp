@@ -84,7 +84,7 @@ void RoomCamera::load(const char *data) {
 	
 	projection = Eigen::Matrix4f::Zero();
 	projection(0,0) = 1.0*5*float(focal2)/scale;
-	projection(1,1) = 1.77*5*float(focal3)/scale;
+	projection(1,1) = 1.7*5*float(focal3)/scale;
 	projection(2,3) = -float(focal1)/scale;
 	projection(0,3) = 0.0;//1280.0 / 2;
 	projection(1,3) = 0.0;//720.0 / 2;

@@ -6,6 +6,8 @@
 	
 Camera GraphicsEngine::m_camera;
 bool GraphicsEngine::m_debug = false;
+int GraphicsEngine::WIDTH = 320;
+int GraphicsEngine::HEIGHT = 200;
 
 std::vector<Aabb> DebugManager::aabb_vec;
 std::vector<Cylinder> DebugManager::cyl_vec;
@@ -88,8 +90,8 @@ void GraphicsEngine::start(int _argc, const char* const* _argv) {
 	Args args(_argc, _argv);
 	bgfx::init(args.m_type, args.m_pciId);
 
-	m_width = 1280;
-	m_height = 720;
+	m_width = WIDTH;
+	m_height = HEIGHT;
 
 	bgfx::reset(m_width, m_height, InputManager::m_reset);
 	bgfx::setDebug(InputManager::m_debug);
@@ -158,13 +160,8 @@ void GraphicsEngine::run() {
 	bgfx::setViewRect(RENDER_PASS_BACKGROUND, 0, 0, m_width, m_height);
 	bgfx::setViewTransform(RENDER_PASS_BACKGROUND, NULL, proj);
 
+	// Geometry render pass
 	bgfx::setViewRect(RENDER_PASS_GEOMETRY, 0, 0, uint16_t(m_width), uint16_t(m_height) );	
-	
-	// geometry render pass
-	// bgfx::setViewRect(RENDER_PASS_GEOMETRY, 0, 0, uint16_t(m_width), uint16_t(m_height) );	
-	// m_camera.mtxLookAt(view);
-	// bx::mtxProj(proj, 60.0f, float(m_width)/float(m_height), 0.1f, 100.0f, bgfx::getCaps()->homogeneousDepth);
-	// bgfx::setViewTransform(RENDER_PASS_GEOMETRY, view, proj);
 	
 	DebugManager::update(deltaTime);
 	frame(deltaTime);

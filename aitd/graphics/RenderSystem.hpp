@@ -20,8 +20,8 @@ public:
 
 		float proj2[16];
 		//TODO query resolution from engine
-		bx::mtxProj(proj2, 60.0f, float(1280)/float(720), 0.1f, 100.0f,					
-		 			bgfx::getCaps()->homogeneousDepth);
+		bx::mtxProj(proj2, 60.0f, float(GraphicsEngine::WIDTH)/float(GraphicsEngine::HEIGHT),
+					0.1f, 100.0f, bgfx::getCaps()->homogeneousDepth);
 
 		Eigen::Map<Eigen::Matrix4f> mf(proj2, 4, 4);
 		std::cout << "bgfx proj: " << mf;
@@ -43,15 +43,16 @@ public:
 class BgImageComponent {
 public:
 	BgImageComponent(unsigned char* buffer) {
-		
-		const bgfx::Memory* mem = bgfx::alloc(320*200*3);
-		memcpy((unsigned char*)mem->data, buffer, 320*200*3);
+
+		const int num_pixels = GraphicsEngine::WIDTH * GraphicsEngine::HEIGHT;
+		const bgfx::Memory* mem = bgfx::alloc(num_pixels*3);
+		memcpy((unsigned char*)mem->data, buffer, num_pixels*3);
 		const uint32_t flags = 0
 	 	| BGFX_TEXTURE_U_CLAMP
 	 	| BGFX_TEXTURE_V_CLAMP
 	 	| BGFX_TEXTURE_MIN_POINT
 	 	| BGFX_TEXTURE_MAG_POINT;
-		texture = bgfx::createTexture2D(320, 200, false, 1,
+		texture = bgfx::createTexture2D(GraphicsEngine::WIDTH, GraphicsEngine::HEIGHT, false, 1,
 										bgfx::TextureFormat::RGB8, flags, mem);	
 		program = Shader::Ptr(new Shader("vs_backg", "fs_backg"));
 		program->init();
@@ -62,7 +63,7 @@ public:
 		bgfx::setState(0
 					   | BGFX_STATE_RGB_WRITE
 					   | BGFX_STATE_ALPHA_WRITE);
-		screenSpaceQuad( (float)1280, (float)720, false, 1.0f, 1.0f);
+		screenSpaceQuad((float)GraphicsEngine::WIDTH, (float)GraphicsEngine::HEIGHT, false, 1.0f, 1.0f);
 		bgfx::submit(RENDER_PASS_BACKGROUND, program->getHandle());
 	}
 	

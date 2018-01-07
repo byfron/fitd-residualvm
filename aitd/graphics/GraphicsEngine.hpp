@@ -117,6 +117,9 @@ public:
 
 	static Camera & camera() { return m_camera; }
 	static bool debugEnabled() { return m_debug; }
+
+	static int WIDTH;
+	static int HEIGHT;
 protected:
 
 	uint32_t m_width;
@@ -125,6 +128,7 @@ protected:
 	uint32_t m_oldHeight = 0;
 	static Camera m_camera;
 	static bool m_debug;
+	
 
 	InputManager m_input_manager;
 

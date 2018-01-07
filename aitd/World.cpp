@@ -10,7 +10,7 @@ void World::load() {
 	
 	//Create camera entities with background and camera parameters
 	//TODO: keep track of entities/data ids
-	RoomCamera::Ptr room_cam = floor_data->getCamera(0);
+	RoomCamera::Ptr room_cam = floor_data->getCamera(4);
 	Entity camera = entity_manager->createLocal();
 	// view matrix is the inverse of the camera trasnformation matrix;
 	entity_manager->assign<CameraComponent>(camera.id(), room_cam->projection,
@@ -42,21 +42,10 @@ void World::load() {
 
 		// Display also a vector of direction		
 		Entity debug_cam2 = entity_manager->createLocal();
-		Vec3f dir = //cam->transform.topLeftCorner(3,3).cast<float>() * Vec3f(0.0, 1.0, 0.0);
-			cam->look_at;
 		entity_manager->assign<DebugComponent>(
 		debug_cam2.id(),
 		Geometry::DebugMesh::Ptr(new Geometry::DebugAxis(cam->transform)));
-//		Geometry::DebugMesh::Ptr(new Geometry::DebugLine(cam_pos,
-//														 cam_pos + dir)));
-
-
-		//DebugAxis(cam_pos, cam->transform)
-		
 	}
-
-	
-
 }
 
 void World::render(float dt) {

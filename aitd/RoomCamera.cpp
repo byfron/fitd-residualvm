@@ -68,7 +68,7 @@ void RoomCamera::load(const char *data) {
 	int16 y = READ_LE_UINT16(data + 0x08); // (world_y - y) * 10
 	int16 z = -READ_LE_UINT16(data + 0x0A); // (world_z - z) * 10
 
-	position = Vec3f(float(x), float(y), float(z))*10;///100.0f; //(1/1000 * 10)
+	position = Vec3f(float(x), float(y), float(z))*10;
 	
 	focal1 = READ_LE_UINT16(data + 0x0C);
 	focal2 = READ_LE_UINT16(data + 0x0E);
@@ -77,7 +77,7 @@ void RoomCamera::load(const char *data) {
 	// Build projection matrix!
 	float fx = focal2;
 	float fy = focal3;
-	float fz = focal1; // no idea where this param comes from!
+	float fz = focal1; // no idea where this param comes from or what is for (*)
 	float s = 0;
 	float zmin = 0;
 	float zmax = 1000000;	
@@ -95,7 +95,7 @@ void RoomCamera::load(const char *data) {
 	projection(2,2) = (zmax+zmin)/(zmax-zmin);
 	projection(3,2) = 1;
 	projection(2,3) = 2*zmax*zmin/(zmin-zmax);
-	projection(3,3) = fz;
+	projection(3,3) = fz; // (*) but has to go here
 
 	// Build view matrix
 	float cosx = DataParsing::computeCos(alpha);
@@ -112,9 +112,9 @@ void RoomCamera::load(const char *data) {
 	float angle_y = asinf(cosy);
 	float angle_z = asinf(cosz);
 
-	rotX = AngleAxisf(angle_x, Vector3f::UnitX());
-	rotY = AngleAxisf(angle_y, Vector3f::UnitY());
-	rotZ = AngleAxisf(angle_z, Vector3f::UnitZ());
+	Eigen::Matrix3f rotX = Eigen::Matrix3f(AngleAxisf(angle_x, Vector3f::UnitX()));
+	Eigen::Matrix3f rotY = Eigen::Matrix3f(AngleAxisf(angle_y, Vector3f::UnitY()));
+	Eigen::Matrix3f rotZ = Eigen::Matrix3f(AngleAxisf(angle_z, Vector3f::UnitZ()));
 	
 	if (!beta) {
 		rotY.col(0) = Vector3f::UnitX();

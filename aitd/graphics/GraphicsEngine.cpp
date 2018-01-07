@@ -11,7 +11,7 @@ std::vector<Aabb> DebugManager::aabb_vec;
 std::vector<Cylinder> DebugManager::cyl_vec;
 std::vector<Sphere> DebugManager::sphere_vec;
 std::vector<std::vector<Vec3f>> DebugManager::poly_vec;
-std::vector<std::pair<Vec3f, Vec3f>> DebugManager::line_vec;
+std::vector<DebugManager::Line> DebugManager::line_vec;
 
 bgfx::VertexDecl PosColorVertex::ms_decl;
 bgfx::VertexDecl PosTexCoordVertex::ms_decl;

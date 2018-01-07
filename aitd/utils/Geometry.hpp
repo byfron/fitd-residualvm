@@ -16,10 +16,10 @@ using namespace Eigen;
 
 namespace Geometry {
 
-Eigen::Matrix3d getXRotMat(float, float);
-Eigen::Matrix3d getYRotMat(float, float);
-Eigen::Matrix3d getZRotMat(float, float);
-
+Eigen::Matrix3f getXRotMat(float, float);
+Eigen::Matrix3f getYRotMat(float, float);
+Eigen::Matrix3f getZRotMat(float, float);
+	
 class DebugMesh {
 public:
 	typedef std::shared_ptr<DebugMesh> Ptr;
@@ -57,6 +57,28 @@ protected:
 	Vec3f point_b;	
 };
 
+class DebugAxis : public DebugMesh {
+public:
+	DebugAxis(const Eigen::Matrix4f& transform) {
+		center = transform.col(3).head(3);
+		axis_x = transform.topLeftCorner(3,3) * Vec3f::UnitX();
+		axis_y = transform.topLeftCorner(3,3) * Vec3f::UnitY();
+		axis_z = transform.topLeftCorner(3,3) * Vec3f::UnitZ();
+	}
+
+	void render(float dt) override {
+		DebugManager::push_line(center, center + axis_x, 0xff0000ff); //ABGR
+		DebugManager::push_line(center, center + axis_y, 0xff00ff00);
+		DebugManager::push_line(center, center + axis_z, 0xffff0000);
+	}
+
+protected:
+	Vec3f center;
+	Vec3f axis_x;
+	Vec3f axis_y;
+	Vec3f axis_z;
+};
+	
 class DebugSphere : public DebugMesh {
 public:
 	DebugSphere(const Vec3f& c, float r) {

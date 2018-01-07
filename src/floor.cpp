@@ -45,6 +45,7 @@ void cameraDataStruct::load(const char *data) {
 	_focal3 = READ_LE_UINT16(data + 0x10);
 
 	std::cout << "Room Camera loaded: " << std::endl;
+	std::cout << "a: " << _alpha << ", b: " << _beta << ", g: " << _gamma << std::endl;
 	std::cout << "x: " << _x << ", y: " << _y << ", z: " << _z << std::endl;
 	std::cout << "f1: " << _focal1 << ", f2: " << _focal2 << ", f3: " << _focal3 << std::endl;
 

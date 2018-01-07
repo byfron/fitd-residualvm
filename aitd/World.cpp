@@ -10,9 +10,11 @@ void World::load() {
 	
 	//Create camera entities with background and camera parameters
 	//TODO: keep track of entities/data ids
-	RoomCamera::Ptr room_cam = floor_data->getCamera(0);
+	RoomCamera::Ptr room_cam = floor_data->getCamera(2);
 	Entity camera = entity_manager->createLocal();
-	entity_manager->assign<CameraComponent>(camera.id(), room_cam->transform);
+	// view matrix is the inverse of the camera trasnformation matrix;
+	entity_manager->assign<CameraComponent>(camera.id(), room_cam->projection,
+											room_cam->transform.inverse()); 
 	entity_manager->assign<BgImageComponent>(camera.id(), room_cam->getBackgroundImagePtr());
 	current_camera_id = camera.id();
 
@@ -24,7 +26,7 @@ void World::load() {
 			debug_obj.id(),
 			Geometry::DebugMesh::Ptr(new Geometry::DebugBox(box->p1.cast<float>(),
 															box->p2.cast<float>()))
-			);	
+			);
 	}
 
 	// Display location of camera
@@ -32,11 +34,11 @@ void World::load() {
 		Room::Ptr room = floor_data->getRoom(room_id);		
 		RoomCamera::Ptr cam = floor_data->getCamera(cam_idx);
 		Vec3f cam_pos = Vec3f(cam->position(0), cam->position(1), cam->position(2));		
-		Entity debug_cam = entity_manager->createLocal();		
-		entity_manager->assign<DebugComponent>(
-			debug_cam.id(),
-			Geometry::DebugMesh::Ptr(new Geometry::DebugSphere(cam_pos, 0.15f))
-			);
+		// Entity debug_cam = entity_manager->createLocal();		
+		// entity_manager->assign<DebugComponent>(
+		// 	debug_cam.id(),
+		// 	Geometry::DebugMesh::Ptr(new Geometry::DebugSphere(cam_pos, 0.15f))
+		// 	);
 
 		// Display also a vector of direction		
 		Entity debug_cam2 = entity_manager->createLocal();
@@ -44,8 +46,13 @@ void World::load() {
 			cam->look_at;
 		entity_manager->assign<DebugComponent>(
 		debug_cam2.id(),
-		Geometry::DebugMesh::Ptr(new Geometry::DebugLine(cam_pos,
-														 cam_pos + dir)));
+		Geometry::DebugMesh::Ptr(new Geometry::DebugAxis(cam->transform)));
+//		Geometry::DebugMesh::Ptr(new Geometry::DebugLine(cam_pos,
+//														 cam_pos + dir)));
+
+
+		//DebugAxis(cam_pos, cam->transform)
+		
 	}
 
 	

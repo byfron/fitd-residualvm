@@ -8,18 +8,26 @@
 
 class DebugManager {
 
-
 public:
+	static const uint32_t default_color = 0xff00ff00;
 
+	struct Line {
+		Vec3f a;
+		Vec3f b;
+		uint32_t color;
+	};
+	
 	template <typename T>
 	static void draw(T & object) {
 		ddSetWireframe(true);
 		ddDraw(object);
 	}
 
-	static void drawLine(const Vec3f& a, const Vec3f& b) {
-		ddMoveTo(a(0), a(1), a(2));
-		ddLineTo(b(0), b(1), b(2));
+	static void drawLine(const Line& l) {
+		ddSetColor(l.color);
+		ddMoveTo(l.a(0), l.a(1), l.a(2));
+		ddLineTo(l.b(0), l.b(1), l.b(2));
+		ddSetColor(0xff00ff00);
 	}
 	
 	static void drawPoly(const std::vector<Vec3f> & poly) {
@@ -51,7 +59,7 @@ public:
 		}
 
 		for (auto line : line_vec) {
-			drawLine(line.first, line.second);
+			drawLine(line);
 		}
 
 		for (auto sphere : sphere_vec) {
@@ -76,8 +84,8 @@ public:
 		poly_vec.push_back(poly);
 	}	
 
-	static void push_line(Vec3f a, Vec3f b) {
-		line_vec.push_back(std::pair<Vec3f, Vec3f>(a,b));
+	static void push_line(const Vec3f& a, const Vec3f& b, uint32_t color = default_color) {
+		line_vec.push_back({a, b, color});
 	}
 
 	
@@ -109,7 +117,7 @@ protected:
 	static std::vector<Aabb> aabb_vec;
 	static std::vector<Cylinder> cyl_vec;
 	static std::vector<Sphere> sphere_vec;
-	static std::vector<std::pair<Vec3f, Vec3f>> line_vec;
+	static std::vector<Line> line_vec;
 	static std::vector<std::vector<Vec3f>> poly_vec;
 
 

@@ -62,6 +62,7 @@ public:
 	Vec3f position;
 	Vec3f look_at;
 	Eigen::Matrix4f transform;
+	Eigen::Matrix4f projection;
 	
 	unsigned char * background_image;
 };

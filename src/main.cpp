@@ -40,6 +40,7 @@
 #include "main_loop.h"
 #include "textes.h"
 #include "common/forbidden.h"
+#include <iostream>
 
 namespace Fitd {
 
@@ -866,6 +867,9 @@ void setupPointTransformSM(int x, int y, int z) {
 	} else {
 		transformUseZ = false;
 	}
+
+	std::cout << "setup camera:" << std::endl;
+	std::cout << "xcos:" << float(transformXCos)/(0xFFFF/2) << " xsin: " << float(transformXSin)/(0xFFFF/2) << std::endl; 
 }
 
 void setupSelfModifyingCode(int x, int y, int z) {

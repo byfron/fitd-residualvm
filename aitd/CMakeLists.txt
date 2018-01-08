@@ -101,9 +101,25 @@ target_link_libraries(aitd
 target_include_directories(aitd PUBLIC
   ${SDL_INCLUDE_DIR})
 
+
+add_executable(viewer_aitd viewer_aitd.cpp)
+target_link_libraries(viewer_aitd
+  fitd  
+  AITDCore
+  AITDViewerCore
+  ${BGFX_LIBRARIES}
+  ${SDL_LIBRARY}
+  rt
+  pthread
+  GL
+  X11
+  dl)
+
+
 add_dependencies(aitd shaders)
 
 add_subdirectory(graphics)
 add_subdirectory(entities)
 add_subdirectory(utils)
 add_subdirectory(shaders)
+add_subdirectory(tools)

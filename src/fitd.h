@@ -56,7 +56,7 @@ class FitdEngine {
 	uint32 _timer;
 
 public:
-	FitdEngine();
+	FitdEngine(bool flag);
 	~FitdEngine();
 	void run();
 	void startup();

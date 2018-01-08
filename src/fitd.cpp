@@ -82,12 +82,14 @@ enumCVars AITD2KnownCVars[] = {
 void makeIntroScreens();
 void sysInitSub1(char *var0, char *var1);
 
-FitdEngine::FitdEngine() {
+FitdEngine::FitdEngine(bool flag = true) {
 	g_resourceLoader = new ResourceLoader();
 	g_driver = new GFXSystem();
 
-	g_driver->init();
-	g_driver->initBuffer(scaledScreen, 640, 400);
+	if (flag) {
+		g_driver->init();
+		g_driver->initBuffer(scaledScreen, 640, 400);
+	}
 }
 
 FitdEngine::~FitdEngine() {

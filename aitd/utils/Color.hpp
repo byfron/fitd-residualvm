@@ -32,7 +32,7 @@ public:
 	
 	void init() {}
 	
-	ColorPalette(byte *data, uint32_t id) : Resource(id) {
+	ColorPalette(byte *data, uint32_t id) : Resource(id) {		
 		byte *ptr = data;		
 		for (int i = 0; i < num_colors; i++) {
 			Color color;
@@ -46,7 +46,7 @@ public:
 	}
 
 	Color getColor(int index) {
-		assert(index < 256);
+		assert(index < palette.size());
 		return palette[index];
 	}
 

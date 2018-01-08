@@ -87,7 +87,7 @@ void Camera::reset()
 	m_pos.curr[2] = -2.0f;
 	m_pos.dest[0] =  1.5f;
 	m_pos.dest[1] =  1.5f;
-	m_pos.dest[2] = -5.0f;
+	m_pos.dest[2] = -100.0f;
 
 	m_cam_forward_dir = Eigen::Vector3f(0.0, 1.0, 0.0);
 	m_cam_right_dir = Eigen::Vector3f(-1.0, 0.0, 0.0);
@@ -95,11 +95,11 @@ void Camera::reset()
 	m_orbit[0] = 0.0f;
 	m_orbit[1] = 0.0f;
 
-	m_eye[0] =   0.0f;
-	m_eye[1] =  -9.0f;
+	m_eye[0] =   2000.0f;
+	m_eye[1] =   1000.0f;
 	m_eye[2] =   0.0f;
 	m_at[0]  =   0.0f;
-	m_at[1]  =   0.0f;
+	m_at[1]  =   1000.0f;
 	m_at[2]  =   0.0f;
 	m_cam_up[0]  =   0.0f;
 	m_cam_up[1]  =   1.0f;
@@ -194,6 +194,8 @@ void Camera::update(float _dt)
 	InputManager::m_keys |= gpy >  16834 ? CAMERA_KEY_DOWN : 0;
 
 
+	float distance = (m_eye - m_at).norm();
+	
 	if (InputManager::m_keys & CAMERA_KEY_ROTATE_LEFT)
 	{
 		m_dir_angle = m_rotateSpeed * _dt;
@@ -206,7 +208,7 @@ void Camera::update(float _dt)
 		m_cam_forward_dir = rot * m_cam_forward_dir;
 		m_cam_right_dir = rot * m_cam_right_dir;
 
-		m_eye = m_at - m_cam_direction*5;
+		m_eye = m_at - m_cam_direction*distance;
 
 		setKeyState(CAMERA_KEY_ROTATE_LEFT, false);
 	}
@@ -224,7 +226,7 @@ void Camera::update(float _dt)
 		m_cam_forward_dir = rot * m_cam_forward_dir;
 		m_cam_right_dir = rot * m_cam_right_dir;
 
-		m_eye = m_at - m_cam_direction*5;
+		m_eye = m_at - m_cam_direction*distance;
 
 		setKeyState(CAMERA_KEY_ROTATE_RIGHT, false);
 	}
@@ -253,7 +255,6 @@ void Camera::update(float _dt)
 		setKeyState(CAMERA_KEY_DOWN, false);
 	}
 
-//	m_at = m_eye + m_cam_direction*5;
 	m_cam_up = m_cam_right_dir.cross(m_cam_direction);
 }
 

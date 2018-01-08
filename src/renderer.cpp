@@ -526,8 +526,8 @@ int computeModel(int x, int y, int z, int alpha, int beta, int gamma, void *mode
 		int bx;
 		int dx;
 
-		point1 = *(int16 *)(si + 4);
-		point2 = *(int16 *)(si);
+		point1 = *(int16 *)(si + 4); //vertex_index
+		point2 = *(int16 *)(si); //start_index
 
 		ASSERT(point1 % 2 == 0);
 		ASSERT(point2 % 2 == 0);

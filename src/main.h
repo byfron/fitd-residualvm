@@ -35,7 +35,7 @@ struct hqrEntryStruct;
 extern int input5;
 
 int runFitd();
-void init();
+void init(bool flag);
 void menuWaitVSync();
 void printTextSub5(int x, int y, int param, char *gfx);
 void flipScreen();

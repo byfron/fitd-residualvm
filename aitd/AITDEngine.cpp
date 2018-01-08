@@ -15,7 +15,7 @@ AITDEngine::~AITDEngine() {
 
 void AITDEngine::init() {
 
-	Fitd::init();
+	Fitd::init(false);
 	DataParsing::init();
 	
 	createSubsystems();

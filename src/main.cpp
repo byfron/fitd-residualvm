@@ -2311,8 +2311,8 @@ void cleanupAndExit(void) {
 	error("Exiting");
 }
 
-void init() {
-	g_fitd = new FitdEngine();
+void init(bool flag = true) {
+	g_fitd = new FitdEngine(flag);
 	startThreadTimer();
 }
 	

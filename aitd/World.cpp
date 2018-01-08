@@ -10,7 +10,7 @@ void World::load() {
 	
 	//Create camera entities with background and camera parameters
 	//TODO: keep track of entities/data ids
-	RoomCamera::Ptr room_cam = floor_data->getCamera(4);
+	RoomCamera::Ptr room_cam = floor_data->getCamera(0);
 	Entity camera = entity_manager->createLocal();
 	// view matrix is the inverse of the camera trasnformation matrix;
 	entity_manager->assign<CameraComponent>(camera.id(), room_cam->projection,

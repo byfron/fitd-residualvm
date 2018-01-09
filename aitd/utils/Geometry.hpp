@@ -108,23 +108,26 @@ public:
 	int color = 0;
 };
 
+
+// The primivitves store pointers to the pool of vertices
+// so that it's easier to deal with animations
 class Line : public Primitive {
 public:
-	Line(const Vector3f& a, const Vector3f& b, int c) :
+	Line(const Vector3f* a, const Vector3f* b, int c) :
 		Primitive(c, PRIM_TYPE_LINE),
 		point_a(a),
 		point_b(b) {}
-	Vector3f point_a;
-	Vector3f point_b;
+	const Vector3f* point_a;
+	const Vector3f* point_b;
 };
 
 class Polygon : public Primitive {
 public:
-	Polygon(const std::vector<Vector3f>& p, int t, int c) :
+	Polygon(const std::vector<const Vector3f*>& p, int t, int c) :
 		Primitive(c, PRIM_TYPE_POLYGON),
 		poly_type(t),
 		points(p) {}
-	std::vector<Vector3f> points;
+	std::vector<const Vector3f*> points;
 	int poly_type = 0;
 };
 

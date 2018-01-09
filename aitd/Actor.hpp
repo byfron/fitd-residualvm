@@ -51,10 +51,5 @@ protected:
 	Geometry::Mesh::Ptr mesh;
 
 	bool refreshVertexBuffer = false;
-
-	//map that maps indices of the original loaded mesh with the vertices with the
-	//colored/triangulated mesh. Used to update the dynamic vertex buffer with the
-	//animation data
-	std::map<int, std::vector<int>> vertex_index_map;
 	
 };

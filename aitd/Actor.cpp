@@ -43,9 +43,9 @@ void Actor::generateMesh() {
 				
 			for (auto p : poly_ptr->points) {
 				PosColorVertex pcv;
-				pcv.m_x = p(0);
-				pcv.m_y = p(1);
-				pcv.m_z = p(2);										
+				pcv.m_x = (*p)(0);
+				pcv.m_y = (*p)(1);
+				pcv.m_z = (*p)(2);										
 				pcv.m_abgr = color;
 				vertex_buffer.push_back(pcv);
 			}
@@ -101,40 +101,32 @@ void Actor::updateVertices() {
 		bone->global_rotation = R;
 	}
 
+	// modify vertex pool
+	for (auto& bone_it : skeleton->bone_map) {
+		Bone::Ptr bone = bone_it.second;
+		int index = bone_it.second->start_vertex_index;
+		for (int i = 0; i < bone_it.second->num_vertices_affected; i++) {
+			vertices[index] = bone->global_rotation * offsets[index] + vertices[bone->local_pos_index];
+			index++;
+		}
+	}	
+	
+	std::vector<PosColorVertex> vertex_buffer;
 	for (auto prim : primitives) {
-		verticesCount = vertex_buffer.size();			
 		if (prim->type == PRIM_TYPE_POLYGON) {
 			auto poly_ptr = std::dynamic_pointer_cast<Geometry::Polygon>(prim);				
 			uint32_t color = getColor(poly_ptr->color, poly_ptr->poly_type);				
 			for (auto p : poly_ptr->points) {
 				PosColorVertex pcv;
-				pcv.m_x = p(0);
-				pcv.m_y = p(1);
-				pcv.m_z = p(2);										
+				pcv.m_x = (*p)(0);
+				pcv.m_y = (*p)(1);
+				pcv.m_z = (*p)(2);										
 				pcv.m_abgr = color;
 				vertex_buffer.push_back(pcv);
 			}
 		}
 	}
-
-	// std::vector<PosColorVertex> vertex_buffer;
-	// for (auto& bone_it : skeleton->bone_map) {
-	// 	Bone::Ptr bone = bone_it.second;
-	// 	int index = bone_it.second->start_vertex_index;
-	// 	for (int i = 0; i < bone_it.second->num_vertices_affected; i++) {
-	// 		std::vector<int> indices_in_vbuffer = vvertex_index_map[index];
-	// 		for (idx : indices_in_vbuffer) {
-
-	// 			idx
-					
-	// 			vertex_buffer.push_back()
-					
-	// 			vertices[index] = bone->global_rotation * offsets[index] + vertices[bone->local_pos_index];
-	// 		}
-	// 		index++;
-	// 	}
-	// }
-	
+   
 	const bgfx::Memory* mem;
 	mem = bgfx::copy(&vertex_buffer[0], sizeof(PosColorVertex) * vertex_buffer.size() );
 	bgfx::updateDynamicVertexBuffer(mesh->m_dvbh, 0, mem);

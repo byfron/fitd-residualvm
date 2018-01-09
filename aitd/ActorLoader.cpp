@@ -110,9 +110,6 @@ Actor::Ptr ActorLoader::load(int actor_idx) {
 	actor->num_vertices = *(int16 *)(ptr + idx);
 	idx +=2;
 
-	std::cout << actor_idx << " ";
-	printf("Num. vertices: %d\n", actor->num_vertices);
-
 	actor->offsets.clear();
 
 	// Locations of mesh vertices as offsets from its corresponding bone head 
@@ -134,8 +131,6 @@ Actor::Ptr ActorLoader::load(int actor_idx) {
 
 		actor->num_bones = *(int16 *)(ptr + idx);
 		idx += 2;
-
-		printf("Num. bones: %d\n", actor->num_bones);
 
 		int16 bonesOffsets[100];
 		memcpy(bonesOffsets, (int16 *)(ptr + idx), actor->num_bones * 2);
@@ -179,13 +174,8 @@ Actor::Ptr ActorLoader::load(int actor_idx) {
 				break;
 			}
 			}
-
-			std::cout << "bone " << b << " offset:" << bonesOffsets[b] << std::endl;
-			std::cout << rotx << "," << roty << "," << rotz << std::endl;
-
 						
 			Eigen::Matrix3f R = getRotationMatrixFromRotIndices(rotx, roty, rotz);
-
 			
 			// starting index of the vertices affected by this bone
 		 	int start_index = *(int16 *)(ptr + idx + 0) / 6;
@@ -220,17 +210,7 @@ Actor::Ptr ActorLoader::load(int actor_idx) {
 			bone->start_vertex_index = start_index;
 			bone->num_vertices_affected = num_points;
 			bone->local_rotation = Eigen::Matrix3f::Identity();
-			bone->global_rotation = Eigen::Matrix3f::Identity();
-			
-			//TODO: this should not happen here but when we transform/render the model			
-			//apply transform to vertices
-			// Eigen::Vector3f bone_head = actor->vertices[vertex_index];				
-			// for (int u = 0; u < num_points; u++) {
-			// 	// vertex = bone_head + offset
-			// 	actor->vertices[start_index] = R * actor->vertices[start_index];
-			// 	actor->vertices[start_index] += bone_head;
-			// 	start_index++;
-			// }
+			bone->global_rotation = Eigen::Matrix3f::Identity();			
 
  			idx += 0x10;						
 		}
@@ -240,12 +220,6 @@ Actor::Ptr ActorLoader::load(int actor_idx) {
 		printf("No bones\n");
 
 	}
-
-	//NOTE: We will have to recompute the primitives when we update the vertex matrix
-	//because the vertex have to be replicated for coloring/triangulation.
-	//TODO: we can save a map of correspondences to make it easier to update.		
-
-	ActorLoader::loadAnimation(actor, 8, 2);
 
 	// primitives
 	actor->num_primitives =  *(int16 *)(ptr + idx);
@@ -276,13 +250,10 @@ Actor::Ptr ActorLoader::load(int actor_idx) {
 			idx += 4;
 
 			Geometry::Primitive::Ptr primitive_ptr =
-				Geometry::Primitive::Ptr(new Geometry::Line(actor->vertices[point_idxA],
-															actor->vertices[point_idxB],
+				Geometry::Primitive::Ptr(new Geometry::Line(&actor->vertices[point_idxA],
+															&actor->vertices[point_idxB],
 															color_index));
 			actor->primitives.push_back(primitive_ptr);					
-			actor->vertex_index_map[point_idxA].push_back(vertex_count++);
-		    actor->vertex_index_map[point_idxB].push_back(vertex_count++);
-			
 			break;
 		}
 		case 1: //poly
@@ -292,12 +263,11 @@ Actor::Ptr ActorLoader::load(int actor_idx) {
 			uint8 color_index = *(ptr + idx + 2);
 			idx += 3;
 
-			std::vector<Vector3f> poly_points;
+			std::vector<const Vector3f*> poly_points;
 			for (int m = 0; m < num_points_poly; m++) {					
 				int point_index = *(int16 *)(ptr + idx) / 6;
 				idx += 2;					
-				poly_points.push_back(actor->vertices[point_index]);
-				actor->vvertex_index_map[point_index].push_back(vertex_count++);
+				poly_points.push_back(&actor->vertices[point_index]);
 			}
 
 			Geometry::Primitive::Ptr primitive_ptr =
@@ -338,5 +308,8 @@ Actor::Ptr ActorLoader::load(int actor_idx) {
 	}
 	
  	actor->generateMesh();
+
+	ActorLoader::loadAnimation(actor, 3, 2);
+
 	return actor;	
 }

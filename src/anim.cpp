@@ -22,6 +22,7 @@
 
 #include "fitd.h"
 #include "common.h"
+#include <iostream>
 
 namespace Fitd {
 int32 animCurrentTime;
@@ -35,6 +36,9 @@ int initAnimInBody(int frame, char *anim, char *body) {
 	int i;
 	int flag;
 
+	std::cout << "Running InitAnimInBody ===========================" << std::endl;
+	std::cout << "frame:" << frame << std::endl;
+	
 	flag = (*(int16 *)body);
 
 	temp = *(int16 *)anim;
@@ -50,6 +54,7 @@ int initAnimInBody(int frame, char *anim, char *body) {
 	cx = ax;
 
 	if(flag & 8) {
+		std::cout << "flag&8 is true" << std::endl;
 		ax = ((ax << 4) + 8) * frame;
 	} else {
 		ax = ((ax + 1) << 3) * frame;
@@ -72,39 +77,41 @@ int initAnimInBody(int frame, char *anim, char *body) {
 	body += *(int16 *)body;
 	body += 2;
 
-	ax = *(int16 *)body;
+	ax = *(int16 *)body; //num vertices?
 	bx = ax;
 
-	body += (((ax << 1) + bx) << 1) + 2;
+	body += (((ax << 1) + bx) << 1) + 2; //jump num_vertices?
 
-	bx = ax = *(int16 *)body;
+	bx = ax = *(int16 *)body; //num_bones?
 
+	std::cout << "num bones:" << bx << std::endl;
+	
 	body += bx << 1;
 
 	if(cx > ax)
 		cx = ax;
 
-	body += 10;
+	body += 10; //jump first (root) bone?
 
 	saveAnim = anim;
 
-	anim += 8;
+	anim += 8; // go to type
 
 	for(i = 0; i < cx; i++) {
-		*(int16 *)(body) = *(int16 *)(anim);
+		*(int16 *)(body) = *(int16 *)(anim); //type
 		body += 2;
 		anim += 2;
-		*(int16 *)(body) = *(int16 *)(anim);
+		*(int16 *)(body) = *(int16 *)(anim); //rotX
 		body += 2;
 		anim += 2;
-		*(int16 *)(body) = *(int16 *)(anim);
+		*(int16 *)(body) = *(int16 *)(anim); //rotY
 		body += 2;
 		anim += 2;
-		*(int16 *)(body) = *(int16 *)(anim);
+		*(int16 *)(body) = *(int16 *)(anim); //rotZ
 		body += 2;
 		anim += 2;
 
-		if(flag & 8) {
+		if(flag & 8) { //not sure what this is
 			*(int16 *)(body) = *(int16 *)(anim);
 			body += 2;
 			anim += 2;
@@ -190,6 +197,11 @@ int anim(int animNum, int arg_2, int arg_4) {
 void initBufferAnim(char *buffer, char *bodyPtr) {
 	int flag = *(int16 *)bodyPtr;
 	if(flag & 2) {
+
+		// std::cout << "Running init_buffer_anim" << std::endl;
+		// std::cout << "===========================================" << std::endl;
+	
+		
 		char *source = bodyPtr + 0x10;
 		int16 ax;
 		int cx;
@@ -206,12 +218,15 @@ void initBufferAnim(char *buffer, char *bodyPtr) {
 
 		source += ax;
 
-		cx = *(int16 *)source;
+		cx = *(int16 *)source; //num of bones?
+
+		// std::cout << "num bones?? " << cx << std::endl;
+		// getchar();
 
 		source += cx * 2;
 
 		buffer += 8;
-		source += 10;
+		source += 10; //skip root
 
 		for(i = 0; i < cx; i++) {
 			*(int16 *)(buffer) = *(int16 *)(source);
@@ -265,7 +280,10 @@ void processAnimRotation(char **bodyPtr, int bp, int bx) { // local
 	animVar4 += 1;
 
 	newRotation = *animVar1;
-	animVar1 += 1;
+
+	std::cout << "rotation" << newRotation << std::endl;
+	
+	animVar1 += 1; //we move two bytes!
 
 	diff = newRotation - oldRotation;
 
@@ -327,6 +345,7 @@ int16 setInterAnimObjet(int frame, char *animPtr, char *bodyPtr) {
 	if(flag & 8) {
 		animPtr += ((numOfBonesInAnim << 4) + 8) * frame; // seek to keyframe
 	} else {
+		std::cout << "seeking frame:" << frame << std::endl;
 		animPtr += ((numOfBonesInAnim + 1) * 8) * frame; // seek to keyframe
 	}
 
@@ -362,6 +381,9 @@ int16 setInterAnimObjet(int frame, char *animPtr, char *bodyPtr) {
 	bodyPtr += ax; // skip the points data
 
 	ax = *(int16 *)bodyPtr; // num of bones
+
+	std::cout << "body num bones:" << ax << std::endl;
+	
 	bx = ax;
 	bodyPtr += bx * 2; // skip bones idx table
 
@@ -384,6 +406,9 @@ int16 setInterAnimObjet(int frame, char *animPtr, char *bodyPtr) {
 
 		if(!(flag & 8)) {
 			do {
+
+				std::cout << "processing bone rotations (not flag 8)" << std::endl;
+				
 				switch(getAnimType(&bodyPtr)) {
 				case 0: {
 					processAnimRotation(&bodyPtr, bp, bx);
@@ -404,6 +429,9 @@ int16 setInterAnimObjet(int frame, char *animPtr, char *bodyPtr) {
 			} while(--numOfBonesInAnim);
 		} else {
 			do {
+
+				std::cout << "processing bone rotations (not flag 8)" << std::endl;
+				
 				switch(getAnimType(&bodyPtr)) {
 				case 0: {
 					animVar4 += 3;

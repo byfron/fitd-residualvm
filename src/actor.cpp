@@ -23,6 +23,7 @@
 #include "fitd.h"
 #include "common.h"
 #include "actor.h"
+#include <iostream>
 
 namespace Fitd {
 
@@ -265,6 +266,7 @@ void processActor1(void) {
 			currentProcessedActorPtr->modX = 0;
 			currentProcessedActorPtr->modZ = 0;
 		}
+
 		initBufferAnim(bufferAnim + (bufferAnimCounter++) * 248, listBody->get(currentProcessedActorPtr->bodyNum));
 
 		if(bufferAnimCounter == 20)
@@ -327,6 +329,8 @@ void processActor1(void) {
 		var_4A = currentProcessedActorPtr->modY;
 		var_48 = currentProcessedActorPtr->modZ;
 
+		std::cout << "running setInterAnimObjet with anim:"  << currentProcessedActorPtr->ANIM << std::endl;
+		
 		currentProcessedActorPtr->END_FRAME = setInterAnimObjet(currentProcessedActorPtr->FRAME, listAnim->get(currentProcessedActorPtr->ANIM), listBody->get(currentProcessedActorPtr->bodyNum));
 
 		walkStep(animRot2, animRot1, currentProcessedActorPtr->beta);

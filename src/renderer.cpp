@@ -421,6 +421,7 @@ int computeModel(int x, int y, int z, int alpha, int beta, int gamma, void *mode
 	numOfBones = *(int16 *)ptr;
 	ptr += 2;
 
+	std::cout << "num vertices:" << numOfPoints << std::endl;
 	std::cout << "num bones:" << numOfBones<< std::endl;
 
 	ASSERT(numOfBones < NUM_MAX_BONES);
@@ -474,6 +475,9 @@ int computeModel(int x, int y, int z, int alpha, int beta, int gamma, void *mode
 			}
 			}
 
+		
+			
+			
 			prepareRotationMatrix(*(int16 *)(boneDataPtr + 0x10), *(int16 *)(boneDataPtr + 0x12), *(int16 *)(boneDataPtr + 0x14));
 			computeBoneRotation2(boneDataPtr);
 		}
@@ -499,10 +503,14 @@ int computeModel(int x, int y, int z, int alpha, int beta, int gamma, void *mode
 
 			if(transX || transY || transZ) {
 				int type = *(int16 *)(boneDataPtr + 0x8);
-
-
-				std::cout << "type: " << type << std::endl;
 				
+				std::cout << "type: " << type << std::endl;
+				int rotx = *(int16 *)(boneDataPtr + 0x10);
+				int roty = *(int16 *)(boneDataPtr + 0x12);
+				int rotz = *(int16 *)(boneDataPtr + 0x14);
+				
+				std::cout << rotx << "," << roty << "," << rotz << std::endl;
+			
 				switch(type) {
 				case 0: {
 					prepareRotationMatrix(transX, transY, transZ);
@@ -520,6 +528,8 @@ int computeModel(int x, int y, int z, int alpha, int beta, int gamma, void *mode
 				}
 			}
 		}
+
+		std::cout << "==============================" << std::endl;
 	}
 
 	si = tempPtr;
@@ -556,7 +566,7 @@ int computeModel(int x, int y, int z, int alpha, int beta, int gamma, void *mode
 
 		number = *(int16 *)(si + 2);
 
-		ax = ptr1[0];
+		ax = ptr1[0]; 
 		bx = ptr1[1];
 		dx = ptr1[2];
 

@@ -789,6 +789,9 @@ void initEngine() {
 		listMatrix = new hqrEntryStruct("LISTMAT", 16000, 5);
 	}
 
+//	&actorTable[actorIdx];
+	
+
 
 	for(int i = 0; i < NUM_MAX_ACTOR; i++) {
 		actorTable[i].field_0 = -1;
@@ -2175,6 +2178,11 @@ void startGame(int startupFloor, int startupRoom, int allowSystemMenu) {
 
 	setupCamera();
 
+	// actorStruct* actor = &actorTable[12];
+	// std::cout << "body num:" << actor->bodyNum << std::endl;
+	// getchar();
+	// initAnimInBody(actor->FRAME, listAnim->get(4), listBody->get(actor->bodyNum));
+	
 	mainLoop(allowSystemMenu);
 
 	/*freeScene();

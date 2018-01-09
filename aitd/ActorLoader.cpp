@@ -81,7 +81,9 @@ void ActorLoader::loadAnimation(Actor::Ptr actor, int anim_idx, int frame) {
 
 		bone_it.second->local_rotation = getRotationMatrixFromRotIndices(new_rotx, new_roty, new_rotz);
 	}	
-		
+
+
+	//TODO: don't update here but store the bones in a "Keyframe vector"
 	actor->updateVertices();
 	
 }
@@ -234,8 +236,6 @@ Actor::Ptr ActorLoader::load(int actor_idx) {
 		int primitive_type = *(ptr + idx);
 		idx++;
 
-		//printf("primitive %d\n", primitive_type);
-			
 		switch(primitive_type) {
 				
 		case 0: //line
@@ -309,6 +309,7 @@ Actor::Ptr ActorLoader::load(int actor_idx) {
 	
  	actor->generateMesh();
 
+	//TODO:  We should store all animations somewhere and then perform interpolations
 	ActorLoader::loadAnimation(actor, 3, 2);
 
 	return actor;	

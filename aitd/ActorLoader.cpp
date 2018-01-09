@@ -7,6 +7,8 @@ Fitd::hqrEntryStruct* ActorLoader::list_body = new Fitd::hqrEntryStruct("LISTBOD
 
 Actor::Ptr ActorLoader::load(int actor_idx) {
 
+	
+	
 	Actor::Ptr actor = Actor::Ptr(new Actor());
 	char *buffer = ActorLoader::list_body->get(actor_idx);
 
@@ -28,6 +30,7 @@ Actor::Ptr ActorLoader::load(int actor_idx) {
 	actor->num_vertices = *(int16 *)(ptr + idx);
 	idx +=2;
 
+	std::cout << actor_idx << " ";
 	printf("Num. vertices: %d\n", actor->num_vertices);
 
 	actor->vertices.clear();
@@ -50,42 +53,71 @@ Actor::Ptr ActorLoader::load(int actor_idx) {
 		idx += 2;
 
 		printf("Num. bones: %d\n", actor->num_bones);
-			
+
+		int16 bonesOffsets[100];
+		memcpy(bonesOffsets, (int16 *)(ptr + idx), actor->num_bones * 2);
 		// next num_bones * uint16_t are the offsets for the bone data
 		idx += actor->num_bones * 2;
+		
+		// for (int i = 0; i < actor->num_bones; i++) {
+		// 	std::cout << "offset:" << bonesOffsets[i];
+		// }
 
-		std::map<int, Bone> bone_map;
+
+		
+		
+		std::map<int, Bone::Ptr> bone_map;
 			
 		// initialize bone map
 		for (int b = 0; b < actor->num_bones; b++) {
-			bone_map[b] = Bone();
+			bone_map[b] = std::shared_ptr<Bone>(new Bone());
 		}
 			
 		for (int b = 0; b < actor->num_bones; b++) {
 
-			int start_index = *(int16 *)(ptr + idx + 0) / 6;
-			int num_points = *(int16 *)(ptr + idx + 2);
-			int vertex_index = *(int16 *)(ptr + idx + 4) / 6;
-			int parent_index = *(ptr + idx + 6);
-			int bone_index = *(ptr + idx + 7);
 
-			Bone* bone = &bone_map[bone_index];
-			bone->parent = &bone_map[parent_index];
-			bone->local_rot = Eigen::Quaternionf::Identity();
-			bone->local_pos = actor->vertices[vertex_index];
-
-			//apply transform to vertices
-			Eigen::Vector3f position = actor->vertices[vertex_index];
-			Eigen::Matrix<int, Eigen::Dynamic, 1> blending_weights =
-				Eigen::Matrix<int, Eigen::Dynamic, 1>::Zero(num_points, 1);
-				
-			for (int u = 0; u < num_points; u++) {
-				actor->vertices[start_index] += position;
-				//blending_weights[start_index] = bone_index;
-				start_index++;
+			int type = *(int16 *)(ptr + idx + bonesOffsets[b] + 0x8);
+			std::cout << b << " offset:" << bonesOffsets[b] << "type:" << type << std::endl;
+			/*
+			
+			switch(type) {
+			case ROTATION_BONE_TYPE:
+				break;
+					
+			case TRANSLATION_BONE_TYPE:
+				break;
 			}
+			*/
+			
+//			int idx = bonesOffsets[b];
+		// 	int start_index = *(int16 *)(ptr + idx + 0) / 6;
+// 			int num_points = *(int16 *)(ptr + idx + 2);
+// 			int vertex_index = *(int16 *)(ptr + idx + 4) / 6;
+// 			int parent_index = *(ptr + idx + 6);
+// 			int bone_index = *(ptr + idx + 7);
+// 			int type = *(int16 *)(ptr + idx + 8);
 
-			idx += 0x10;				
+// //			std::cout << "bone:" << b << ":" << "npoints:" << num_points << " parent:" << parent_index << "type:" << type << std::endl; 
+			
+			
+// 			Bone::Ptr bone = bone_map[bone_index];
+// 			bone->parent = bone_map[parent_index];
+// 			bone->local_rot = Eigen::Quaternionf::Identity();
+// 			bone->local_pos = actor->vertices[vertex_index];
+
+// 			//apply transform to vertices
+// 			Eigen::Vector3f position = actor->vertices[vertex_index];
+// 			Eigen::Matrix<int, Eigen::Dynamic, 1> blending_weights =
+// 				Eigen::Matrix<int, Eigen::Dynamic, 1>::Zero(num_points, 1);
+				
+// 			for (int u = 0; u < num_points; u++) {
+// 				actor->vertices[start_index] += position;
+// 				//blending_weights[start_index] = bone_index;
+// 				start_index++;
+// 			}
+
+// 			idx += 0x10;	
+						
 		}
 	}
 	else {

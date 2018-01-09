@@ -43,7 +43,6 @@ SET(BGFX_LIBRARIES
   ${ROOT_DIR}/bgfx/.build/linux64_gcc/bin/libbxRelease.a
   )
 
-SET(BGFX_COMMON_LIBRARIES ${ROOT_DIR}/bgfx/.build/linux64_gcc/bin/libexample-commonRelease.a)
 SET(SHADER_COMPILER ${ROOT_DIR}/bgfx/.build/linux64_gcc/bin/shadercRelease)
 
 add_library(AITDCore

@@ -4,11 +4,17 @@
 
 class Bone {
 public:
-
-	Bone* parent;
+	typedef std::shared_ptr<Bone> Ptr;
+	Bone::Ptr parent;
 	Eigen::Quaternionf local_rot;
 	Eigen::Vector3f local_pos;
 	
+};
+
+class Skeleton {
+public:
+	typedef std::shared_ptr<Skeleton> Ptr;
+	std::vector<Bone::Ptr> bone_list;
 };
 
 class Actor {
@@ -17,6 +23,7 @@ public:
 	void generateMesh();
 	void draw(float delta);
 	Geometry::Mesh::Ptr getMesh() { return mesh; }
+	Skeleton::Ptr getSkeleton() { return skeleton; }
 	
 protected:
 
@@ -29,7 +36,7 @@ protected:
 	//TODO move this to a component-based arch.   
 	std::vector<Eigen::Vector3f> vertices;
 	std::vector<Geometry::Primitive::Ptr> primitives;
-	std::vector<Bone> bones;
+	Skeleton::Ptr skeleton;	
 	Geometry::Mesh::Ptr mesh;
 	
 };

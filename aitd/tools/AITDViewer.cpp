@@ -2,8 +2,6 @@
 #include <utils/DataParsing.hpp>
 #include <utils/Color.hpp>
 #include <graphics/RenderSystem.hpp>
-
-
 #include <main.h>
 
 AITDViewer::~AITDViewer() {
@@ -20,10 +18,14 @@ void AITDViewer::init() {
 	entity_manager = EntityManager::Ptr(new EntityManager());
 	
 	//create actor entity
-	int actor_idx = 45;
-	actor_data = ActorLoader::load(actor_idx);
+//	for (int actor_idx = 0; actor_idx < 60; actor_idx++)
+
+	actor_data = ActorLoader::load(12);
+	
 	Entity actor = entity_manager->createLocal();
 	entity_manager->assign<MeshComponent>(actor.id(), actor_data->getMesh());
+//	entity_manager->assign<SkeletonComponent>(actor.id(), actor_data->getSkeleton());
+	
 }
 
 void AITDViewer::run_frame(float dt) {

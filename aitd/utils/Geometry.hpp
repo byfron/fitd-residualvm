@@ -61,9 +61,9 @@ class DebugAxis : public DebugMesh {
 public:
 	DebugAxis(const Eigen::Matrix4f& transform) {
 		center = transform.col(3).head(3);
-		axis_x = transform.topLeftCorner(3,3) * Vec3f::UnitX();
-		axis_y = transform.topLeftCorner(3,3) * Vec3f::UnitY();
-		axis_z = transform.topLeftCorner(3,3) * Vec3f::UnitZ();
+		axis_x = transform.topLeftCorner(3,3) * Vec3f::UnitX() * 1000;
+		axis_y = transform.topLeftCorner(3,3) * Vec3f::UnitY() * 1000;
+		axis_z = transform.topLeftCorner(3,3) * Vec3f::UnitZ() * 1000;
 	}
 
 	void render(float dt) override {

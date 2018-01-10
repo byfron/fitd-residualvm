@@ -23,6 +23,7 @@
 #include "common.h"
 #include "fitd.h"
 #include "gfx.h"
+#include <iostream>
 
 namespace Fitd {
 
@@ -32,6 +33,8 @@ void loadCamera(int cameraIdx) {
 	char name[16];
 	int useSpecial = -1;
 
+	std::cout << "loading camera " << cameraIdx << std::endl;
+	
 	sprintf(name, "CAMERA%02d", currentEtage);
 	//strcat(name,".PAK");
 
@@ -143,6 +146,8 @@ void setupCamera() {
 
 	currentCamera = startGameVar1;
 
+	std::cout << "loading camera: " << roomDataTable[currentDisplayedRoom].cameraIdxTable[startGameVar1] << std::endl;
+	
 	loadCamera(roomDataTable[currentDisplayedRoom].cameraIdxTable[startGameVar1]);
 
 	pCamera = cameraDataTable[currentCamera];

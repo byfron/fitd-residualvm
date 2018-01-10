@@ -12,30 +12,13 @@ public:
 
 		//initialize matrices
 		memcpy(view, camera_view.data(), sizeof(float)*16);
-		memcpy(proj, camera_proj.data(), sizeof(float)*16);
-
-
-	
-		
-/*		const float proj_test[16] = {2*fx/W,0,0,0,2*s/W,2*fy/H,0,0,2*(cx/W)-1,2*(cy/H)-1,(zmax+zmin)/(zmax-zmin),1,0,0,2*zmax*zmin/(zmin-zmax),fuck};
-		memcpy(proj, proj_test, sizeof(float)*16);
-*/
-		
+		memcpy(proj, camera_proj.data(), sizeof(float)*16);		
 		m_camera.init();
-
-		float proj2[16];
-		//TODO query resolution from engine
-		// bx::mtxProj(proj, 60.0f, float(GraphicsEngine::WIDTH)/float(GraphicsEngine::HEIGHT),
-		// 			0.1f, 100000.0f, bgfx::getCaps()->homogeneousDepth);
-
-		Eigen::Map<Eigen::Matrix4f> mf(proj2, 4, 4);
-		std::cout << "bgfx proj: " << mf;
-
 	}
 
 	void render(float delta) {
 
-		//	m_camera.mtxLookAt(view);
+		//m_camera.mtxLookAt(view);
 		bgfx::setViewTransform(RENDER_PASS_GEOMETRY, view, proj);
 		m_camera.update(delta);
 	}

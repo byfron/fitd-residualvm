@@ -703,10 +703,7 @@ void initEngine() {
 	}
 
 	for(int i = 0; i < maxObjects; i++) {
-		objectTable[i].readFromStream(stream);
-
-		std::cout << "owneridx: " << objectTable[i].ownerIdx << std::endl; 
-		
+		objectTable[i].readFromStream(stream);		
 	}
 	delete stream;
 
@@ -2171,10 +2168,12 @@ void startGame(int startupFloor, int startupRoom, int allowSystemMenu) {
 	initEngine();
 	initVars();
 
+	std::cout << "loading startup floor:" << startupFloor << std::endl;
 	loadFloor(startupFloor);
 
 	currentCamera = -1;
 
+	std::cout << "loading startup room:" << startupRoom << std::endl;
 	loadRoom(startupRoom);
 
 	startGameVar1 = 0;

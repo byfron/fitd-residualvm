@@ -21,10 +21,12 @@ void World::loadFloor(int floor_id) {
 
 	current_floor_id = floor_id;
 	current_room_id = 0;
-	
+
 	//create entities in this floor
 	//Cameras ==================================================================
-	RoomCamera::Ptr room_cam = floor_data->getCamera(0);
+
+	std::vector<int> camera_indices = floor_data->getRoom(current_room_id)->camera_indices;	
+	RoomCamera::Ptr room_cam = floor_data->getCamera(camera_indices[3]);
 
 	//createCameraEntity()
 	
@@ -33,7 +35,10 @@ void World::loadFloor(int floor_id) {
 	entity_manager->assign<CameraComponent>(camera.id(), room_cam->projection,
 											room_cam->transform.inverse()); 
 	entity_manager->assign<BgImageComponent>(camera.id(), room_cam->getBackgroundImagePtr());
-	current_camera_id = camera.id().index();
+	current_camera_id = camera.id();
+
+
+	
 	//maybe instead keep a map id/Entity
 
 	//Objects ==================================================================
@@ -83,8 +88,6 @@ void World::createObjectEntities(const ObjectData& object) {
 										object.gamma)
 		);
 
-	std::cout << "trying to load " << object.body << std::endl;		
-	
 	if (object.body != -1) {	
 	
 		//check if actor is created (create it otherwise)?

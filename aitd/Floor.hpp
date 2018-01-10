@@ -2,6 +2,7 @@
 
 #include "Room.hpp"
 #include "RoomCamera.hpp"
+#include <map>
 
 class Floor {
 
@@ -12,8 +13,8 @@ public:
 	void load(int floor_idx);
 
 	RoomCamera::Ptr getCamera(int cam_idx) {
-		assert(cam_idx < camera_vector.size());
-		return camera_vector[cam_idx];
+		assert(camera_map.count(cam_idx));
+		return camera_map[cam_idx];
 	}
 
 	Room::Ptr getRoom(int room_idx) {
@@ -24,6 +25,6 @@ public:
 protected:
 
 	std::vector<Room::Ptr> room_vector;
-	std::vector<RoomCamera::Ptr> camera_vector;
+	std::map<int, RoomCamera::Ptr> camera_map;
 };
 

@@ -60,20 +60,25 @@ RoomCamera::~RoomCamera() {
 
 void RoomCamera::load(const char *data) {
 
-	alpha = READ_LE_UINT16(data + 0x00);
-	beta  = READ_LE_UINT16(data + 0x02);
-	gamma = READ_LE_UINT16(data + 0x04);
+ 	uint16 alpha = READ_LE_UINT16(data + 0x00);
+	uint16 beta  = READ_LE_UINT16(data + 0x02);
+	uint16 gamma = READ_LE_UINT16(data + 0x04);
 	
 	int16 x = READ_LE_UINT16(data + 0x06); // (x - world_x) * 10
 	int16 y = READ_LE_UINT16(data + 0x08); // (world_y - y) * 10
 	int16 z = -READ_LE_UINT16(data + 0x0A); // (world_z - z) * 10
-
+	
 	position = Vec3f(float(x), float(y), float(z))*10;
 	
 	focal1 = READ_LE_UINT16(data + 0x0C);
 	focal2 = READ_LE_UINT16(data + 0x0E);
 	focal3 = READ_LE_UINT16(data + 0x10);
 
+	std::cout << alpha << "," << beta << "," << gamma << std::endl;
+	std::cout << x << "," << y << "," << z << std::endl;
+	std::cout << focal1 << "," << focal2 << "," << focal3 << std::endl;
+
+	
 	// Build projection matrix!
 	float fx = focal2;
 	float fy = focal3;
@@ -98,12 +103,9 @@ void RoomCamera::load(const char *data) {
 	projection(3,3) = fz; // (*) but has to go here
 
 	// Build view matrix
-	float cosx = DataParsing::computeCos(alpha);
-	float sinx = DataParsing::computeSin(alpha);
-	float cosy = DataParsing::computeCos(beta);
-	float siny = DataParsing::computeSin(beta);
-	float cosz = DataParsing::computeCos(gamma);
-	float sinz = DataParsing::computeSin(gamma);
+	float cosx = DataParsing::computeCos(alpha&0x3FF);
+	float cosy = DataParsing::computeCos(beta&0x3FF);
+	float cosz = DataParsing::computeCos(gamma&0x3FF);
 	
 	transform = Eigen::Matrix4f::Identity();
 	
@@ -111,6 +113,9 @@ void RoomCamera::load(const char *data) {
 	float angle_x = asinf(cosx);
 	float angle_y = asinf(cosy);
 	float angle_z = asinf(cosz);
+	if (alpha >= 0x3FF) angle_x = 0;
+	if (beta >= 0x3FF) angle_y = 0;
+	if (gamma >= 0x3FF) angle_z = 0;
 
 	Eigen::Matrix3f rotX = Eigen::Matrix3f(AngleAxisf(angle_x, Vector3f::UnitX()));
 	Eigen::Matrix3f rotY = Eigen::Matrix3f(AngleAxisf(angle_y, Vector3f::UnitY()));
@@ -132,7 +137,7 @@ void RoomCamera::load(const char *data) {
 		rotZ = Eigen::Matrix3f::Identity();
 	}
 
-	Eigen::Matrix3f t = Eigen::Matrix3f(rotY * rotX);	
+	Eigen::Matrix3f t = Eigen::Matrix3f(rotZ * rotY * rotX);	
 	transform.topLeftCorner(3,3) = t;
 	transform.col(3).head(3) = position;
 	
@@ -142,7 +147,8 @@ void RoomCamera::load(const char *data) {
 	
 	for(int k = 0; k < num_camera_zone_def; k++) {
 		CameraZone::Ptr zone = CameraZone::Ptr(new CameraZone(data, base_data));
-		zone_vector.push_back(zone);	
+		zone_vector.push_back(zone);
+		data += 0x0C;
 	}
 }
 

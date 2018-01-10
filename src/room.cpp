@@ -22,7 +22,7 @@
 
 #include "fitd.h"
 #include "common.h"
-
+#include <iostream>
 namespace Fitd {
 
 /*
@@ -88,6 +88,9 @@ void loadRoom(int roomNumber) {
 
 	freezeTime();
 
+
+	std::cout << "loading room: " << std::endl;
+	
 	ASSERT(roomNumber >= 0);
 
 	if(currentCamera == -1) {
@@ -125,12 +128,16 @@ void loadRoom(int roomNumber) {
 
 	ASSERT(numCameraInRoom < NUM_MAX_CAMERA_IN_ROOM);
 
+	std::cout << "num cameras:" << numCameraInRoom << std::endl;
+	
 	for(i = 0; i < numCameraInRoom; i++) { // build all the camera list
 		unsigned int currentCameraIdx;
 		unsigned int j;
 
 		currentCameraIdx = roomDataTable[currentDisplayedRoom].cameraIdxTable[i]; // indexes are between the roomDefStruct and the first zone data
 
+		std::cout << "cameraIdx:" << currentCameraIdx << std::endl;
+		
 		ASSERT(currentCameraIdx <= numGlobalCamera);
 
 		if(oldCameraIdx == currentCameraIdx) {

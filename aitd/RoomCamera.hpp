@@ -49,11 +49,7 @@ public:
 	
 	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 	
-	std::vector<CameraZone::Ptr> zone_vector;
-
-	int16 alpha;
-	int16 beta;
- 	int16 gamma;
+	std::vector<CameraZone::Ptr> zone_vector;	
 
 	int16 focal1;
 	int16 focal2;
@@ -63,5 +59,5 @@ public:
 	Eigen::Matrix4f transform;
 	Eigen::Matrix4f projection;
 	
-	unsigned char * background_image;
+	unsigned char* background_image;
 };

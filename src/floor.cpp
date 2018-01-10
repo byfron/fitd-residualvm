@@ -48,6 +48,10 @@ void cameraDataStruct::load(const char *data) {
 	
 	_cameraZoneDefTable = new cameraZoneDefStruct[_numCameraZoneDef];
 
+	std::cout << _alpha << "," << _beta << "," << _gamma << std::endl;
+	std::cout << _x << "," << _y << "," << _z << std::endl;
+	std::cout << _focal1 << "," << _focal2 << "," << _focal3 << std::endl;
+	
 	const char *backupDataPtr = data;
 	data += 0x14;
 	
@@ -131,13 +135,18 @@ void roomDataStruct::load(const char *data) {
 	worldX = (int16)READ_LE_UINT16(data + 4);
 	worldY = (int16)READ_LE_UINT16(data + 6);
 	worldZ = (int16)READ_LE_UINT16(data + 8);
+
+	std::cout << "pos:" << worldX << "," << worldY << "," << worldZ << std::endl;
 	
 	numCameraInRoom = READ_LE_UINT16(data + 0xA);
 	
 	cameraIdxTable = new uint16[numCameraInRoom];
+
+	std::cout << "num cams in room:" << numCameraInRoom << std::endl;
 	
 	for(uint32 j = 0; j < numCameraInRoom; j++) {
 		cameraIdxTable[j] = READ_LE_UINT16(data + 0xC + 2 * j);
+		std::cout << "camera idx: " << cameraIdxTable[j] << std::endl;
 	}
 	
 	// hard col read
@@ -190,6 +199,8 @@ void loadFloor(int32 floorNumber) {
 	uint32 cameraDataSize;
 	char buffer[256];
 
+	std::cout << "loading floor:" << floorNumber << std::endl;
+	
 	if(etageVar1) {
 		free(etageVar1);
 		free(etageVar0);
@@ -248,6 +259,8 @@ void loadFloor(int32 floorNumber) {
 			roomData = g_resourceLoader->loadPakSafe(buffer, i);
 		} else {
 			roomData = (etageVar0 + READ_LE_UINT32(etageVar0 + i * 4));
+			
+			std::cout << "Loading room " << i << std::endl;
 		}
 		currentRoomDataPtr = &roomDataTable[i];
 		
@@ -293,14 +306,18 @@ void loadFloor(int32 floorNumber) {
 			currentCameraData = g_resourceLoader->loadPakSafe(buffer, i);
 		} else {
 			offset = READ_LE_UINT32(etageVar1 + i * 4);
+			std::cout << "offset:" << offset << std::endl;
 		}
 
 		// load cameras
 		if(offset < cameraDataSize) {
 			if(g_fitd->getGameType() < GType_AITD3) {
+				std::cout << READ_LE_UINT32(etageVar1 + i * 4) << std::endl;
 				currentCameraData = (etageVar1 + READ_LE_UINT32(etageVar1 + i * 4));
 			}
 
+			std::cout << "Loading camera?: " << i << std::endl;
+					
 			globalCameraDataTable[i].load(currentCameraData);
 
 			ASSERT(globalCameraDataTable[i]._cameraZoneDefTable);

@@ -21,6 +21,10 @@ protected:
 	std::map<int, Floor::Ptr> floor_map;
 	EntityManager::Ptr entity_manager;
 	uint32_t current_floor_id;
-	uint32_t current_camera_id;
 	uint32_t current_room_id;
+
+
+	Entity::Id current_camera_id;
+
 };
+

@@ -28,9 +28,9 @@ Eigen::Matrix3f getRotationMatrixFromRotIndices(uint16 rotx, uint16 roty, uint16
 	if (rotz >= 0x3FF) angle_z = 0;
 
 	//NOTE: I had to switch here the X=-Z axis. Cameras dont seem to follow same rotation pattern.	
-	Eigen::Matrix3f rotX = Eigen::Matrix3f(AngleAxisf(angle_x, Vector3f::UnitZ()));
-	Eigen::Matrix3f rotY = Eigen::Matrix3f(AngleAxisf(angle_y, Vector3f::UnitY()));
-	Eigen::Matrix3f rotZ = Eigen::Matrix3f(AngleAxisf(angle_z, -Vector3f::UnitX()));
+	Eigen::Matrix3f rotX = Eigen::Matrix3f(AngleAxisf(angle_x, Vector3f::UnitX()));
+	Eigen::Matrix3f rotY = Eigen::Matrix3f(AngleAxisf(angle_y, -Vector3f::UnitY()));
+	Eigen::Matrix3f rotZ = Eigen::Matrix3f(AngleAxisf(angle_z, Vector3f::UnitZ()));
 
 	if (!roty) {
 		rotY.col(0) = Vector3f::UnitX();

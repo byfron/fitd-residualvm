@@ -3,6 +3,9 @@
 #include "Actor.hpp"
 #include <hqr.h>
 
+//TODO: send this to parseUtils ?
+Eigen::Matrix3f getRotationMatrixFromRotIndices(uint16 rotx, uint16 roty, uint16 rotz);
+
 class ActorLoader {
 public:
 	static Actor::Ptr load(int idx);

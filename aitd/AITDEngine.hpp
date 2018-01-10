@@ -1,6 +1,7 @@
 #pragma once
 
 #include "World.hpp"
+#include "ScriptingManager.hpp"
 #include "entities/Entity.hpp"
 #include "entities/System.hpp"
 #include <map>
@@ -31,6 +32,7 @@ protected:
 	EntityManager::Ptr entity_manager;
 	EventManager::Ptr event_manager;
 	SystemManager::Ptr system_manager;
+	ScriptingManager::Ptr scripting_manager;
 	
 	World::Ptr world;
 	

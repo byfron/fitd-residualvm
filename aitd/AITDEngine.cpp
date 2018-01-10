@@ -1,7 +1,9 @@
 #include "AITDEngine.hpp"
 #include "ObjectManager.hpp"
 #include "ActorLoader.hpp"
+#include "GameSystems.hpp"
 #include "utils/Color.hpp"
+#include "Components.hpp"
 #include <graphics/RenderSystem.hpp>
 #include <utils/DataParsing.hpp>
 #include <main.h>
@@ -21,6 +23,10 @@ void AITDEngine::init() {
 	
 	createSubsystems();
 	loadGameData();
+
+	// Add systems
+	add<UpdateSystem>(std::make_shared<UpdateSystem>(world));
+	add<RenderSystem>(std::make_shared<RenderSystem>(world));
 }
 
 void AITDEngine::createSubsystems() {
@@ -29,12 +35,8 @@ void AITDEngine::createSubsystems() {
 	entity_manager = EntityManager::Ptr(new EntityManager());
 	event_manager = EventManager::Ptr(new EventManager());
 	system_manager = SystemManager::Ptr(new SystemManager(*entity_manager, *event_manager));
-
 	world = World::Ptr(new World(entity_manager));
-	
-	// Add Render system
-	add<RenderSystem>(std::make_shared<RenderSystem>(world));
-	
+	scripting_manager = ScriptingManager::Ptr(new ScriptingManager(entity_manager, world));	
 }
 
 void AITDEngine::loadGameData() {
@@ -42,12 +44,9 @@ void AITDEngine::loadGameData() {
 	ColorPalette::loadPalette();
 	ObjectManager::loadObjects();
 
-	int actor_idx = 45;
+	scripting_manager->loadScriptsFromObjects(ObjectManager::object_map);
 	
-	//create actor entity
-	Actor::Ptr actor_data = ActorLoader::load(actor_idx);	
-	Entity actor = entity_manager->createLocal();
-	entity_manager->assign<MeshComponent>(actor.id(), actor_data->getMesh());
+	int actor_idx = 45;
 
 	//create world
 	world->load();

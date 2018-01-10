@@ -27,9 +27,6 @@ void Room::load(const char *data) {
 	world_pos(1) = static_cast<float>((int16)READ_LE_UINT16(data + 6));
 	world_pos(2) = static_cast<float>(-(int16)READ_LE_UINT16(data + 8));
 
-	std::cout << "Room Loaded: " << std::endl;
-	std::cout << "wpos: " << world_pos.transpose() << std::endl;
-	
 	int num_cameras = READ_LE_UINT16(data + 0xA);
 
 	for(uint32 j = 0; j < num_cameras; j++) {
@@ -46,7 +43,6 @@ void Room::load(const char *data) {
 	for(uint32 j = 0; j < num_hard_cols; j++) {
 		BBox::Ptr bbox = BBox::Ptr(new BBox(hard_col_data));
 	    colision_vector.push_back(bbox);
-		std::cout << "hard col:" << bbox->p1.transpose() << " " << bbox->p2.transpose() << std::endl;
 		hard_col_data += 16;
 	}
 

@@ -63,12 +63,14 @@ void AITDViewer::run_frame(float dt) {
 	GraphicsEngine::camera().mtxLookAt(view);
 	
 	bgfx::setViewTransform(RENDER_PASS_GEOMETRY, view, proj);
+
+	Eigen::Matrix4f t = Eigen::Matrix4f::Identity();
 	
 	// Render all meshes
 	entity_manager->each<MeshComponent>(
-		[dt](Entity entity,
+		[dt, t](Entity entity,
 				MeshComponent &mc) {
-			mc.render(dt);
+			mc.render(dt, t.data());
 		});
 
 	// Render debug elements

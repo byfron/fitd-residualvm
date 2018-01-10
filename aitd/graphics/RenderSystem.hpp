@@ -97,7 +97,8 @@ public:
 
 	MeshComponent(Geometry::Mesh::Ptr m) : mesh(m) {}
 	
-	void render(float delta) {
+	void render(float delta, const float* mtx) {
+		bgfx::setTransform(mtx);
 		mesh->submit();
 	}
 	

@@ -329,8 +329,6 @@ void processActor1(void) {
 		var_4A = currentProcessedActorPtr->modY;
 		var_48 = currentProcessedActorPtr->modZ;
 
-		std::cout << "running setInterAnimObjet with anim:"  << currentProcessedActorPtr->ANIM << std::endl;
-		
 		currentProcessedActorPtr->END_FRAME = setInterAnimObjet(currentProcessedActorPtr->FRAME, listAnim->get(currentProcessedActorPtr->ANIM), listBody->get(currentProcessedActorPtr->bodyNum));
 
 		walkStep(animRot2, animRot1, currentProcessedActorPtr->beta);

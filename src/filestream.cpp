@@ -31,7 +31,6 @@ ReadFileStream::ReadFileStream() {
 }
 ReadFileStream::ReadFileStream(const char *filename) {
 	_fileHandle = NULL;
-	printf("ReadFilestream:%s\n", filename);
 	open(filename);
 }
 

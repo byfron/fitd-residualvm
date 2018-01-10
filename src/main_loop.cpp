@@ -24,7 +24,7 @@
 #include "actor.h"
 #include "common.h"
 #include "gfx.h"
-
+#include<iostream>
 namespace Fitd {
 
 int mainLoopSwitch = 0;
@@ -186,7 +186,11 @@ void mainLoop(int allowSystemMenu) {
 						case GType_AITD1: {
 							if(currentProcessedActorPtr->life != -1)
 								if(currentProcessedActorPtr->lifeMode != -1)
+
+//									std::cout << "Processing life: " << currentProcessedActorPtr->life << std::endl;
+									
 									processLife(currentProcessedActorPtr->life);
+									
 							break;
 						}
 						}
@@ -205,7 +209,9 @@ void mainLoop(int allowSystemMenu) {
 
 		if(changeFloor) {
 			loadFloor(newFloor);
+
 		}
+
 
 #if INTERNAL_DEBUGGER
 		if(debuggerVar_topCamera)

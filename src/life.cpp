@@ -24,6 +24,7 @@
 #include "fitd.h"
 #include "osystem.h"
 #include "common.h"
+#include <iostream>
 
 namespace Fitd {
 
@@ -270,8 +271,6 @@ void animMove(int a, int b, int c, int d, int e, int f, int g) {
 	if(currentProcessedActorPtr->speed == 0) {
 		anim(d, 0, a);
 	}
-
-
 }
 
 void setStage(int newStage, int newRoomLocal, int X, int Y, int Z) {
@@ -331,6 +330,9 @@ void setStage(int newStage, int newRoomLocal, int X, int Y, int Z) {
 
 		//    objModifFlag1 = 1;
 	}
+
+	std::cout << "stage" << newStage << std::endl;
+	getchar();
 }
 
 void setupRealZv(ZVStruct *zvPtr) {
@@ -1081,6 +1083,8 @@ processOpcode:
 				lifeTempVar5 = *(int16 *)(currentLifePtr);
 				currentLifePtr += 2;
 
+				std::cout << "setting stage!!" << std::endl;
+				
 				setStage(lifeTempVar1, lifeTempVar2, lifeTempVar3, lifeTempVar4, lifeTempVar5);
 
 				break;

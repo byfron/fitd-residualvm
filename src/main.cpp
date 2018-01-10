@@ -704,6 +704,9 @@ void initEngine() {
 
 	for(int i = 0; i < maxObjects; i++) {
 		objectTable[i].readFromStream(stream);
+
+		std::cout << "owneridx: " << objectTable[i].ownerIdx << std::endl; 
+		
 	}
 	delete stream;
 
@@ -871,8 +874,6 @@ void setupPointTransformSM(int x, int y, int z) {
 		transformUseZ = false;
 	}
 
-	std::cout << "setup camera:" << std::endl;
-	std::cout << "xcos:" << float(transformXCos)/(0xFFFF/2) << " xsin: " << float(transformXSin)/(0xFFFF/2) << std::endl; 
 }
 
 void setupSelfModifyingCode(int x, int y, int z) {
@@ -1253,6 +1254,9 @@ void updateAllActorAndObjectsAITD2() {
 						//int var_A = currentObject->anim;
 
 addObject:
+
+						// This would be our equivalent to create an entity
+						// and initialise with an object data
 						actorIdx = copyObjectToActor(currentObject->body, currentObject->field_6, currentObject->foundName,
 						                             currentObject->flags & 0xFFDF,
 						                             currentObject->x, currentObject->y, currentObject->z,

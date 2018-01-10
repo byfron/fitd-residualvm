@@ -36,9 +36,6 @@ int initAnimInBody(int frame, char *anim, char *body) {
 	int i;
 	int flag;
 
-	std::cout << "Running InitAnimInBody ===========================" << std::endl;
-	std::cout << "frame:" << frame << std::endl;
-	
 	flag = (*(int16 *)body);
 
 	temp = *(int16 *)anim;
@@ -54,7 +51,6 @@ int initAnimInBody(int frame, char *anim, char *body) {
 	cx = ax;
 
 	if(flag & 8) {
-		std::cout << "flag&8 is true" << std::endl;
 		ax = ((ax << 4) + 8) * frame;
 	} else {
 		ax = ((ax + 1) << 3) * frame;
@@ -84,8 +80,6 @@ int initAnimInBody(int frame, char *anim, char *body) {
 
 	bx = ax = *(int16 *)body; //num_bones?
 
-	std::cout << "num bones:" << bx << std::endl;
-	
 	body += bx << 1;
 
 	if(cx > ax)
@@ -198,10 +192,6 @@ void initBufferAnim(char *buffer, char *bodyPtr) {
 	int flag = *(int16 *)bodyPtr;
 	if(flag & 2) {
 
-		// std::cout << "Running init_buffer_anim" << std::endl;
-		// std::cout << "===========================================" << std::endl;
-	
-		
 		char *source = bodyPtr + 0x10;
 		int16 ax;
 		int cx;
@@ -281,8 +271,6 @@ void processAnimRotation(char **bodyPtr, int bp, int bx) { // local
 
 	newRotation = *animVar1;
 
-	std::cout << "rotation" << newRotation << std::endl;
-	
 	animVar1 += 1; //we move two bytes!
 
 	diff = newRotation - oldRotation;
@@ -345,7 +333,6 @@ int16 setInterAnimObjet(int frame, char *animPtr, char *bodyPtr) {
 	if(flag & 8) {
 		animPtr += ((numOfBonesInAnim << 4) + 8) * frame; // seek to keyframe
 	} else {
-		std::cout << "seeking frame:" << frame << std::endl;
 		animPtr += ((numOfBonesInAnim + 1) * 8) * frame; // seek to keyframe
 	}
 
@@ -382,8 +369,6 @@ int16 setInterAnimObjet(int frame, char *animPtr, char *bodyPtr) {
 
 	ax = *(int16 *)bodyPtr; // num of bones
 
-	std::cout << "body num bones:" << ax << std::endl;
-	
 	bx = ax;
 	bodyPtr += bx * 2; // skip bones idx table
 
@@ -407,8 +392,6 @@ int16 setInterAnimObjet(int frame, char *animPtr, char *bodyPtr) {
 		if(!(flag & 8)) {
 			do {
 
-				std::cout << "processing bone rotations (not flag 8)" << std::endl;
-				
 				switch(getAnimType(&bodyPtr)) {
 				case 0: {
 					processAnimRotation(&bodyPtr, bp, bx);
@@ -430,8 +413,6 @@ int16 setInterAnimObjet(int frame, char *animPtr, char *bodyPtr) {
 		} else {
 			do {
 
-				std::cout << "processing bone rotations (not flag 8)" << std::endl;
-				
 				switch(getAnimType(&bodyPtr)) {
 				case 0: {
 					animVar4 += 3;

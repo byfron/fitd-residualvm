@@ -421,9 +421,6 @@ int computeModel(int x, int y, int z, int alpha, int beta, int gamma, void *mode
 	numOfBones = *(int16 *)ptr;
 	ptr += 2;
 
-	std::cout << "num vertices:" << numOfPoints << std::endl;
-	std::cout << "num bones:" << numOfBones<< std::endl;
-
 	ASSERT(numOfBones < NUM_MAX_BONES);
 	memcpy(bonesBuffer, ptr, numOfBones * 2);
 	ptr += numOfBones * 2;
@@ -434,13 +431,9 @@ int computeModel(int x, int y, int z, int alpha, int beta, int gamma, void *mode
 		for(i = 0; i < numOfBones; i++) {
 			int boneDataOffset = bonesBuffer[i]; //startIndex
 
-			std::cout << i <<  " offset:" << boneDataOffset << std::endl;
-			
 			char *boneDataPtr = tempPtr + boneDataOffset;
 
 			int type = *(int16 *)(boneDataPtr + 0x8);
-
-			std::cout << "bone:" << i << " type:" << type << std::endl;
 
 			switch(type) {
 			case 1: {
@@ -489,8 +482,6 @@ int computeModel(int x, int y, int z, int alpha, int beta, int gamma, void *mode
 		for(i = 0; i < numOfBones; i++) {
 			int boneDataOffset = bonesBuffer[i];
 
-			std::cout << i <<  " offset:" << boneDataOffset << std::endl;
-
 			char *boneDataPtr = tempPtr + boneDataOffset;
 
 			int transX;
@@ -504,12 +495,9 @@ int computeModel(int x, int y, int z, int alpha, int beta, int gamma, void *mode
 			if(transX || transY || transZ) {
 				int type = *(int16 *)(boneDataPtr + 0x8);
 				
-				std::cout << "type: " << type << std::endl;
 				int rotx = *(int16 *)(boneDataPtr + 0x10);
 				int roty = *(int16 *)(boneDataPtr + 0x12);
 				int rotz = *(int16 *)(boneDataPtr + 0x14);
-				
-				std::cout << rotx << "," << roty << "," << rotz << std::endl;
 			
 				switch(type) {
 				case 0: {
@@ -529,7 +517,6 @@ int computeModel(int x, int y, int z, int alpha, int beta, int gamma, void *mode
 			}
 		}
 
-		std::cout << "==============================" << std::endl;
 	}
 
 	si = tempPtr;

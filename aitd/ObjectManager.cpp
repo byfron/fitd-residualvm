@@ -6,7 +6,7 @@
 std::map<int, ObjectData> ObjectManager::object_map;
 
 void ObjectData::readFromStream(Common::SeekableReadStream *stream) {
-	this->ownerIdx = stream->readUint16LE();
+	this->ownerIdx = stream->readUint16LE(); //OwnerIdx is ALWAYS -1 at loading!!
 	this->body = stream->readUint16LE();
 	this->flags = stream->readUint16LE();
 	this->field_6 = stream->readUint16LE();
@@ -48,6 +48,5 @@ void ObjectManager::loadObjects() {
 	for(int i = 0; i < data_loader.num_objects; i++) {
 		object_map[i].readFromStream(data_loader.stream);
 	}
-	std::cout << "Loaded data for " << data_loader.num_objects << " objects" << std::endl; 
 	delete data_loader.stream;
 }

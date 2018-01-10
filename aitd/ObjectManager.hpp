@@ -1,10 +1,5 @@
 #pragma once
 
-//#include <main.h>
-//#include <fitd.h>
-//#include <common/endian.h>
-//#include <common.h>
-
 #include <filestream.h>
 #include <hqr.h>
 #include <map>
@@ -39,7 +34,7 @@ struct ObjectData {
 	int16 foundBody;
 	int16 foundName;
 	int16 flags2;
-	int16 foundLife;
+	int16 foundLife; //index of the corresponding script entry? and life?
 	int16 x;
 	int16 y;
 	int16 z;

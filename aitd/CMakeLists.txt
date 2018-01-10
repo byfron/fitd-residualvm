@@ -63,7 +63,11 @@ add_library(AITDCore
   World.hpp
   World.cpp
   ObjectManager.hpp
-  ObjectManager.cpp  
+  ObjectManager.cpp
+  ScriptingManager.hpp
+  ScriptingManager.cpp
+  GameSystems.hpp
+  GameSystems.cpp
   AITDEngine.hpp
   AITDEngine.cpp
   ActorLoader.hpp

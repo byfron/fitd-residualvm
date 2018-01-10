@@ -62,6 +62,8 @@ add_library(AITDCore
   Actor.cpp
   World.hpp
   World.cpp
+  ObjectManager.hpp
+  ObjectManager.cpp  
   AITDEngine.hpp
   AITDEngine.cpp
   ActorLoader.hpp

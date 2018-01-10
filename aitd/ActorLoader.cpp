@@ -4,6 +4,7 @@
 #include <fitd.h>
 #include <map>
 
+//this could be private
 Fitd::hqrEntryStruct* ActorLoader::list_body = new Fitd::hqrEntryStruct("LISTBODY", 100000, 50); // was calculated from free mem size
 Fitd::hqrEntryStruct* ActorLoader::list_anim = new Fitd::hqrEntryStruct("LISTANIM", 100000, 50); // was calculated from free mem size
 

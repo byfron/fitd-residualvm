@@ -92,7 +92,7 @@ void fire(int fireAnim, int X, int Y, int Z, int hitForce, int nextAnim) {
 		currentProcessedActorPtr->animActionFRAME = X;
 		currentProcessedActorPtr->animActionType = 4;
 		currentProcessedActorPtr->animActionParam = Z;
-		currentProcessedActorPtr->field_98 = Y;
+ 		currentProcessedActorPtr->field_98 = Y;
 		currentProcessedActorPtr->hitForce = hitForce;
 
 	}
@@ -422,7 +422,7 @@ void processLife(int lifeNum) {
 		warning("%d:opcode: %04X\n", lifeNum, currentOpcode);
 
 		if(currentOpcode & 0x8000) {
-			var_6 = *(int16 *)(currentLifePtr);
+			var_6 = *(int16 *)(currentLifePtr); // argument of command?
 			currentLifePtr += 2;
 
 			if(var_6 == -1) {
@@ -505,10 +505,10 @@ void processLife(int lifeNum) {
 					}
 					////////////////////////////////////////////////////////////////////////
 					case LM_MOVE: { // MOVE
-						objectTable[var_6].stage = *(int16 *)(currentLifePtr);
+						objectTable[var_6].stage = *(int16 *)(currentLifePtr); //etage
 						currentLifePtr += 2;
 
-						objectTable[var_6].room = *(int16 *)(currentLifePtr);
+						objectTable[var_6].room = *(int16 *)(currentLifePtr); //room
 						currentLifePtr += 2;
 
 						objectTable[var_6].lifeMode = 0;

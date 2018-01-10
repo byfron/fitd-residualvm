@@ -1,4 +1,5 @@
 #include "AITDEngine.hpp"
+#include "ObjectManager.hpp"
 #include "ActorLoader.hpp"
 #include "utils/Color.hpp"
 #include <graphics/RenderSystem.hpp>
@@ -39,6 +40,7 @@ void AITDEngine::createSubsystems() {
 void AITDEngine::loadGameData() {
 
 	ColorPalette::loadPalette();
+	ObjectManager::loadObjects();
 
 	int actor_idx = 45;
 	

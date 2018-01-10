@@ -38,7 +38,6 @@ void Floor::load(int floor_idx) {
 	int num_rooms = getNumRooms(floor_data, floor_data_size);
 
 	//TODO: add spdlog
-	printf("Found %d rooms in floor %d\n", num_rooms, floor_idx);
 
 	// Load rooms
 	for (int i = 0; i < num_rooms; i++) {

@@ -21,6 +21,10 @@ public:
 		assert(room_idx < room_vector.size());
 		return room_vector[room_idx];
 	}
+
+	std::vector<Room::Ptr> getRoomVector() {
+		return room_vector;
+	}
 	
 protected:
 

@@ -31,10 +31,13 @@ void Room::load(const char *data) {
 	world_pos(1) = static_cast<float>((int16)READ_LE_UINT16(data + 6));
 	world_pos(2) = static_cast<float>((int16)READ_LE_UINT16(data + 8));
 
-//	std::cout << "pos:" << world_pos.transpose() << std::endl;
+	std::cout << "pos:" << world_pos.transpose() << std::endl;
 	
 	int num_cameras = READ_LE_UINT16(data + 0xA);
 
+	//NOTE something is wrong with the camera indexing, because
+	//different rooms share the same camera index and that doesnt make much sense
+	//NOTE2: This seems normal since some rooms are seen from two different cameras (through doors)
 	for(uint32 j = 0; j < num_cameras; j++) {
 		int16 camera_idx = READ_LE_UINT16(data + 0xC + 2 * j);
 		camera_indices.push_back(camera_idx);
@@ -57,12 +60,12 @@ void Room::load(const char *data) {
 			Vector3i p1 = bbox->p1;
 			Vector3i p2 = bbox->p2;
 
-			p1(0) = p1(0) + wx;
-			p1(1) = -(p1(1) + wy);
-			p1(2) = p1(2) + wz;
-			p2(0) = p2(0) + wx;
-			p2(1) = -(p2(1) + wy);
-			p2(2) = p2(2) + wz;
+			// p1(0) = p1(0) + wx;
+			// p1(1) = -(p1(1) + wy);
+			// p1(2) = p1(2) + wz;
+			// p2(0) = p2(0) + wx;
+			// p2(1) = -(p2(1) + wy);
+			// p2(2) = p2(2) + wz;
 
 			
 			bbox->p1 = p1;

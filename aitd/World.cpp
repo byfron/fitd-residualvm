@@ -21,7 +21,7 @@ void World::loadFloor(int floor_id) {
 
 	current_floor_id = floor_id;
 	current_room_id = 1;
-	int camera_index = 6;
+	int camera_index = 1;
 
 	//create entities in this floor
 	//Cameras ==================================================================
@@ -37,11 +37,22 @@ void World::loadFloor(int floor_id) {
 	// scene-tree)
 	Vec3f room_world = floor_data->getRoom(current_room_id)->world_pos.cast<float>();
 	Vec3f cam_pos = room_cam->transform.col(3).head(3)/10;
+
+	std::cout << "========================" << std::endl;
+	std::cout << "ROOM:" << room_world << std::endl;
+	std::cout << "CAM:" << cam_pos << std::endl;
+	
 	cam_pos(0) = (cam_pos(0) - room_world(0));
 	cam_pos(1) = (room_world(1) - cam_pos(1));
 	cam_pos(2) = (room_world(2) - cam_pos(2));
  	room_cam->transform.col(3).head(3) = cam_pos * 10;
 	////////////////////////////////////////////////////////////////////////////////////////////////
+
+	std::cout << "CAM2:" << cam_pos << std::endl;
+
+
+	
+	
 	
 	Entity camera = entity_manager->createLocal();
 	
@@ -55,23 +66,48 @@ void World::loadFloor(int floor_id) {
 	
 	//maybe instead keep a map id/Entity
 
-	//Objects ==================================================================
+	//Objects ==================================================================	
 	for (auto object_it : ObjectManager::object_map) {
 		if (object_it.second.stage == floor_id) {
-			createObjectEntities(object_it.second);
+			if (object_it.second.stage == current_room_id) {
+				createObjectEntities(object_it.second, room_world);
+			}
 		}
 	}
 
 	// DEBUG STUFF =============================================================
 	// Display debug meshes with collison stuff
-	for (auto &box : floor_data->getRoom(current_room_id)->colision_vector) {
-		//Add debug objects for each colision vector
-		Entity debug_obj = entity_manager->createLocal();
-		entity_manager->assign<DebugComponent>(
-			debug_obj.id(),
-			Geometry::DebugMesh::Ptr(new Geometry::DebugBox(box->p1.cast<float>(),
-															box->p2.cast<float>()))
-			);
+	// Try to get them for the whole floor
+//	for (auto& room : floor_data->getRoomVector())
+
+	//NOTE: The rooms seem to form a "graph" or "tree" where the world positions
+	// are displacements wrt the parent room
+	
+	Room::Ptr room = floor_data->getRoom(current_room_id);
+	{
+		for (auto& box : room->colision_vector) {
+
+			Vector3i p1 = box->p1;
+			Vector3i p2 = box->p2;
+			// p1(0) = p1(0) + room->world_pos(0);
+			// p1(1) = -(p1(1) + room->world_pos(1));
+			// p1(2) = p1(2) + room->world_pos(2);
+			// p2(0) = p2(0) + room->world_pos(0);
+			// p2(1) = -(p2(1) + room->world_pos(1));
+			// p2(2) = p2(2) + room->world_pos(2);
+
+			p1(1) = -p1(1);
+			p2(1) = -p2(1);
+				
+			
+			//Add debug objects for each colision vector
+			Entity debug_obj = entity_manager->createLocal();
+			entity_manager->assign<DebugComponent>(
+				debug_obj.id(),				
+				Geometry::DebugMesh::Ptr(new Geometry::DebugBox(p1.cast<float>(),
+																p2.cast<float>()))
+				);
+		}
 	}
 
 	// Display location of camera
@@ -88,15 +124,16 @@ void World::loadFloor(int floor_id) {
 	}
 }
 
-void World::createObjectEntities(const ObjectData& object) {
+void World::createObjectEntities(const ObjectData& object,
+								 /*TODO: remove this and make a proper tree*/const Vec3f& room_world) {
 
 	//Create all entities at this floor
 	Entity object_entity = entity_manager->createLocal();
 	entity_manager->assign<TransformComponent>(
 		object_entity.id(),
-		object.x,
-		-object.y,
-		object.z,
+		(object.x - room_world(0)),
+		-(object.y + room_world(1)),
+		(object.z + room_world(2)),
 		getRotationMatrixFromRotIndices(object.alpha,
 										object.beta,
 										object.gamma)

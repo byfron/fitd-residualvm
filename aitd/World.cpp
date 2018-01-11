@@ -20,7 +20,7 @@ void World::loadFloor(int floor_id) {
 	floor_data->load(floor_id);
 
 	current_floor_id = floor_id;
-	current_room_id = 1;
+	current_room_id = 2;
 	int camera_index = 1;
 
 	//create entities in this floor
@@ -69,7 +69,7 @@ void World::loadFloor(int floor_id) {
 	//Objects ==================================================================	
 	for (auto object_it : ObjectManager::object_map) {
 		if (object_it.second.stage == floor_id) {
-			if (object_it.second.stage == current_room_id) {
+			if (object_it.second.room == current_room_id) {
 				createObjectEntities(object_it.second, room_world);
 			}
 		}
@@ -118,9 +118,9 @@ void World::createObjectEntities(const ObjectData& object,
 	Entity object_entity = entity_manager->createLocal();
 	entity_manager->assign<TransformComponent>(
 		object_entity.id(),
-		(object.x),// - room_world(0)),
-		-(object.y),// + room_world(1)),
-		(object.z),// + room_world(2)),
+		object.x,
+		-object.y,
+		object.z,
 		getRotationMatrixFromRotIndices(object.alpha,
 										object.beta,
 										object.gamma)

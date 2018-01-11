@@ -21,8 +21,15 @@ public:
 	}
 
 	static float computeSin(int index) {
+
+
+		//assert(index + 0x100 < 0x3FF);
+		
+		return 2*float(cosTable[(index + 0x100)&0x3FF])/0xFFFF;
+		
+		
 		assert(index <= 0x3FF);
-		return cos_table[(index + 0x100) & 0x3FF];
+		return cos_table[(index + 0x200) & 0x3FF];
 	}
 
 protected:

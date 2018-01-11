@@ -1036,10 +1036,7 @@ void DataParsing::init() {
 	//AITD angles are encoded as indices in a cosinus table as follows:	
     //-PI/2   0    PI/2   PI     3PI/2
 	//0...    1 ... 0 ... -1 ... 0 (1024)
-
-	float inc = 4.0f/0xFFFF;
-	
-//	float inc = (2.0*M_PI)/0x3FF;
+	float inc = (2.0*M_PI)/0x3FF;
 	float start = -M_PI/2.0;
 	cos_table.clear();
 	

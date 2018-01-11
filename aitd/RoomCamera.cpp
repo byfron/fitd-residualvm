@@ -65,7 +65,7 @@ void RoomCamera::load(const char *data) {
 	uint16 gamma = READ_LE_UINT16(data + 0x04);
 	
 	int16 x = READ_LE_UINT16(data + 0x06); // (x - world_x) * 10
-	int16 y = READ_LE_UINT16(data + 0x08); // (world_y - y) * 10
+	int16 y = -READ_LE_UINT16(data + 0x08); // (world_y - y) * 10
 	int16 z = -READ_LE_UINT16(data + 0x0A); // (world_z - z) * 10
 	
 	position = Vec3f(float(x), float(y), float(z))*10;
@@ -106,20 +106,52 @@ void RoomCamera::load(const char *data) {
 	float cosx = DataParsing::computeCos(alpha&0x3FF);
 	float cosy = DataParsing::computeCos(beta&0x3FF);
 	float cosz = DataParsing::computeCos(gamma&0x3FF);
+	float sinx = DataParsing::computeSin(alpha&0x3FF);
+	float siny = DataParsing::computeSin(beta&0x3FF);
+	float sinz = DataParsing::computeSin(gamma&0x3FF);
 	
 	transform = Eigen::Matrix4f::Identity();
-	
-	// The angles are shifted!! Use the arcsin instead.
-	float angle_x = asinf(cosx);
-	float angle_y = asinf(cosy);
-	float angle_z = asinf(cosz);
-	if (alpha >= 0x3FF) angle_x = 0;
-	if (beta >= 0x3FF) angle_y = 0;
-	if (gamma >= 0x3FF) angle_z = 0;
 
-	Eigen::Matrix3f rotX = Eigen::Matrix3f(AngleAxisf(angle_x, Vector3f::UnitX()));
-	Eigen::Matrix3f rotY = Eigen::Matrix3f(AngleAxisf(angle_y, Vector3f::UnitY()));
-	Eigen::Matrix3f rotZ = Eigen::Matrix3f(AngleAxisf(angle_z, Vector3f::UnitZ()));
+	// std::cout << "abg:";
+	// std::cout << alpha << "," << beta << "," << gamma << std::endl;
+	
+	
+	// // The angles are shifted!! Use the arcsin instead.
+	// float angle_x = asinf(cosx);
+	// float angle_y = asinf(cosy);
+	// float angle_z = asinf(cosz);
+
+	// std::cout << "xyz:";
+	// std::cout << angle_x << "," << angle_y << "," << angle_z << std::endl;
+
+
+	// std::cout << angle_x << "=" << acosf(sinx) << std::endl;
+	// std::cout << angle_y << "=" << acosf(siny) << std::endl;
+	// std::cout << angle_z << "=" << acosf(sinz) << std::endl;
+	
+	// angle_x = acosf(sinx);
+	// angle_y = acosf(siny);
+	// angle_z = acosf(sinz);
+	
+	// if (alpha >= 0x3FF) angle_x = 0;
+	// if (beta >= 0x3FF) angle_y = 0;
+	// if (gamma >= 0x3FF) angle_z = 0;
+
+	Eigen::Matrix3f rotX = Geometry::getXRotMat(sinx, cosx);
+	Eigen::Matrix3f rotY = Geometry::getYRotMat(siny, -cosy);
+	Eigen::Matrix3f rotZ = Geometry::getZRotMat(sinz, cosz);
+
+	// Eigen::Matrix3f rotX = Geometry::getXRotMat(cos(angle_x), sin(angle_x));
+	// Eigen::Matrix3f rotY = Geometry::getYRotMat(cos(angle_y), sin(angle_y));
+	// Eigen::Matrix3f rotZ = Geometry::getZRotMat(cos(angle_z), sin(angle_z));
+	
+	
+	// Eigen::Matrix3f rotX2 = Eigen::Matrix3f(AngleAxisf(angle_x, Vector3f::UnitX()));
+	// Eigen::Matrix3f rotY2 = Eigen::Matrix3f(AngleAxisf(angle_y, Vector3f::UnitY()));
+	// Eigen::Matrix3f rotZ2 = Eigen::Matrix3f(AngleAxisf(angle_z, Vector3f::UnitZ()));
+
+	//std::cout << rotY << "=" << std::endl << rotY2 << std::endl;
+	
 	
 	if (!beta) {
 		rotY.col(0) = Vector3f::UnitX();

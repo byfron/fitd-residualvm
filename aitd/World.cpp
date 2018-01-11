@@ -20,14 +20,12 @@ void World::loadFloor(int floor_id) {
 	floor_data->load(floor_id);
 
 	current_floor_id = floor_id;
-	current_room_id = 2;
+	current_room_id = 1;
 	int camera_index = 1;
 
 	//create entities in this floor
 	//Cameras ==================================================================
-
 	std::vector<int> camera_indices = floor_data->getRoom(current_room_id)->camera_indices;
-
 	assert(camera_index < camera_indices.size());
 	RoomCamera::Ptr room_cam = floor_data->getCamera(camera_indices[camera_index]);
 
@@ -37,39 +35,25 @@ void World::loadFloor(int floor_id) {
 	// scene-tree)
 	Vec3f room_world = floor_data->getRoom(current_room_id)->world_pos.cast<float>();
 	Vec3f cam_pos = room_cam->transform.col(3).head(3)/10;
-
-	std::cout << "========================" << std::endl;
-	std::cout << "ROOM:" << room_world << std::endl;
-	std::cout << "CAM:" << cam_pos << std::endl;
-	
 	cam_pos(0) = (cam_pos(0) - room_world(0));
 	cam_pos(1) = (room_world(1) - cam_pos(1));
 	cam_pos(2) = (room_world(2) - cam_pos(2));
  	room_cam->transform.col(3).head(3) = cam_pos * 10;
 	////////////////////////////////////////////////////////////////////////////////////////////////
-
-	std::cout << "CAM2:" << cam_pos << std::endl;
-
-
-	
-	
-	
-	Entity camera = entity_manager->createLocal();
-	
+		
+	Entity camera = entity_manager->createLocal();	
 	// view matrix is the inverse of the camera trasnformation matrix;
 	entity_manager->assign<CameraComponent>(camera.id(), room_cam->projection,
 											room_cam->transform.inverse()); 
 	entity_manager->assign<BgImageComponent>(camera.id(), room_cam->getBackgroundImagePtr());
 	current_camera_id = camera.id();
 
-
-	
 	//maybe instead keep a map id/Entity
-
 	//Objects ==================================================================	
 	for (auto object_it : ObjectManager::object_map) {
 		if (object_it.second.stage == floor_id) {
-			if (object_it.second.room == current_room_id) {
+			if (object_it.second.room == current_room_id)
+			{
 				createObjectEntities(object_it.second, room_world);
 			}
 		}
@@ -85,7 +69,7 @@ void World::loadFloor(int floor_id) {
 			Vector3i p1 = box->p1;
 			Vector3i p2 = box->p2;
 			p1(1) = -p1(1);
-			p2(1) = -p2(1);
+			p2(1) = -p2(1); //TODO: revert the Y coordinate at loading time
 			
 			//Add debug objects for each colision vector
 			Entity debug_obj = entity_manager->createLocal();
@@ -119,7 +103,7 @@ void World::createObjectEntities(const ObjectData& object,
 	entity_manager->assign<TransformComponent>(
 		object_entity.id(),
 		object.x,
-		-object.y,
+	   -object.y,
 		object.z,
 		getRotationMatrixFromRotIndices(object.alpha,
 										object.beta,
@@ -131,8 +115,7 @@ void World::createObjectEntities(const ObjectData& object,
 		//check if actor is created (create it otherwise)?
 		Actor::Ptr actor_data = ActorLoader::load(object.body);		
 		entity_manager->assign<MeshComponent>(object_entity.id(), actor_data->getMesh());
-	}
-	
+	}	
 }
 
 void World::render(float dt) {

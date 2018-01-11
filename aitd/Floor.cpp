@@ -40,15 +40,10 @@ void Floor::load(int floor_idx) {
 	int num_rooms = getNumRooms(floor_data, floor_data_size);
 
 	//TODO: add spdlog
-	std::cout << "num rooms:" << num_rooms << std::endl;
-
 	// Load rooms
 	for (int i = 0; i < num_rooms; i++) {
 		char* room_data = (floor_data + READ_LE_UINT32(floor_data + i * 4));
 		Room::Ptr room = Room::Ptr(new Room());
-
-		std::cout << "Loading room " << i << std::endl;
-		
 		room->load(room_data);
 		room_vector.push_back(room);
 	}
@@ -60,9 +55,6 @@ void Floor::load(int floor_idx) {
 	int num_cameras = getNumCameras(camera_data);
 	for (int i = 0; i < num_cameras; i++) {
 		uint32 offset = READ_LE_UINT32(camera_data + i * 4);
-
-		std::cout << "camera:" << i << std::endl;
-		std::cout << "offset:" << offset << std::endl;
 		if (offset < camera_data_size) {
 			char *current_camera_data = camera_data + offset;
 			RoomCamera::Ptr camera = RoomCamera::Ptr(new RoomCamera(current_camera_data));

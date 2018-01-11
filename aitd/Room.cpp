@@ -8,8 +8,8 @@ BBox::BBox(const char* data) {
 void BBox::load(const char* data) {
 	p1(0) = (int16)READ_LE_UINT16(data + 0x00);
 	p2(0) = (int16)READ_LE_UINT16(data + 0x02);
-	p1(1) = -(int16)READ_LE_UINT16(data + 0x04);
-	p2(1) = -(int16)READ_LE_UINT16(data + 0x06);
+	p1(1) = (int16)READ_LE_UINT16(data + 0x04);
+	p2(1) = (int16)READ_LE_UINT16(data + 0x06);
 	p1(2) = (int16)READ_LE_UINT16(data + 0x08);
 	p2(2) = (int16)READ_LE_UINT16(data + 0x0A);
 
@@ -22,12 +22,16 @@ void BBox::load(const char* data) {
 
 // TODO: All these eventually become Loaders and all the logic stays into components
 void Room::load(const char *data) {
+
+	int16 wx = (int16)READ_LE_UINT16(data + 4);
+	int16 wy = (int16)READ_LE_UINT16(data + 6);
+	int16 wz = (int16)READ_LE_UINT16(data + 8);
 	
 	world_pos(0) = static_cast<float>((int16)READ_LE_UINT16(data + 4));
 	world_pos(1) = static_cast<float>((int16)READ_LE_UINT16(data + 6));
-	world_pos(2) = static_cast<float>(-(int16)READ_LE_UINT16(data + 8));
+	world_pos(2) = static_cast<float>((int16)READ_LE_UINT16(data + 8));
 
-	std::cout << "pos:" << world_pos.transpose() << std::endl;
+//	std::cout << "pos:" << world_pos.transpose() << std::endl;
 	
 	int num_cameras = READ_LE_UINT16(data + 0xA);
 
@@ -48,6 +52,22 @@ void Room::load(const char *data) {
 		// Box transform expressed wrt parent
 		for(uint32 j = 0; j < num_hard_cols; j++) {
 			BBox::Ptr bbox = BBox::Ptr(new BBox(hard_col_data));
+
+			// See note in World.cpp about the scene tree
+			Vector3i p1 = bbox->p1;
+			Vector3i p2 = bbox->p2;
+
+			p1(0) = p1(0) + wx;
+			p1(1) = -(p1(1) + wy);
+			p1(2) = p1(2) + wz;
+			p2(0) = p2(0) + wx;
+			p2(1) = -(p2(1) + wy);
+			p2(2) = p2(2) + wz;
+
+			
+			bbox->p1 = p1;
+			bbox->p2 = p2;
+			
 			colision_vector.push_back(bbox);
 			hard_col_data += 0x10; //16
 		}

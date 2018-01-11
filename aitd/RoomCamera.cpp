@@ -65,8 +65,8 @@ void RoomCamera::load(const char *data) {
 	uint16 gamma = READ_LE_UINT16(data + 0x04);
 	
 	int16 x = READ_LE_UINT16(data + 0x06); // (x - world_x) * 10
-	int16 y = -READ_LE_UINT16(data + 0x08); // (world_y - y) * 10
-	int16 z = -READ_LE_UINT16(data + 0x0A); // (world_z - z) * 10
+	int16 y = -READ_LE_UINT16(data + 0x08); // -(world_y - y) * 10
+	int16 z = READ_LE_UINT16(data + 0x0A); //(world_z - z) * 10
 	
 	position = Vec3f(float(x), float(y), float(z))*10;
 	
@@ -140,7 +140,7 @@ void RoomCamera::load(const char *data) {
 	Eigen::Matrix3f rotX = Geometry::getXRotMat(sinx, cosx);
 	Eigen::Matrix3f rotY = Geometry::getYRotMat(siny, -cosy);
 	Eigen::Matrix3f rotZ = Geometry::getZRotMat(sinz, cosz);
-
+	
 	// Eigen::Matrix3f rotX = Geometry::getXRotMat(cos(angle_x), sin(angle_x));
 	// Eigen::Matrix3f rotY = Geometry::getYRotMat(cos(angle_y), sin(angle_y));
 	// Eigen::Matrix3f rotZ = Geometry::getZRotMat(cos(angle_z), sin(angle_z));

@@ -7,7 +7,7 @@ using namespace Components;
 
 void World::load() {
 
-	loadFloor(0);
+	loadFloor(1);
 }
 
 //TODO: shall we preload the floors??
@@ -20,17 +20,31 @@ void World::loadFloor(int floor_id) {
 	floor_data->load(floor_id);
 
 	current_floor_id = floor_id;
-	current_room_id = 0;
+	current_room_id = 1;
+	int camera_index = 6;
 
 	//create entities in this floor
 	//Cameras ==================================================================
 
-	std::vector<int> camera_indices = floor_data->getRoom(current_room_id)->camera_indices;	
-	RoomCamera::Ptr room_cam = floor_data->getCamera(camera_indices[3]);
+	std::vector<int> camera_indices = floor_data->getRoom(current_room_id)->camera_indices;
 
-	//createCameraEntity()
+	assert(camera_index < camera_indices.size());
+	RoomCamera::Ptr room_cam = floor_data->getCamera(camera_indices[camera_index]);
+
+	//TODO: refactor in createCameraEntity()
+	//NOTE: The camera coordinates are expressed wrt the room (We can consider that is "attached" to
+	//the room node. We temporarily alter the location but in practice we should have a proper
+	// scene-tree)
+	Vec3f room_world = floor_data->getRoom(current_room_id)->world_pos.cast<float>();
+	Vec3f cam_pos = room_cam->transform.col(3).head(3)/10;
+	cam_pos(0) = (cam_pos(0) - room_world(0));
+	cam_pos(1) = (room_world(1) - cam_pos(1));
+	cam_pos(2) = (room_world(2) - cam_pos(2));
+ 	room_cam->transform.col(3).head(3) = cam_pos * 10;
+	////////////////////////////////////////////////////////////////////////////////////////////////
 	
 	Entity camera = entity_manager->createLocal();
+	
 	// view matrix is the inverse of the camera trasnformation matrix;
 	entity_manager->assign<CameraComponent>(camera.id(), room_cam->projection,
 											room_cam->transform.inverse()); 

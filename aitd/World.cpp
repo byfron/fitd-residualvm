@@ -77,28 +77,15 @@ void World::loadFloor(int floor_id) {
 
 	// DEBUG STUFF =============================================================
 	// Display debug meshes with collison stuff
-	// Try to get them for the whole floor
-//	for (auto& room : floor_data->getRoomVector())
-
-	//NOTE: The rooms seem to form a "graph" or "tree" where the world positions
-	// are displacements wrt the parent room
-	
+	// Collision meshes are stored as world coordinates for each floor
 	Room::Ptr room = floor_data->getRoom(current_room_id);
 	{
 		for (auto& box : room->colision_vector) {
 
 			Vector3i p1 = box->p1;
 			Vector3i p2 = box->p2;
-			// p1(0) = p1(0) + room->world_pos(0);
-			// p1(1) = -(p1(1) + room->world_pos(1));
-			// p1(2) = p1(2) + room->world_pos(2);
-			// p2(0) = p2(0) + room->world_pos(0);
-			// p2(1) = -(p2(1) + room->world_pos(1));
-			// p2(2) = p2(2) + room->world_pos(2);
-
 			p1(1) = -p1(1);
 			p2(1) = -p2(1);
-				
 			
 			//Add debug objects for each colision vector
 			Entity debug_obj = entity_manager->createLocal();
@@ -131,9 +118,9 @@ void World::createObjectEntities(const ObjectData& object,
 	Entity object_entity = entity_manager->createLocal();
 	entity_manager->assign<TransformComponent>(
 		object_entity.id(),
-		(object.x - room_world(0)),
-		-(object.y + room_world(1)),
-		(object.z + room_world(2)),
+		(object.x),// - room_world(0)),
+		-(object.y),// + room_world(1)),
+		(object.z),// + room_world(2)),
 		getRotationMatrixFromRotIndices(object.alpha,
 										object.beta,
 										object.gamma)

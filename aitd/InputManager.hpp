@@ -13,6 +13,12 @@
 #define KEY_MOVE_UP        UINT8_C(0x10)
 #define KEY_MOVE_DOWN      UINT8_C(0x20)
 
+#define ACTOR_KEY_LEFT      UINT8_C(0x01)
+#define ACTOR_KEY_RIGHT     UINT8_C(0x02)
+#define ACTOR_KEY_UP        UINT8_C(0x04)
+#define ACTOR_KEY_DOWN      UINT8_C(0x08)
+
+
 struct Mouse
 {
 	Mouse()

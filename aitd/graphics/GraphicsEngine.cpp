@@ -1,6 +1,7 @@
 #include "GraphicsEngine.hpp"
 #include "ResourceManager.hpp"
 #include "DebugManager.hpp"
+#include "GameSystems.hpp"
 #include <iostream>
 #include <common/common.h>
 	
@@ -165,10 +166,9 @@ void GraphicsEngine::run() {
 	
 	DebugManager::update(deltaTime);
 	frame(deltaTime);
-
+	
 	bgfx::frame();
 
-	m_camera.update(deltaTime);
 }
 
 void GraphicsEngine::stop() {

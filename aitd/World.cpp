@@ -7,7 +7,7 @@ using namespace Components;
 
 void World::load() {
 
-	loadFloor(1);
+	loadFloor(0);
 }
 
 //TODO: shall we preload the floors??
@@ -20,8 +20,8 @@ void World::loadFloor(int floor_id) {
 	floor_data->load(floor_id);
 
 	current_floor_id = floor_id;
-	current_room_id = 1;
-	int camera_index = 1;
+	current_room_id = 0;
+	int camera_index = 2;
 
 	//create entities in this floor
 	//Cameras ==================================================================

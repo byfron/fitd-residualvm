@@ -24,8 +24,8 @@ struct actorFlags {
 };
 
 struct ObjectData {
-	int16 ownerIdx;
-	int16 body;
+	int16 ownerIdx; 
+	int16 body;    // corresponding entry in actor (mesh) array 
 	union {
 		int16 flags;
 		actorFlags bitField;
@@ -50,7 +50,7 @@ struct ObjectData {
 	int16 frame;
 	int16 animType;
 	int16 animInfo;
-	int16 trackMode;
+	int16 trackMode; //1: manual, 2: follow, 3: scripted
 	int16 trackNumber;
 	int16 positionInTrack;
 

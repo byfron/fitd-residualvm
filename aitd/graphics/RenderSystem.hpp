@@ -20,7 +20,7 @@ public:
 
 		//m_camera.mtxLookAt(view);
 		bgfx::setViewTransform(RENDER_PASS_GEOMETRY, view, proj);
-		m_camera.update(delta);
+//		m_camera.update(delta);
 	}
 
 	float view[16];

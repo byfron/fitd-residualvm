@@ -183,7 +183,7 @@ float Camera::getPitch() {
 void Camera::update(float _dt)
 {
 
-	entry::GamepadHandle handle = { 0 };
+/*	entry::GamepadHandle handle = { 0 };
 	m_horizontalAngle += m_gamepadSpeed * inputGetGamepadAxis(handle, entry::GamepadAxis::RightX)/32768.0f;
 	m_verticalAngle   -= m_gamepadSpeed * inputGetGamepadAxis(handle, entry::GamepadAxis::RightY)/32768.0f;
 	const int32_t gpx = inputGetGamepadAxis(handle, entry::GamepadAxis::LeftX);
@@ -192,7 +192,7 @@ void Camera::update(float _dt)
 	InputManager::m_keys |= gpx >  16834 ? CAMERA_KEY_RIGHT    : 0;
 	InputManager::m_keys |= gpy < -16834 ? CAMERA_KEY_UP  : 0;
 	InputManager::m_keys |= gpy >  16834 ? CAMERA_KEY_DOWN : 0;
-
+*/
 
 	float distance = (m_eye - m_at).norm();
 	
@@ -215,7 +215,6 @@ void Camera::update(float _dt)
 
 	if (InputManager::m_keys & CAMERA_KEY_ROTATE_RIGHT)
 	{
-
 		m_dir_angle = -m_rotateSpeed * _dt;
 		Eigen::Vector3f axis = Eigen::Vector3f(0.0, 1.0, 0.0);
 

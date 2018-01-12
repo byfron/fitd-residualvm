@@ -21,7 +21,7 @@ public:
 		return T;
 	}
 
-protected:
+//protected: TODO
 
 	Eigen::Matrix3f rotation = Eigen::Matrix3f::Identity();
 	Eigen::Vector3f translation = Eigen::Vector3f::Zero();

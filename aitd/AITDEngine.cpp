@@ -7,6 +7,7 @@
 #include <graphics/RenderSystem.hpp>
 #include <utils/DataParsing.hpp>
 #include <main.h>
+#include "Message.hpp"
 
 AITDEngine::AITDEngine() {	
 }
@@ -14,7 +15,6 @@ AITDEngine::AITDEngine() {
 AITDEngine::~AITDEngine() {
 	ActorLoader::cleanBuffers();
 }
-
 
 void AITDEngine::init() {
 
@@ -25,8 +25,15 @@ void AITDEngine::init() {
 	loadGameData();
 
 	// Add systems
-	add<UpdateSystem>(std::make_shared<UpdateSystem>(world));
+	std::shared_ptr<UpdateSystem> update_sys = std::make_shared<UpdateSystem>(world);
+
+	// Suscribe for events
+	event_manager->subscribe<Msg::Move>(*update_sys);
+	
+	add<InputSystem>(std::make_shared<InputSystem>());
 	add<RenderSystem>(std::make_shared<RenderSystem>(world));
+	add<UpdateSystem>(update_sys);
+
 }
 
 void AITDEngine::createSubsystems() {

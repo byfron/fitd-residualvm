@@ -1,6 +1,7 @@
 #include "World.hpp"
 #include "Components.hpp"
 #include "ActorLoader.hpp"
+#include "AITDEngine.hpp"
 #include <graphics/RenderSystem.hpp>
 
 using namespace Components;
@@ -21,7 +22,7 @@ void World::loadFloor(int floor_id) {
 
 	current_floor_id = floor_id;
 	current_room_id = 0;
-	int camera_index = 2;
+	int camera_index = 0;
 
 	//create entities in this floor
 	//Cameras ==================================================================
@@ -52,9 +53,9 @@ void World::loadFloor(int floor_id) {
 	//Objects ==================================================================	
 	for (auto object_it : ObjectManager::object_map) {
 		if (object_it.second.stage == floor_id) {
-			if (object_it.second.room == current_room_id)
+			if (object_it.second.room == current_room_id) //TODO: all rooms seen by the camera!!
 			{
-				createObjectEntities(object_it.second, room_world);
+				createObjectEntities(object_it.second);
 			}
 		}
 	}
@@ -95,11 +96,24 @@ void World::loadFloor(int floor_id) {
 	}
 }
 
-void World::createObjectEntities(const ObjectData& object,
-								 /*TODO: remove this and make a proper tree*/const Vec3f& room_world) {
+void World::createObjectEntities(const ObjectData& object) {
 
 	//Create all entities at this floor
 	Entity object_entity = entity_manager->createLocal();
+
+	// if track mode is user input, this is the player entity
+	// TODO: we should find a better way to figure this out?
+	if (object.trackMode == 1) {
+		entity_manager->assign<UserInputComponent>(object_entity.id());
+	}
+
+	// TODO give objects a debug name that makes it easier to check
+	// to figure out properties
+	
+	// can move?
+	entity_manager->assign<MoveComponent>(object_entity.id(), 1000.0, 2.0);
+
+	// is displayed in screen?
 	entity_manager->assign<TransformComponent>(
 		object_entity.id(),
 		object.x,
@@ -114,7 +128,11 @@ void World::createObjectEntities(const ObjectData& object,
 	
 		//check if actor is created (create it otherwise)?
 		Actor::Ptr actor_data = ActorLoader::load(object.body);		
-		entity_manager->assign<MeshComponent>(object_entity.id(), actor_data->getMesh());
+		entity_manager->assign<MeshComponent>(object_entity.id(), actor_data);
+
+		// is animated? TODO: We should include all animations (deep copies!)
+		Animation::Ptr anim_data = ActorLoader::loadAnimation(actor_data->skeleton, 11);
+		entity_manager->assign<Components::AnimationComponent>(object_entity.id(), anim_data);
 	}	
 }
 

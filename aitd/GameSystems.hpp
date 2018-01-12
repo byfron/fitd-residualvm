@@ -12,15 +12,12 @@ public:
 	void update(EntityManager& em, EventManager &evm, float delta);
 };
 
-class UpdateSystem : public System<UpdateSystem>,
-					 public Receiver<UpdateSystem> {
+class UpdateSystem : public System<UpdateSystem> {
 public:	
 	UpdateSystem(World::Ptr w) : world(w) {}
 	void update(EntityManager& em, EventManager &evm, float delta);
-	void receive(const Msg::Move &move);
 	
 	protected:
 
-	std::queue<Msg::Message::Ptr> message_queue;
 	World::Ptr world;
 };

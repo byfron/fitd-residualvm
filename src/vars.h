@@ -106,11 +106,11 @@ struct actorStruct { // used to read data from file too
 	int16 ANIM;
 	int16 field_40;
 	int16 field_42;
-	int16 field_44;
+	int16 field_44; //index of animation
 	int16 field_46;
 	int16 field_48;
 	int16 FRAME;
-	int16 field_4C;
+	int16 field_4C; //num frames in animation
 	int16 END_FRAME;
 	int16 END_ANIM;
 	int16 trackMode;

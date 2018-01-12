@@ -2,6 +2,7 @@
 
 namespace Geometry {
 
+
 Eigen::Matrix3f getXRotMat(float c, float s) {
 	Eigen::Matrix3f rot = Eigen::Matrix3f::Identity();
 	rot(1,1) = c; // 1  0  0  // 1  0  0  // 1  0  0  

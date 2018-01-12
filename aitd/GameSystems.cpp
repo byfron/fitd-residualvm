@@ -1,53 +1,52 @@
 #include "GameSystems.hpp"
 #include "Components.hpp"
+#include "AITDEngine.hpp"
 
 using namespace Components;
 
 void InputSystem::update(EntityManager & em, EventManager &evm, float delta) {
 
-	if (InputManager::m_keys & ACTOR_KEY_LEFT) {
-		evm.emit<Msg::Move>(AITDEngine::player_entity, Vec3f(1.0, 0.0, 0.0));
-		InputManager::setKeyState(ACTOR_KEY_LEFT, false);
-	}
+	em.each<MoveComponent, UserInputComponent>(
+		[delta](Entity entity,
+				MoveComponent& mc,
+	 			UserInputComponent& tc) {
+
+			mc.reset();
+			
+			if (InputManager::m_keys & ACTOR_KEY_LEFT) {
+				float angle = mc.rotate_speed * delta;
+				mc.rotation = Eigen::AngleAxisf(-angle, Eigen::Vector3f::UnitY());
+				mc.move_vector = mc.rotation * mc.move_vector;				
+				InputManager::setKeyState(ACTOR_KEY_LEFT, false);
+			}
 		
-	if (InputManager::m_keys & ACTOR_KEY_RIGHT) {
-		InputManager::setKeyState(ACTOR_KEY_RIGHT, false);
-	}
+			if (InputManager::m_keys & ACTOR_KEY_RIGHT) {
+				float angle = mc.rotate_speed * delta;
+				mc.rotation = Eigen::AngleAxisf(angle, Eigen::Vector3f::UnitY());
+				mc.move_vector = mc.rotation * mc.move_vector;				
+				InputManager::setKeyState(ACTOR_KEY_RIGHT, false);
+			}
 	
-	if (InputManager::m_keys & ACTOR_KEY_UP) {
-		InputManager::setKeyState(ACTOR_KEY_UP, false);
-	}
+			if (InputManager::m_keys & ACTOR_KEY_UP) {
+				mc.translation = mc.move_vector * mc.move_speed * delta;
+				InputManager::setKeyState(ACTOR_KEY_UP, false);
+			}
 	
-	if (InputManager::m_keys & ACTOR_KEY_DOWN) {
-		InputManager::setKeyState(ACTOR_KEY_DOWN, false);
-	}	
-}
-
-void UpdateSystem::receive(const Msg::Move &move) {
-
-	//queue move components
-	message_queue.push(Msg::Message::Ptr(new Msg::Move(move)));
+			if (InputManager::m_keys & ACTOR_KEY_DOWN) {
+				mc.translation = -mc.move_vector * mc.move_speed * delta;
+				InputManager::setKeyState(ACTOR_KEY_DOWN, false);
+			}	
+		});
 }
 
 void UpdateSystem::update(EntityManager & em, EventManager &evm, float delta ) {
-
-	while(!message_queue.empty()) {
-
-		std::shared_ptr<Msg::Move> msg = std::static_pointer_cast<Msg::Move>(message_queue.front());
-		switch(msg->type) {
-		case Msg::MOVE:
-			TransformComponent *tc = em.getComponentPtr<TransformComponent>(msg->entity);
-			tc->translation += msg->moveVector * delta;
-			break;
-		}
-
-		message_queue.pop();
-	}
 	
-	// em.each<TransformComponent>(
-	// 	[delta](Entity entity,
-	// 			TransformComponent &tc) {
-	// 		//	tc.update(delta);
-	// 	});		
-	
+	// Update model transform with the move component
+	em.each<MoveComponent, TransformComponent>(
+		[delta](Entity entity,
+				MoveComponent& mc,
+	 			TransformComponent& tc) {
+			tc.translation += mc.translation;
+			tc.rotation *= mc.rotation;
+	 	});			
 }

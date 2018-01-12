@@ -9,6 +9,8 @@
 #include <main.h>
 #include "Message.hpp"
 
+Entity::Id AITDEngine::player_entity;
+
 AITDEngine::AITDEngine() {	
 }
 
@@ -28,8 +30,9 @@ void AITDEngine::init() {
 	std::shared_ptr<UpdateSystem> update_sys = std::make_shared<UpdateSystem>(world);
 
 	// Suscribe for events
-	event_manager->subscribe<Msg::Move>(*update_sys);
-	
+//	event_manager->subscribe<Msg::Move>(*update_sys);
+
+	// Order matters!!
 	add<InputSystem>(std::make_shared<InputSystem>());
 	add<RenderSystem>(std::make_shared<RenderSystem>(world));
 	add<UpdateSystem>(update_sys);

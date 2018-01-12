@@ -24,6 +24,8 @@ public:
 	void run_frame(float dt) {
 		system_manager->update_all(dt);
 	}
+
+	static Entity::Id player_entity;
 	
 protected:
 

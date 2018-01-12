@@ -11,6 +11,5 @@ public:
 	
 protected:
 	
-	Actor::Ptr actor_data;
 	EntityManager::Ptr entity_manager;
 };

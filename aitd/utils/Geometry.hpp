@@ -19,7 +19,7 @@ namespace Geometry {
 Eigen::Matrix3f getXRotMat(float, float);
 Eigen::Matrix3f getYRotMat(float, float);
 Eigen::Matrix3f getZRotMat(float, float);
-	
+
 class DebugMesh {
 public:
 	typedef std::shared_ptr<DebugMesh> Ptr;
@@ -95,40 +95,6 @@ public:
 protected:
 	
 	Sphere sphere;
-};
-
-	
-class Primitive {
-public:
-	virtual ~Primitive() = default;
-	
-	typedef std::shared_ptr<Primitive> Ptr;
-	Primitive(int c, int t) : color(c), type(t) {}
-	int type = 0;
-	int color = 0;
-};
-
-
-// The primivitves store pointers to the pool of vertices
-// so that it's easier to deal with animations
-class Line : public Primitive {
-public:
-	Line(const Vector3f* a, const Vector3f* b, int c) :
-		Primitive(c, PRIM_TYPE_LINE),
-		point_a(a),
-		point_b(b) {}
-	const Vector3f* point_a;
-	const Vector3f* point_b;
-};
-
-class Polygon : public Primitive {
-public:
-	Polygon(const std::vector<const Vector3f*>& p, int t, int c) :
-		Primitive(c, PRIM_TYPE_POLYGON),
-		poly_type(t),
-		points(p) {}
-	std::vector<const Vector3f*> points;
-	int poly_type = 0;
 };
 
 class Mesh {

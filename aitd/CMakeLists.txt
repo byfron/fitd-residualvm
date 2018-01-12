@@ -112,6 +112,7 @@ target_link_libraries(viewer_aitd
   fitd  
   AITDCore
   AITDViewerCore
+  GraphicsCore
   ${BGFX_LIBRARIES}
   ${SDL_LIBRARY}
   rt

@@ -168,7 +168,6 @@ void GraphicsEngine::run() {
 	frame(deltaTime);
 	
 	bgfx::frame();
-
 }
 
 void GraphicsEngine::stop() {

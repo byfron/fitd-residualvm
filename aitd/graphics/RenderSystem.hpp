@@ -2,6 +2,7 @@
 
 #include "GraphicsEngine.hpp"
 #include <World.hpp>
+#include <Actor.hpp>
 #include <entities/Entity.hpp>
 #include <entities/System.hpp>
 #include <utils/Geometry.hpp>
@@ -78,16 +79,46 @@ class MeshComponent {
 
 public:
 
-	MeshComponent(Geometry::Mesh::Ptr m) : mesh(m) {}
-	
+	MeshComponent(Actor::Ptr actor) {
+		offsets = actor->offsets;
+		vertices = actor->vertices;
+		primitives = actor->primitives;
+		skeleton = actor->skeleton->deepCopy();
+		generateMesh();		
+	}
+
+	//TODO: put this in the system to have components contain no logic at all
 	void render(float delta, const float* mtx) {
 		bgfx::setTransform(mtx);
 		mesh->submit();
 	}
+
+	void generateMesh();
+	void updateVertices();
+	
+	void updateSkeleton(Skeleton::Ptr skel) {
+		skeleton = skel;
+		updateVertices();
+	}
 	
 protected:
 	
+	//mesh for rendering
 	Geometry::Mesh::Ptr mesh;
+
+	//offsets from bone locations. Fixed since loading time.
+	std::vector<Eigen::Vector3f> offsets; 
+
+	//includes vertices and bones. Is modified when the mesh animates
+	std::vector<Eigen::Vector3f> vertices; 
+	std::vector<uint16_t> indices;
+	
+	//vector of polygons pointing to the vertex buffer
+	std::vector<Primitive::Ptr> primitives;
+
+	//skeleton that defines the mesh deformation
+	Skeleton::Ptr skeleton;
+
 };
 
 class RenderSystem : public System<RenderSystem> {

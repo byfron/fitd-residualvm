@@ -46,7 +46,7 @@ struct ObjectData {
 	int16 lifeMode;
 	int16 life;
 	int16 field_24; //what?
-	int16 anim;
+	int16 anim; //index in the anim buffer
 	int16 frame;
 	int16 animType;
 	int16 animInfo;

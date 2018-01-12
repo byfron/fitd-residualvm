@@ -28,9 +28,9 @@ Eigen::Matrix3f getRotationMatrixFromRotIndices(uint16 rotx, uint16 roty, uint16
 	if (rotz >= 0x3FF) angle_z = 0;
 
 	//NOTE: I had to switch here the X=-Z axis. Cameras dont seem to follow same rotation pattern.	
-	Eigen::Matrix3f rotX = Eigen::Matrix3f(AngleAxisf(angle_x, Vector3f::UnitX()));
-	Eigen::Matrix3f rotY = Eigen::Matrix3f(AngleAxisf(angle_y, -Vector3f::UnitY()));
-	Eigen::Matrix3f rotZ = Eigen::Matrix3f(AngleAxisf(angle_z, Vector3f::UnitZ()));
+	Eigen::Matrix3f rotX = Eigen::Matrix3f(AngleAxisf(angle_x, Vector3f::UnitZ()));
+	Eigen::Matrix3f rotY = Eigen::Matrix3f(AngleAxisf(angle_y, Vector3f::UnitY()));
+	Eigen::Matrix3f rotZ = Eigen::Matrix3f(AngleAxisf(angle_z, -Vector3f::UnitX()));
 
 	if (!roty) {
 		rotY.col(0) = Vector3f::UnitX();
@@ -52,41 +52,54 @@ Eigen::Matrix3f getRotationMatrixFromRotIndices(uint16 rotx, uint16 roty, uint16
 }
 
 
-void ActorLoader::loadAnimation(Actor::Ptr actor, int anim_idx, int frame) {
+Animation::Ptr ActorLoader::loadAnimation(Skeleton::Ptr skeleton, int anim_idx) {
 
-	char *anim_buffer = ActorLoader::list_anim->get(anim_idx);
-
-	// TODO: re-factor this so that we can fetch specific places of a buffer (using a table maybe)
-	int16 num_bones_in_anim = *(int16 *)(anim_buffer + 2);
-	anim_buffer += 4;
-	anim_buffer += ((num_bones_in_anim + 1) * 8) * frame; // seek keyframe
-
-	uint16 keyframeLength = *(uint16 *)anim_buffer; // keyframe length
-
-	anim_buffer += 4;
-
-	for (auto bone_it : actor->getSkeleton()->bone_map) {
-
-		uint16 type = *(uint16 *)anim_buffer;
-		anim_buffer += 2;
-		
-		//get new rotation values
-		uint16 new_rotx = *(uint16 *)anim_buffer;
-		anim_buffer += 2;
-		
-		uint16 new_roty = *(uint16 *)anim_buffer;
-		anim_buffer += 2;
-
-		uint16 new_rotz = *(uint16 *)anim_buffer;
-		anim_buffer += 2;
-
-		bone_it.second->local_rotation = getRotationMatrixFromRotIndices(new_rotx, new_roty, new_rotz);
-	}	
-
-
-	//TODO: don't update here but store the bones in a "Keyframe vector"
-	actor->updateVertices();
+	Animation::Ptr anim = Animation::Ptr(new Animation());
 	
+	char* start_of_buffer = ActorLoader::list_anim->get(anim_idx);
+	char* anim_buffer  = start_of_buffer;
+	int16 num_frames_in_anim = *(int16 *)(anim_buffer);
+
+	for (int i = 0; i < num_frames_in_anim; i++)
+	{
+
+		char* anim_buffer  = start_of_buffer;
+		// TODO: re-factor this so that we can fetch specific places of a buffer (using a table maybe)
+		int16 num_bones_in_anim = *(int16 *)(anim_buffer + 2);
+		anim_buffer += 4;
+		anim_buffer += ((num_bones_in_anim + 1) * 8) * i; // seek keyframe
+
+		// keyframe length (time keyframe should last until we change)
+		uint16 keyframeLength = *(uint16 *)anim_buffer;
+		
+		anim_buffer += 4;
+	
+		KeyFrame::Ptr kframe = KeyFrame::Ptr(new KeyFrame());
+		kframe->length = keyframeLength;
+		kframe->skeleton = skeleton->deepCopy();
+		
+		for (auto bone_it : kframe->skeleton->bone_map) {
+
+			uint16 type = *(uint16 *)anim_buffer;
+			anim_buffer += 2;
+		
+			//get new rotation values
+			uint16 new_rotx = *(uint16 *)anim_buffer;
+			anim_buffer += 2;
+		
+			uint16 new_roty = *(uint16 *)anim_buffer;
+			anim_buffer += 2;
+
+			uint16 new_rotz = *(uint16 *)anim_buffer;
+			anim_buffer += 2;
+
+			bone_it.second->local_rotation = getRotationMatrixFromRotIndices(new_rotx, new_roty, new_rotz);
+		}
+
+		anim->keyframes.push_back(kframe);
+	}
+
+	return anim;	
 }
 
 Actor::Ptr ActorLoader::load(int actor_idx) {
@@ -205,9 +218,7 @@ Actor::Ptr ActorLoader::load(int actor_idx) {
 			Bone::Ptr bone = bone_map[bone_index];
 
 			// Root bone has parent -1
-			if (parent_index > 0) {
-				bone->parent = bone_map[parent_index];
-			}			
+			bone->parent_index = parent_index;
 			bone->local_rot = Eigen::Quaternionf::Identity();
 			bone->local_pos_index = vertex_index;
 			bone->start_vertex_index = start_index;
@@ -250,10 +261,10 @@ Actor::Ptr ActorLoader::load(int actor_idx) {
 				
 			idx += 4;
 
-			Geometry::Primitive::Ptr primitive_ptr =
-				Geometry::Primitive::Ptr(new Geometry::Line(&actor->vertices[point_idxA],
-															&actor->vertices[point_idxB],
-															color_index));
+			Primitive::Ptr primitive_ptr =
+				Primitive::Ptr(new Line(point_idxA,
+										point_idxB,
+										color_index));
 			actor->primitives.push_back(primitive_ptr);					
 			break;
 		}
@@ -264,17 +275,17 @@ Actor::Ptr ActorLoader::load(int actor_idx) {
 			uint8 color_index = *(ptr + idx + 2);
 			idx += 3;
 
-			std::vector<const Vector3f*> poly_points;
+			std::vector<int16> poly_points;
 			for (int m = 0; m < num_points_poly; m++) {					
 				int point_index = *(int16 *)(ptr + idx) / 6;
 				idx += 2;					
-				poly_points.push_back(&actor->vertices[point_index]);
+				poly_points.push_back(point_index);
 			}
 
-			Geometry::Primitive::Ptr primitive_ptr =
-				Geometry::Primitive::Ptr(new Geometry::Polygon(poly_points,
-															   poly_type,
-															   color_index));
+			Primitive::Ptr primitive_ptr =
+				Primitive::Ptr(new Polygon(poly_points,
+										   poly_type,
+										   color_index));
 			actor->primitives.push_back(primitive_ptr);				
 				
 			break;
@@ -306,12 +317,7 @@ Actor::Ptr ActorLoader::load(int actor_idx) {
 		default:
 			assert(false); //throw except.
 		}				
-	}
-	
- 	actor->generateMesh();
-
-	//TODO:  We should store all animations somewhere and then perform interpolations
-	ActorLoader::loadAnimation(actor, 3, 2);
+	}	
 
 	return actor;	
 }

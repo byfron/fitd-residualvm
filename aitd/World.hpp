@@ -14,7 +14,7 @@ public:
 
 	void loadFloor(int);
 
-	void createObjectEntities(const ObjectData& object, const Vec3f&);
+	void createObjectEntities(const ObjectData& object);
 	
 protected:
 

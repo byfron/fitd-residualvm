@@ -9,7 +9,8 @@ Eigen::Matrix3f getRotationMatrixFromRotIndices(uint16 rotx, uint16 roty, uint16
 class ActorLoader {
 public:
 	static Actor::Ptr load(int idx);
-	static void loadAnimation(Actor::Ptr actor, int anim_idx, int frame);
+	static Animation::Ptr loadAnimation(Skeleton::Ptr skeleton, int anim_idx);
+	
 	static void cleanBuffers() { if (list_body) delete list_body; }
 	static Fitd::hqrEntryStruct *list_body;
 	static Fitd::hqrEntryStruct *list_anim;	

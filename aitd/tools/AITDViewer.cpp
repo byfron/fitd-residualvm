@@ -1,4 +1,5 @@
 #include "AITDViewer.hpp"
+#include "Components.hpp"
 #include <utils/DataParsing.hpp>
 #include <utils/Color.hpp>
 #include <graphics/RenderSystem.hpp>
@@ -7,6 +8,8 @@
 void display_vertices_of_bone(int bone_id, Actor::Ptr actor_data, EntityManager::Ptr entity_manager) {
 
 	Bone::Ptr bone = actor_data->getSkeleton()->bone_map[bone_id];
+	if (!bone) return;
+	
 	int start_v = bone->start_vertex_index;
 	
 	for (int i = 0; i < bone->num_vertices_affected; i++) {
@@ -33,25 +36,12 @@ void AITDViewer::init() {
 	//create actor entity
 //	for (int actor_idx = 0; actor_idx < 60; actor_idx++)
 
-	actor_data = ActorLoader::load(12);
+	Actor::Ptr actor_data = ActorLoader::load(12);
+	Animation::Ptr anim_data = ActorLoader::loadAnimation(actor_data->skeleton, 5);
 	
 	Entity actor = entity_manager->createLocal();
-	entity_manager->assign<MeshComponent>(actor.id(), actor_data->getMesh());
-
-	//mark with a sphere the locations of bones
-	for (auto bone_it : actor_data->getSkeleton()->bone_map) {
-		Entity bone = entity_manager->createLocal();		
-		entity_manager->assign<DebugComponent>(
-			bone.id(),
-			Geometry::DebugMesh::Ptr(
-				new Geometry::DebugSphere(
-					actor_data->getVertices()[bone_it.second->local_pos_index], 10
-					)));
-	}
-
-
-	// display all vertices of bone id
-	display_vertices_of_bone(4, actor_data, entity_manager);
+	entity_manager->assign<MeshComponent>(actor.id(), actor_data);
+	entity_manager->assign<Components::AnimationComponent>(actor.id(), anim_data);
 }
 
 void AITDViewer::run_frame(float dt) {
@@ -64,11 +54,26 @@ void AITDViewer::run_frame(float dt) {
 	
 	bgfx::setViewTransform(RENDER_PASS_GEOMETRY, view, proj);
 
-	Eigen::Matrix4f t = Eigen::Matrix4f::Identity();
+	static Eigen::Matrix4f t = Eigen::Matrix4f::Identity();
+
+	////// TODO: this is duplicated in RenderSystem ....
+	
+	// Update model mesh with current animation
+	entity_manager->each<MeshComponent, Components::AnimationComponent>(
+		[dt](Entity entity,
+			 MeshComponent &mc,
+			 Components::AnimationComponent &ac) {
+			
+			// perform interpolation			
+			Skeleton::Ptr skel = ac.getInterpolatedSkeleton();
+			
+			// update mesh bones
+			mc.updateSkeleton(skel);
+		});
 	
 	// Render all meshes
 	entity_manager->each<MeshComponent>(
-		[dt, t](Entity entity,
+		[dt](Entity entity,
 				MeshComponent &mc) {
 			mc.render(dt, t.data());
 		});
@@ -79,4 +84,7 @@ void AITDViewer::run_frame(float dt) {
 				DebugComponent &dc) {
 			dc.render(dt);
 		});
+
+	// handy to rotate objects around
+	GraphicsEngine::camera().update(dt);
 }

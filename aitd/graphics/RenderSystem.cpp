@@ -99,7 +99,7 @@ void MeshComponent::updateVertices() {
 	for (auto& bone_it : skeleton->bone_map) {
 		Bone::Ptr bone = bone_it.second;
 		int parent_index = bone->parent_index;
-		Eigen::Matrix3f R = bone->local_rotation;
+		Eigen::Quaternionf R = bone->local_rotation;
 		
 		while(parent_index != -1) {
 			Bone::Ptr parent = skeleton->bone_map[parent_index];

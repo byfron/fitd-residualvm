@@ -131,7 +131,7 @@ public:
 	void loadScript(char *life_ptr);
 	void loadObjectCommand(CommandId command, char* life_ptr);
 	void loadActionCommand(CommandId command, char* life_ptr);
-
+	int evalVar(char* life_ptr);
 	void runScript(int idx);
 
 protected:

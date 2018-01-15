@@ -219,12 +219,11 @@ Actor::Ptr ActorLoader::load(int actor_idx) {
 
 			// Root bone has parent -1
 			bone->parent_index = parent_index;
-			bone->local_rot = Eigen::Quaternionf::Identity();
 			bone->local_pos_index = vertex_index;
 			bone->start_vertex_index = start_index;
 			bone->num_vertices_affected = num_points;
-			bone->local_rotation = Eigen::Matrix3f::Identity();
-			bone->global_rotation = Eigen::Matrix3f::Identity();			
+			bone->local_rotation = Eigen::Quaternionf::Identity();
+			bone->global_rotation = Eigen::Quaternionf::Identity();			
 
  			idx += 0x10;						
 		}

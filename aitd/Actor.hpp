@@ -40,12 +40,11 @@ class Bone {
 public:
 	typedef std::shared_ptr<Bone> Ptr;
 	int parent_index = -1;
-	Eigen::Quaternionf local_rot;
 	int local_pos_index = 0;
 	int start_vertex_index = 0;
 	int num_vertices_affected = 0;
-	Eigen::Matrix3f local_rotation;
-	Eigen::Matrix3f global_rotation;	
+	Eigen::Quaternionf local_rotation;
+	Eigen::Quaternionf global_rotation;	
 };
 
 class Skeleton {

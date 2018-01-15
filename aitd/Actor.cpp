@@ -20,8 +20,15 @@ Skeleton::Ptr interpolateSkeletons(Skeleton::Ptr a,
 	for (auto bone_it : a->bone_map) {
 		Eigen::Quaternionf q_a = Eigen::Quaternionf(bone_it.second->local_rotation);
 		Eigen::Quaternionf q_b = Eigen::Quaternionf(b->bone_map[bone_it.first]->local_rotation);
+		// normalize quaternion
+		q_a.normalize();
+		q_b.normalize();
 		Eigen::Quaternionf q_interp = q_a.slerp(alpha,q_b);
-		interp->bone_map[bone_it.first]->local_rotation = Eigen::Matrix3f(q_interp);		
+		q_interp.normalize();
+
+//		Eigen::Quaternionf q_interp = q_a*(1 - alpha) + q_b*alpha;
+		
+		interp->bone_map[bone_it.first]->local_rotation = q_interp;
 	}
 
 	return interp;   

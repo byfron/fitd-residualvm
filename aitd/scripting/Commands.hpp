@@ -34,4 +34,4 @@ class ACmdSetType {
 
 class ACmdGetHardClip {
 
-}
+};

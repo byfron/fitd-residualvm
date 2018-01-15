@@ -23,6 +23,7 @@
 #include "common/textconsole.h"
 #include "fitd.h"
 #include "common.h"
+#include <iostream>
 
 namespace Fitd {
 
@@ -170,13 +171,20 @@ int evalVar(void) {
 		int temp = *(int16 *)(currentLifePtr);
 		currentLifePtr += 2;
 
+		std::cout << "| -1 |";
+
 		return(temp);
 	} else if(var1 == 0) {
 		int temp = *(int16 *)(currentLifePtr);
 		currentLifePtr += 2;
 
+		std::cout << "| 0 |";
+		
 		return(vars[temp]);
 	} else {
+
+		std::cout << "| reg-";
+		
 		actorStruct *actorPtr = currentLifeActorPtr;
 		int actorIdx = currentLifeActorIdx;
 
@@ -193,10 +201,12 @@ int evalVar(void) {
 			if(actorIdx == -1) {
 				switch(var1 & 0x7FFF) {
 				case 0x1F: {
+					std::cout << "[0x8] room(" << actorIdx << ")|";
 					return(objectTable[objectNumber].room);
 					break;
 				}
 				case 0x26: {
+					std::cout << "[0x8] stage(" << actorIdx << ")|";
 					return(objectTable[objectNumber].stage);
 					break;
 				}
@@ -217,17 +227,21 @@ int evalVar(void) {
 				int temp1 = actorPtr->COL[0];
 
 				if(temp1 != -1) {
+					std::cout << "COL field_0(" << actorIdx << ")|";
 					return(actorTable[temp1].field_0);
 				} else {
+					std::cout << "COL -1 |";
 					return(-1);
 				}
 				break;
 			}
 			case 0x1: {
+				std::cout << "HARD_DEC |";
 				return(actorPtr->HARD_DEC);
 				break;
 			}
 			case 0x2: {
+				std::cout << "HARD_COL |";
 				return(actorPtr->HARD_COL);
 				break;
 			}
@@ -235,8 +249,10 @@ int evalVar(void) {
 				int temp = actorPtr->HIT;
 
 				if(temp == -1) {
+					std::cout << "HIT -1|";
 					return(-1);
 				} else {
+					std::cout << "HIT field_0(" << temp << ")|";
 					return(actorTable[temp].field_0);
 				}
 
@@ -246,30 +262,37 @@ int evalVar(void) {
 				int temp = actorPtr->HIT_BY;
 
 				if(temp == -1) {
+					std::cout << "HIT_BY -1|";
 					return(-1);
 				} else {
+					std::cout << "HIT_BY field_0(" << temp << ")|";
 					return(actorTable[temp].field_0);
 				}
 
 				break;
 			}
 			case 0x5: {
+				std::cout << "ANIM" << actorPtr->ANIM << "|";
 				return(actorPtr->ANIM);
 				break;
 			}
 			case 0x6: {
+				std::cout << "END_ANIM" << actorPtr->END_ANIM << "|";
 				return(actorPtr->END_ANIM);
 				break;
 			}
 			case 0x7: {
+				std::cout << "FRAME" << actorPtr->FRAME << "|";
 				return(actorPtr->FRAME);
 				break;
 			}
 			case 0x8: {
+				std::cout << "END_FRAME" << actorPtr->END_FRAME << "|";
 				return(actorPtr->END_FRAME);
 				break;
 			}
 			case 0x9: {
+				std::cout << "BodyNum" << actorPtr->bodyNum << "|";
 				return(actorPtr->bodyNum);
 				break;
 			}

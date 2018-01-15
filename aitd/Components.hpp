@@ -20,29 +20,23 @@ public:
 
 		//length is in frames (we should divide by the framerate?)
 		alpha = elapsed_time/(float(anim->keyframes[current_frame]->length)/30);
-		if (alpha > 1.0f) {
-			//next frame
-			elapsed_time = 0.0f;
 
-			next_frame += frame_inc;
-			if (next_frame == anim->keyframes.size() || next_frame == -1) {
-				frame_inc *= -1;
-				current_frame = next_frame + frame_inc;
-				next_frame = current_frame + frame_inc;
+		if (alpha > 1.0f) {
+			alpha = 0.0f;		   
+			elapsed_time = 0.0f;
+			current_frame +=1;
+			next_frame += 1;
+			if (next_frame == anim->keyframes.size()) {
+				next_frame = 0;
 			}
-			else {
-				current_frame += frame_inc;
+			if (current_frame == anim->keyframes.size()) {
+				current_frame = 0;
 			}
-			
-			
 		}
 		
 		return interpolateSkeletons(anim->keyframes[current_frame]->skeleton,
 									anim->keyframes[next_frame]->skeleton,
 									alpha);
-
-	
-		
 	}
 
 	// int anim_type;
@@ -50,7 +44,6 @@ public:
 	int duration = 0;
 	float elapsed_time = 0;
 	
-	int frame_inc = 1;	
 	int current_frame = 0;
 	int next_frame = 1;
 	

@@ -132,8 +132,10 @@ void World::createObjectEntities(const ObjectData& object) {
 		
 		// is animated? TODO: We should include all animations (deep copies!)
 		if (object.anim >= 0) {
-			Animation::Ptr anim_data = ActorLoader::loadAnimation(actor_data->skeleton, object.anim);
-			entity_manager->assign<Components::AnimationComponent>(object_entity.id(), anim_data);
+			if (object.body == 12) {
+				Animation::Ptr anim_data = ActorLoader::loadAnimation(actor_data->skeleton, 254);
+				entity_manager->assign<Components::AnimationComponent>(object_entity.id(), anim_data);
+			}
 		}
 	}	
 }

@@ -424,9 +424,12 @@ void processLife(int lifeNum) {
 		warning("%d:opcode: %04X\n", lifeNum, currentOpcode);
 
 
-		std::cout << "opcode:" << currentOpcode << std::endl;
+//		std::cout << "opcode:" << currentOpcode << std::endl;
 		
 		if(currentOpcode & 0x8000) {
+
+			std::cout << "[opcode & 0x8000]";
+			
 			var_6 = *(int16 *)(currentLifePtr); // argument of command?
 			currentLifePtr += 2;
 
@@ -451,15 +454,18 @@ void processLife(int lifeNum) {
 					switch(opcodeLocated) {
 						////////////////////////////////////////////////////////////////////////
 					case LM_BODY: {
+						std::cout << "LM_BODY ->";
 						objectTable[var_6].body = evalVar();
 						break;
 					}
 					case LM_BODY_RESET: {
+						std::cout << "LM_RESET ->";
 						objectTable[var_6].body = evalVar();
 						objectTable[var_6].anim = evalVar();
 						break;
 					}
 					case LM_TYPE: {
+						std::cout << "LM_TYPE ->";
 						lifeTempVar1 = (*(int16 *)(currentLifePtr)) & TYPE_MASK;
 						currentLifePtr += 2;
 
@@ -470,6 +476,7 @@ void processLife(int lifeNum) {
 					}
 					////////////////////////////////////////////////////////////////////////
 					case LM_ANIM_ONCE: {
+						std::cout << "LM_ANIM_ONCE->";
 						objectTable[var_6].anim = *(int16 *)(currentLifePtr);
 						currentLifePtr += 2;
 						objectTable[var_6].animInfo = *(int16 *)(currentLifePtr);
@@ -480,6 +487,7 @@ void processLife(int lifeNum) {
 						break;
 					}
 					case LM_ANIM_REPEAT: {
+						std::cout << "LM_ANIM_REPEAT->";
 						objectTable[var_6].anim = *(int16 *)(currentLifePtr);
 						currentLifePtr += 2;
 						objectTable[var_6].animInfo = -1;
@@ -489,6 +497,7 @@ void processLife(int lifeNum) {
 						break;
 					}
 					case LM_ANIM_ALL_ONCE: {
+						std::cout << "LM_ANIM_ALL_ONCE->";
 						objectTable[var_6].anim = *(int16 *)(currentLifePtr);
 						currentLifePtr += 2;
 						objectTable[var_6].animInfo = *(int16 *)(currentLifePtr);
@@ -499,6 +508,7 @@ void processLife(int lifeNum) {
 						break;
 					}
 					case    LM_ANIM_RESET: {
+						std::cout << "LM_ANIM_RESET->";
 						ASSERT(g_fitd->getGameType() >= GType_JACK);
 						objectTable[var_6].anim = *(int16 *)(currentLifePtr);
 						currentLifePtr += 2;
@@ -510,6 +520,7 @@ void processLife(int lifeNum) {
 					}
 					////////////////////////////////////////////////////////////////////////
 					case LM_MOVE: { // MOVE
+						std::cout << "LM_MOVE->";
 						objectTable[var_6].stage = *(int16 *)(currentLifePtr); //etage
 						currentLifePtr += 2;
 
@@ -520,6 +531,7 @@ void processLife(int lifeNum) {
 						break;
 					}
 					case LM_ANGLE: {
+						std::cout << "LM_ANGLE->";
 						objectTable[var_6].alpha = *(int16 *)(currentLifePtr);
 						currentLifePtr += 2;
 
@@ -532,6 +544,7 @@ void processLife(int lifeNum) {
 						break;
 					}
 					case LM_STAGE: { // stage
+						std::cout << "LM_STAGE->";
 						objectTable[var_6].stage = *(int16 *)(currentLifePtr);
 						currentLifePtr += 2;
 
@@ -552,6 +565,7 @@ void processLife(int lifeNum) {
 						break;
 					}
 					case LM_TEST_COL: {
+						std::cout << "LM_TEST_COL->";
 						if(*(int16 *)(currentLifePtr)) {
 							objectTable[var_6].flags |= 0x20;
 						} else {
@@ -564,11 +578,13 @@ void processLife(int lifeNum) {
 					}
 					////////////////////////////////////////////////////////////////////////
 					case LM_LIFE: {
+						std::cout << "LM_LIFE->";
 						objectTable[var_6].life = *(int16 *)(currentLifePtr);
 						currentLifePtr += 2;
 						break;
 					}
 					case LM_LIFE_MODE: { // LIFE_MODE
+						std::cout << "LM_LIFE_MODE->";
 						lifeTempVar1 = *(int16 *)(currentLifePtr);
 						currentLifePtr += 2;
 
@@ -580,12 +596,14 @@ void processLife(int lifeNum) {
 						break;
 					}
 					case LM_FOUND_NAME: { // FOUND_NAME
+						std::cout << "LM_FOUND_NAME->";
 						objectTable[var_6].foundName = *(int16 *)(currentLifePtr);
 						currentLifePtr += 2;
 
 						break;
 					}
 					case LM_FOUND_BODY: { // FOUND_BODY
+						std::cout << "LM_FOUND_BODY->";
 						objectTable[var_6].foundBody = *(int16 *)(currentLifePtr);
 						currentLifePtr += 2;
 
@@ -616,6 +634,9 @@ void processLife(int lifeNum) {
 				}
 			}
 		} else {
+
+			std::cout << "NOT[opcode & 0x8000] ";
+			
 			int opcodeLocated;
 processOpcode:
 
@@ -627,6 +648,7 @@ processOpcode:
 
 			switch(opcodeLocated) {
 			case LM_BODY: {
+				std::cout << "LM_BODY ->";
 				lifeTempVar1 = evalVar();
 
 				objectTable[currentProcessedActorPtr->field_0].body = lifeTempVar1;
@@ -664,6 +686,7 @@ processOpcode:
 			case LM_BODY_RESET: {
 				int param1;
 				int param2;
+				std::cout << "LM_BODY_RESET ->";
 
 				param1 = evalVar();
 				param2 = evalVar();
@@ -849,6 +872,7 @@ processOpcode:
 			}
 			////////////////////////////////////////////////////////////////////////
 			case LM_HIT: {
+				std::cout << "LM_HIT ->";
 				lifeTempVar1 = *(int16 *)(currentLifePtr);
 				currentLifePtr += 2;
 				lifeTempVar2 = *(int16 *)(currentLifePtr);
@@ -866,6 +890,7 @@ processOpcode:
 				break;
 			}
 			case LM_FIRE: { // FIRE
+				std::cout << "LM_FIRE ->";
 				if(g_fitd->getGameType() == GType_AITD1) {
 					int fireAnim;
 					int shootFrame;
@@ -916,6 +941,7 @@ processOpcode:
 				break;
 			}
 			case LM_FIRE_UP_DOWN: { // TODO AITD3 only
+				
 				evalVar();
 				currentLifePtr += 12;
 				evalVar();
@@ -1136,6 +1162,7 @@ processOpcode:
 				break;
 			}
 			case LM_DELETE: { // DELETE
+				std::cout << "LM_DELETE ->";
 				if(g_fitd->getGameType() == GType_AITD1) {
 					lifeTempVar1 = *(int16 *)(currentLifePtr);
 					currentLifePtr += 2;
@@ -1230,6 +1257,7 @@ processOpcode:
 				break;
 			}
 			case LM_IN_HAND: { // IN_HAND
+				std::cout << "LM_IN_HAND ->";
 				if(g_fitd->getGameType() == GType_AITD1) {
 					inHand = *(int16 *)(currentLifePtr);
 					currentLifePtr += 2;
@@ -1244,6 +1272,7 @@ processOpcode:
 				break;
 			}
 			case LM_DROP: { // DROP
+				std::cout << "LM_DROP ->";
 				lifeTempVar1 = evalVar();
 				lifeTempVar2 = *(int16 *)(currentLifePtr);
 				currentLifePtr += 2;
@@ -1381,6 +1410,8 @@ processOpcode:
 				break;
 			}
 			case    LM_2D_ANIM_SAMPLE: {
+				std::cout << "LM_2D_ANIM_SAMPLE ->";
+								
 				int sampleNumber;
 				int animNumber;
 				int frameNumber;
@@ -1394,6 +1425,7 @@ processOpcode:
 				break; // TODO: implement
 			}
 			case LM_SAMPLE: {
+				std::cout << "LM_SAMPLE ->";
 				int sampleNumber;
 
 				if(g_fitd->getGameType() == GType_AITD1) {
@@ -1412,6 +1444,8 @@ processOpcode:
 				break;
 			}
 			case LM_REP_SAMPLE: { // sample TODO!
+				std::cout << "LM_REP_SAMPLE ->";
+								
 				if(g_fitd->getGameType() == GType_AITD1) {
 					evalVar();
 					currentLifePtr += 2;
@@ -1424,6 +1458,7 @@ processOpcode:
 				break ;
 			}
 			case LM_SAMPLE_THEN: { //todo
+				std::cout << "LM_SAMPLE_THEN ->";
 				if(g_fitd->getGameType() == GType_AITD1) {
 					playSound(evalVar());
 					genVar7 = evalVar();
@@ -1447,6 +1482,7 @@ processOpcode:
 				break;
 			}
 			case LM_SAMPLE_THEN_REPEAT: { //todo
+				std::cout << "LM_SAMPLE_THEN_REP ->";
 				playSound(evalVar());
 				genVar7 = evalVar() | 0x4000;
 				// setSampleFreq(0);
@@ -1779,6 +1815,7 @@ processOpcode:
 			}
 			////////////////////////////////////////////////////////////////////////
 			case LM_VAR: {
+				std::cout << "LM_VAR ->";
 				lifeTempVar1 = *(int16 *)(currentLifePtr);
 				currentLifePtr += 2;
 
@@ -1800,6 +1837,7 @@ processOpcode:
 				break;
 			}
 			case LM_ADD: { // ADD_VAR
+				std::cout << "LM_ADD ->";
 				lifeTempVar1 = *(int16 *)(currentLifePtr);
 				currentLifePtr += 2;
 
@@ -1807,6 +1845,7 @@ processOpcode:
 				break;
 			}
 			case LM_SUB: { // SUB_VAR
+				std::cout << "LM_SUB_VAR ->";
 				lifeTempVar1 = *(int16 *)(currentLifePtr);
 				currentLifePtr += 2;
 
@@ -1815,6 +1854,7 @@ processOpcode:
 			}
 			case LM_MODIF_C_VAR:
 			case LM_C_VAR: {
+				std::cout << "LM_C_VAR ->";
 				lifeTempVar1 = *(int16 *)(currentLifePtr);
 				currentLifePtr += 2;
 
@@ -1823,6 +1863,7 @@ processOpcode:
 			}
 			////////////////////////////////////////////////////////////////////////
 			case LM_IF_EGAL: { //A, B, (num bytes to jump if false)
+				std::cout << "LM_IF_EGAL->";
 				lifeTempVar1 = evalVar();
 				lifeTempVar2 = evalVar();
 
@@ -1837,6 +1878,7 @@ processOpcode:
 				break;
 			}
 			case LM_IF_DIFFERENT: {
+				std::cout << "LM_IF_DIF->";
 				lifeTempVar1 = evalVar();
 				lifeTempVar2 = evalVar();
 
@@ -1851,6 +1893,7 @@ processOpcode:
 				break;
 			}
 			case LM_IF_SUP_EGAL: {
+				std::cout << "LM_IF_>=->";
 				lifeTempVar1 = evalVar();
 				lifeTempVar2 = evalVar();
 
@@ -1865,6 +1908,7 @@ processOpcode:
 				break;
 			}
 			case LM_IF_SUP: {
+				std::cout << "LM_IF_> ->";
 				lifeTempVar1 = evalVar();
 				lifeTempVar2 = evalVar();
 
@@ -1879,6 +1923,7 @@ processOpcode:
 				break;
 			}
 			case LM_IF_INF_EGAL: {
+				std::cout << "LM_IF_INF_EGAL->";
 				lifeTempVar1 = evalVar();
 				lifeTempVar2 = evalVar();
 
@@ -1893,6 +1938,7 @@ processOpcode:
 				break;
 			}
 			case LM_IF_INF: {
+				std::cout << "LM_IF_INF->";
 				lifeTempVar1 = evalVar();
 				lifeTempVar2 = evalVar();
 
@@ -1914,6 +1960,7 @@ processOpcode:
 			}
 			////////////////////////////////////////////////////////////////////////
 			case LM_SWITCH: { // SWITCH
+				std::cout << "SWITCH->";
 				switchVal = evalVar();
 				break;
 			}
@@ -1973,8 +2020,10 @@ processOpcode:
 			currentProcessedActorIdx = currentLifeActorIdx;
 			currentProcessedActorPtr = currentLifeActorPtr;
 		}
-
+		std::cout << std::endl;
 	}
+
+
 
 	currentLifeNum = -1;
 }

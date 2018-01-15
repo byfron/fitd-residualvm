@@ -345,6 +345,12 @@ int evalVar(void) {
 				break;
 			}
 			case 0x11: {
+				if (action!=0) {
+				std::cout << "=============================================================" << std::endl;
+				std::cout << "ACTION=" << action << "|";
+				std::cout << "=============================================================" << std::endl;
+				getchar();
+					}
 				return action;
 				break;
 			}
@@ -363,6 +369,10 @@ int evalVar(void) {
 				break;
 			}
 			case 0x13: {
+				std::cout << "=============================================================" << std::endl;
+				std::cout << "INPUT|";
+				getchar();
+				std::cout << "=============================================================" << std::endl;
 				if(input4 & 4)
 					return 4;
 				if(input4 & 8)
@@ -376,6 +386,7 @@ int evalVar(void) {
 				break;
 			}
 			case 0x14: {
+				std::cout << "BUTTON|";
 				return(button);
 				break;
 			}

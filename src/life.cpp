@@ -423,7 +423,6 @@ void processLife(int lifeNum) {
 
 		warning("%d:opcode: %04X\n", lifeNum, currentOpcode);
 
-
 //		std::cout << "opcode:" << currentOpcode << std::endl;
 		
 		if(currentOpcode & 0x8000) {
@@ -1018,6 +1017,7 @@ processOpcode:
 				break;
 			}
 			case LM_DO_MOVE: {
+				std::cout << "LM_DO_MOVE" << std::endl;
 				if(g_fitd->getGameType() == GType_AITD1) {
 					processTrack();
 				} else {
@@ -1965,6 +1965,7 @@ processOpcode:
 				break;
 			}
 			case LM_CASE: { // CASE
+				std::cout << "CASE->";
 				lifeTempVar1 = *(int16 *)(currentLifePtr);
 				currentLifePtr += 2;
 
@@ -2020,9 +2021,17 @@ processOpcode:
 			currentProcessedActorIdx = currentLifeActorIdx;
 			currentProcessedActorPtr = currentLifeActorPtr;
 		}
+		
 		std::cout << std::endl;
 	}
-
+	
+	std::cout << std::endl;
+	std::cout << std::endl;
+	std::cout << "###########################################" << std::endl;
+	std::cout << "#                 FRAME                   #" << std::endl;
+	std::cout << "###########################################" << std::endl;
+	std::cout << std::endl;
+	std::cout << std::endl;
 
 
 	currentLifeNum = -1;

@@ -128,7 +128,7 @@ public:
 	typedef std::shared_ptr<ScriptingManager> Ptr;
 	ScriptingManager(EntityManager::Ptr em, World::Ptr w);
 	void loadScriptsFromObjects(const std::map<int, ObjectData> &object_map);
-	void loadScript(char *life_ptr);
+	Script loadScript(char *life_ptr);
 	void loadObjectCommand(CommandId command, char* life_ptr);
 	void loadActionCommand(CommandId command, char* life_ptr);
 	int evalVar(char* life_ptr);

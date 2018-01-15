@@ -227,6 +227,9 @@ void hardColSuB1(ZVStruct *startZv, ZVStruct *zvPtr2, ZVStruct *zvPtr3) {
 	}
 }
 
+// port this to the UpdateSystem!!!!???
+// This will go all in components!!
+	
 void processActor1(void) {
 	int var_42 = 0;
 	int var_6 = currentProcessedActorPtr->field_44;
@@ -246,7 +249,7 @@ void processActor1(void) {
 	static int32 bufferAnimCounter = 0;
 
 	if(var_6 != -1) { // next anim ?
-		if(var_6 == -2) { // completly stop anim
+		if(var_6 == -2) { // completly stop anim //var6/field_44
 			stopAnim(currentProcessedActorIdx);
 			currentProcessedActorPtr->field_44 = -1;
 			currentProcessedActorPtr->field_46 = 0;
@@ -256,7 +259,7 @@ void processActor1(void) {
 			return;
 		}
 
-		if(currentProcessedActorPtr->END_FRAME == 0) {
+		if(currentProcessedActorPtr->END_FRAME == 0) { //END_FRAME?
 			currentProcessedActorPtr->worldX += currentProcessedActorPtr->modX;
 			currentProcessedActorPtr->roomX += currentProcessedActorPtr->modX;
 
@@ -267,12 +270,14 @@ void processActor1(void) {
 			currentProcessedActorPtr->modZ = 0;
 		}
 
+		// fill skeleton buffer
 		initBufferAnim(bufferAnim + (bufferAnimCounter++) * 248, listBody->get(currentProcessedActorPtr->bodyNum));
 
 		if(bufferAnimCounter == 20)
 			bufferAnimCounter = 0;
 
-		currentProcessedActorPtr->ANIM = var_6;
+		//reset anim flags
+		currentProcessedActorPtr->ANIM = var_6; //anim id
 		currentProcessedActorPtr->field_40 = currentProcessedActorPtr->field_46;
 		currentProcessedActorPtr->field_42 = currentProcessedActorPtr->field_48;
 		currentProcessedActorPtr->field_44 = -1;
@@ -287,10 +292,14 @@ void processActor1(void) {
 	if(currentProcessedActorPtr->ANIM == -1) { // no animation
 		currentProcessedActorPtr->END_FRAME = 0;
 		if(currentProcessedActorPtr->speed == 0) {
+			
+			// check collisions with other actors?. Fills up the COL field
 			var_42 = processActor1Sub1(currentProcessedActorIdx, &currentProcessedActorPtr->zv);
 
 			if(var_42) {
 				for(var_40 = 0; var_40 < var_42; var_40 ++) {
+
+					//signal in actortable that this actor is colliding with them
 					actorTable[currentProcessedActorPtr->COL[var_40]].COL_BY = currentProcessedActorIdx; // collision with current actor
 				}
 			}
@@ -315,8 +324,10 @@ void processActor1(void) {
 			animRot3 = 0;
 			animRot2 = 0;
 
+			// update rotation
 			animRot1 = processActor1Sub2(&currentProcessedActorPtr->speedChange);
 
+			// perform step
 			walkStep(0, animRot1, currentProcessedActorPtr->beta);
 
 			var_52 = animMoveX - var_4C;
@@ -390,6 +401,7 @@ void processActor1(void) {
 						hardColVar1 = var_52;
 						hardColVar2 = var_50;
 
+						//run hard-collisions check
 						hardColSuB1(zvPtr, &zvLocal, &var_3E->zv);
 
 						zvLocal.ZVX1 +=  hardColVar1 - var_52;

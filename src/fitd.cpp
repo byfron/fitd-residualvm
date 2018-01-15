@@ -159,6 +159,8 @@ void FitdEngine::startup() {
 	g_driver->_paletteObj->fill(0, 0, 0);
 	
 	preloadResource();
+
+	startGame(0, 0, 1);
 	
 	switch(g_fitd->getGameType()) {
 		case GType_AITD1: {

@@ -23,6 +23,7 @@
 #include "common/textconsole.h"
 #include "fitd.h"
 #include "common.h"
+#include <iostream>
 
 namespace Fitd {
 
@@ -116,6 +117,8 @@ int copyObjectToActor(int flag2, int var1, int foundName, int16 flag, int x, int
 	actorPtr->HIT_BY = -1;
 
 	if(flag2 != -1) {
+		std::cout << "actor: " << actorPtr->bodyNum << " ";
+
 		bodyPtr = listBody->get(actorPtr->bodyNum);
 
 		if(var2 != -1) {
@@ -160,6 +163,7 @@ int copyObjectToActor(int flag2, int var1, int foundName, int16 flag, int x, int
 	switch(var1) {
 	case 0: {
 		if(flag2 != -1) {
+			bodyPtr = listBody->get(actorPtr->bodyNum);					
 			getZvMax(bodyPtr, zvPtr);
 		} else {
 			makeDefaultZV(zvPtr);
@@ -168,6 +172,7 @@ int copyObjectToActor(int flag2, int var1, int foundName, int16 flag, int x, int
 	}
 	case 1: {
 		if(flag2 != -1) {
+			bodyPtr = listBody->get(actorPtr->bodyNum);
 			getZvNormal(bodyPtr, zvPtr);
 		} else {
 			makeDefaultZV(zvPtr);

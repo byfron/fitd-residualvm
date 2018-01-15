@@ -119,6 +119,7 @@ public:
 
 	//std::map<uint16_t, Animation::Ptr> animations;
 
+	Geometry::BBox bounding_box;
 	bool refreshVertexBuffer = false;
 	
 };

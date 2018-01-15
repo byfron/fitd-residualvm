@@ -1,5 +1,6 @@
 SET(ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../)
 
+
 add_definitions(-DENTRY_CONFIG_IMPLEMENT_MAIN)
 
 find_package(Eigen3 REQUIRED)
@@ -129,4 +130,4 @@ add_subdirectory(entities)
 add_subdirectory(utils)
 add_subdirectory(shaders)
 add_subdirectory(tools)
-add_subdirectory(scripting)
+#add_subdirectory(scripting)

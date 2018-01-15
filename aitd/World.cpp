@@ -71,14 +71,21 @@ void World::loadFloor(int floor_id) {
 			Vector3i p2 = box->p2;
 			p1(1) = -p1(1);
 			p2(1) = -p2(1); //TODO: revert the Y coordinate at loading time
-			
-			//Add debug objects for each colision vector
-			Entity debug_obj = entity_manager->createLocal();
-			entity_manager->assign<DebugComponent>(
-				debug_obj.id(),				
-				Geometry::DebugMesh::Ptr(new Geometry::DebugBox(p1.cast<float>(),
-																p2.cast<float>()))
-				);
+
+			//Add collision entities for the scene
+			Entity scene_entity = entity_manager->createLocal();
+			entity_manager->assign<SceneCollisionComponent>(
+				scene_entity.id(),
+				Geometry::BBox(Vec3f(p1(0), p2(1), p1(2)),
+							   Vec3f(p2(0), p1(1), p2(2))));
+				
+			// //Add debug objects for each colision vector
+			// Entity debug_obj = entity_manager->createLocal();
+			// entity_manager->assign<DebugComponent>(
+			// 	debug_obj.id(),				
+			// 	Geometry::DebugMesh::Ptr(new Geometry::DebugBox(p1.cast<float>(),
+			// 													p2.cast<float>()))
+			// 	);
 		}
 	}
 
@@ -98,12 +105,17 @@ void World::loadFloor(int floor_id) {
 
 void World::createObjectEntities(const ObjectData& object) {
 
+
+	//TODO
+	//keep a global map that relates objects to entities????
+	//not sure we needed but the legacy code uses this
+	
 	//Create all entities at this floor
 	Entity object_entity = entity_manager->createLocal();
 
 	// if track mode is user input, this is the player entity
 	// TODO: we should find a better way to figure this out?
-	if (object.trackMode == 1) {
+	if (object.track_mode == 1) {
 		entity_manager->assign<UserInputComponent>(object_entity.id());
 	}
 
@@ -112,7 +124,7 @@ void World::createObjectEntities(const ObjectData& object) {
 	
 	// can move?
 	entity_manager->assign<MoveComponent>(object_entity.id(), 1000.0, 2.0);
-
+	
 	// is displayed in screen?
 	entity_manager->assign<TransformComponent>(
 		object_entity.id(),
@@ -124,7 +136,21 @@ void World::createObjectEntities(const ObjectData& object) {
 										object.gamma)
 		);
 
-	if (object.body != -1) {	
+	if (object.life != -1) {
+		// is scripted?
+		entity_manager->assign<ScriptComponent>(object_entity.id(), object.life);
+
+		// metadata used by the scripting/logic
+		// I put it temporarily in the component but we should probably split it		
+		entity_manager->assign<MetaDataComponent>(object_entity.id(),
+												  object.flags,
+												  object.body,
+												  object.life,
+												  object.life_mode,
+												  object.track_mode);
+	}
+	
+	if (object.body != -1) {		
 	
 		//check if actor is created (create it otherwise)?
 		Actor::Ptr actor_data = ActorLoader::load(object.body);		
@@ -134,9 +160,16 @@ void World::createObjectEntities(const ObjectData& object) {
 		if (object.anim >= 0) {
 			if (object.body == 12) {
 				Animation::Ptr anim_data = ActorLoader::loadAnimation(actor_data->skeleton, 254);
-				entity_manager->assign<Components::AnimationComponent>(object_entity.id(), anim_data);
+				entity_manager->assign<Components::AnimationComponent>(object_entity.id(), object.anim, anim_data);
 			}
 		}
+
+		// can collide?
+		// get corresponding actor bounding box
+		Geometry::BBox box = actor_data->bounding_box;
+		box.translation = Vec3f(object.x, -object.y, object.z);
+		entity_manager->assign<ActorCollisionComponent>(object_entity.id(), box);
+		
 	}	
 }
 

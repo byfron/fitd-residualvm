@@ -116,7 +116,7 @@ void mainLoop(int allowSystemMenu) {
 		}
 
 		if(g_fitd->getGameType() == GType_AITD1) {
-			updateInHand(inHand);
+					updateInHand(inHand);
 		} else {
 			if(g_fitd->getGameType() == GType_AITD2) // seems to crash in Jack for now
 				updateInHand(inHandTable[currentInHand]);
@@ -187,8 +187,7 @@ void mainLoop(int allowSystemMenu) {
 							if(currentProcessedActorPtr->life != -1)
 								if(currentProcessedActorPtr->lifeMode != -1)
 
-//									std::cout << "Processing life: " << currentProcessedActorPtr->life << std::endl;
-									
+									std::cout << "Processing life: " << currentProcessedActorPtr->life << std::endl;									
 									processLife(currentProcessedActorPtr->life);
 									
 							break;

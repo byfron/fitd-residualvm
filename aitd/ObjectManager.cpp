@@ -10,8 +10,8 @@ void ObjectData::readFromStream(Common::SeekableReadStream *stream) {
 	this->body = stream->readUint16LE();
 	this->flags = stream->readUint16LE();
 	this->field_6 = stream->readUint16LE();
-	this->foundBody = stream->readUint16LE();
-	this->foundName = stream->readUint16LE();
+	this->found_body = stream->readUint16LE();
+	this->found_name = stream->readUint16LE();
 	this->flags2 = stream->readUint16LE();
 	this->foundLife = stream->readUint16LE();
 	this->x = stream->readUint16LE();
@@ -22,16 +22,16 @@ void ObjectData::readFromStream(Common::SeekableReadStream *stream) {
 	this->gamma = stream->readUint16LE();
 	this->stage = stream->readUint16LE();
 	this->room = stream->readUint16LE();
-	this->lifeMode = stream->readUint16LE();
+	this->life_mode = stream->readUint16LE();
 	this->life = stream->readUint16LE();	
 	this->field_24 = stream->readUint16LE();
 	this->anim = stream->readUint16LE();
 	this->frame = stream->readUint16LE();
 	this->animType = stream->readUint16LE();
 	this->animInfo = stream->readUint16LE();
-	this->trackMode = stream->readUint16LE();
+	this->track_mode = stream->readUint16LE();
 	this->trackNumber = stream->readUint16LE();
-	this->positionInTrack = stream->readUint16LE();
+	this->pos_in_track = stream->readUint16LE();
 	this->flags |= 0x20;
 }
 

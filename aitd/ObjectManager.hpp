@@ -31,8 +31,8 @@ struct ObjectData {
 		actorFlags bitField;
 	};
 	int16 field_6; //what?
-	int16 foundBody;
-	int16 foundName;
+	int16 found_body;
+	int16 found_name;
 	int16 flags2;
 	int16 foundLife; //index of the corresponding script entry? and life?
 	int16 x;
@@ -43,16 +43,16 @@ struct ObjectData {
 	int16 gamma;
 	int16 stage;
 	int16 room;
-	int16 lifeMode;
+	int16 life_mode;
 	int16 life;
 	int16 field_24; //what?
 	int16 anim; //index in the anim buffer
 	int16 frame;
 	int16 animType;
 	int16 animInfo;
-	int16 trackMode; //1: manual, 2: follow, 3: scripted
+	int16 track_mode; //1: manual, 2: follow, 3: scripted
 	int16 trackNumber;
-	int16 positionInTrack;
+	int16 pos_in_track;
 
 	void readFromStream(Common::SeekableReadStream *stream);
 };

@@ -139,6 +139,7 @@ void updateInHand(int objIdx) {
 		currentProcessedActorPtr->ANIM = -1;
 	}
 
+	std::cout << "1. process life: " << foundLife << std::endl;
 	processLife(foundLife);
 
 	if(var_2) {
@@ -745,7 +746,7 @@ void initEngine() {
 	//
 
 	vars = (int16 *)g_resourceLoader->loadFromItd("VARS.ITD");
-
+   
 	varSize = g_resourceLoader->getFileSize("VARS.ITD");
 
 	if(g_fitd->getGameType() == GType_AITD1) {

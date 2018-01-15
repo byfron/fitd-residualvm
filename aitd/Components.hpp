@@ -4,13 +4,89 @@
 
 namespace Components {
 
+class SceneCollisionComponent {
+public:
+
+	SceneCollisionComponent(const Geometry::BBox& bb) : bounding_box(bb) {}
+
+	bool checkCollision(SceneCollisionComponent* box) const {
+		uint32_t int_code = bounding_box.getTransformedBox().intersect(
+			box->bounding_box.getTransformedBox());
+		return int_code == 0;
+	}
+
+	void reset() {
+		is_colliding_with_actor = false;
+	}
+	
+	bool is_colliding_with_actor = false;
+	Entity::Id colliding_with_entity;
+	
+	Geometry::BBox bounding_box;
+};
+	
+class ActorCollisionComponent : public SceneCollisionComponent {
+public:
+
+	ActorCollisionComponent(const Geometry::BBox& bb) : SceneCollisionComponent(bb) {}
+
+	int getCollidingActorIdx() { return 0; }
+	int getCollidingWithSceneIdx() { return 0; }
+
+	
+	int getHittingActorIdx() { return 0; }	 // TODO: this may go to another component	
+
+	void reset() {
+		SceneCollisionComponent::reset();
+		is_colliding_with_scene = false;
+	}
+
+	bool is_colliding_with_scene = false;
+	Entity::Id colliding_with_entity;
+};
+	
+class ScriptComponent {
+public:
+	ScriptComponent(int id) : script_id(id) {
+	}   
+
+	int script_id = 0;
+	
+protected:
+
+};
+	
 class UserInputComponent {
 public:
 };
 
+//This is a temporary component until we figure out each data field
+//so that we can store it properly in components (we could also have a global table)
+class MetaDataComponent {
+public:
+
+	MetaDataComponent(int16 f, int16 body, int16 l, int16 lm, int16 tm) :
+		flags(f),
+		body_num(body),
+		life(l),
+		life_mode(lm),
+		track_mode(tm) {
+			
+	}
+
+//	int16 object_id; // corresponding object/body in the table of bodies pre-loaded
+	
+	int16 flags; //
+	int16 body_num;
+	int16 life;
+	int16 life_mode;
+	int16 track_mode;
+	
+};	
+	
 class AnimationComponent {
 public:   	
-	AnimationComponent(Animation::Ptr a) : anim(a) {
+	AnimationComponent(int id, Animation::Ptr a) : anim_id(id), anim(a) {
 		//TODO: we should instead deep copy the data here otherwise we break our cache-friendly design
 
 		current_skeleton = Skeleton::Ptr(new Skeleton());
@@ -50,6 +126,19 @@ public:
 	// std::vector<Frame> frames;
 
 	Skeleton::Ptr current_skeleton;
+	
+
+	
+	int anim_id = -1; //animation id (related to the game logic)
+
+
+	// equivalent of fields in actor. Maybe we don't need this at all.
+	int end_frame; // frame needs to change
+	int end_anim; // end of animation
+	
+	
+	
+	
 	Animation::Ptr anim;
 
 };

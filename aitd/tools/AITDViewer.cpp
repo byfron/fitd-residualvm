@@ -37,11 +37,12 @@ void AITDViewer::init() {
 //	for (int actor_idx = 0; actor_idx < 60; actor_idx++)
 
 	Actor::Ptr actor_data = ActorLoader::load(12);
-	Animation::Ptr anim_data = ActorLoader::loadAnimation(actor_data->skeleton, 5);
+	int anim_id = 5;
+	Animation::Ptr anim_data = ActorLoader::loadAnimation(actor_data->skeleton, anim_id);
 	
 	Entity actor = entity_manager->createLocal();
 	entity_manager->assign<MeshComponent>(actor.id(), actor_data);
-	entity_manager->assign<Components::AnimationComponent>(actor.id(), anim_data);
+	entity_manager->assign<Components::AnimationComponent>(actor.id(), anim_id, anim_data);
 }
 
 void AITDViewer::run_frame(float dt) {

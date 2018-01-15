@@ -6,7 +6,7 @@
 #include "Shader.hpp"
 #include <DebugManager.hpp>
 #include <vector>
-
+#include <assert.h>
 
 #define PRIM_TYPE_LINE 0
 #define PRIM_TYPE_POLYGON 1
@@ -16,10 +16,85 @@ using namespace Eigen;
 
 namespace Geometry {
 
+#define MAX_FLOAT 0xFFFFFFFF
+	
+class Line {
+public:
+	Line(const Vec3f& _p1, const Vec3f& _p2) : p1(_p1), p2(_p2) {
+
+	}
+
+	bool intersect(const Line& line, Vec3f& hit) const {
+		
+	}
+	
+	Vec3f p1;
+	Vec3f p2;
+};
+	
+class Plane {
+public:
+	Plane(const Vec3f& p, const Vec3f& n) : point(p), normal(n) {}
+	Vec3f point;
+	Vec3f normal;
+};
+	
+class BBox {
+public:
+	BBox() {}
+	BBox(const Vec3f& a, const Vec3f& b) : p_min(a), p_max(b) {
+		assert(a(0) < b(0) && a(1) < b(1) && a(2) < b(2));
+	}
+
+	BBox getTransformedBox() const {
+
+		return BBox(p_min + translation,
+					p_max + translation);
+	}
+	
+	Vec3f getCentroid() const {
+		return (p_max + p_min)/2.0f;
+	}
+
+	bool intersect(const Vec3f& point) const {
+		
+		if (point(0) > p_min(0) && point(1) > p_min(1) && point(2) > p_min(2) &&
+			point(0) < p_max(0) && point(1) < p_max(1) && point(2) < p_max(2)) {
+			return true;
+		}
+		return false;
+	}
+	
+	uint32_t intersect(const BBox& box) const {
+
+		const uint32_t ltMinX = p_max(0) <  box.p_min(0);
+		const uint32_t gtMaxX = p_min(0) >  box.p_max(0);
+		const uint32_t ltMinY = p_max(1) <  box.p_min(1);
+		const uint32_t gtMaxY = p_min(1) >  box.p_max(1);
+		const uint32_t ltMinZ = p_max(2) <  box.p_min(2);
+		const uint32_t gtMaxZ = p_min(2) >  box.p_max(2);
+		return 0
+			| (ltMinX <<0)
+			| (gtMaxX <<1)
+			| (ltMinY <<2)
+			| (gtMaxY <<3)
+			| (ltMinZ <<4)
+			| (gtMaxZ <<5);		
+	}
+
+	Eigen::Vector3f translation = Eigen::Vector3f::Zero();
+	Vec3f p_min;
+	Vec3f p_max;
+};
+	
 Eigen::Matrix3f getXRotMat(float, float);
 Eigen::Matrix3f getYRotMat(float, float);
 Eigen::Matrix3f getZRotMat(float, float);
 
+Vec3f computeVectorToCollision(const BBox&, const BBox&, const Vec3f&);	
+bool linePlaneIntersection(Vec3f ray, Vec3f rayOrigin, Vec3f normal,
+						   Vec3f planePoint, Vec3f & contact);
+	
 class DebugMesh {
 public:
 	typedef std::shared_ptr<DebugMesh> Ptr;

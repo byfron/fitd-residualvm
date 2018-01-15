@@ -21,6 +21,7 @@
  */
 
 #include "common.h"
+#include <iostream>
 
 namespace Fitd {
 

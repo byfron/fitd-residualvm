@@ -169,11 +169,28 @@ void RenderSystem::update(EntityManager & em, EventManager &evm, float delta) {
 			mc.render(delta, tc.getTransform().data());
 		});
 
-	
-	// Render debug elements
-	em.each<DebugComponent>(
-		[delta](Entity entity,
-				DebugComponent &dc) {
-			dc.render(delta);
+
+	// Render actor collision components
+	em.each<ActorCollisionComponent>(
+		[](Entity entity,
+				ActorCollisionComponent &ac) {
+			Geometry::BBox tb = ac.bounding_box.getTransformedBox();
+			DebugManager::push_aabb(tb.p_min,
+									tb.p_max);
 		});
+
+	em.each<SceneCollisionComponent>(
+		[](Entity entity,
+				SceneCollisionComponent &sc) {
+			Geometry::BBox tb = sc.bounding_box.getTransformedBox();
+			DebugManager::push_aabb(tb.p_min,
+									tb.p_max);
+		});
+
+	// // Render debug elements
+	// em.each<DebugComponent>(
+	// 	[delta](Entity entity,
+	// 			DebugComponent &dc) {
+	// 		dc.render(delta);
+	// 	});
 }

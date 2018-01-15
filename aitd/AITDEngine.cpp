@@ -7,9 +7,13 @@
 #include <graphics/RenderSystem.hpp>
 #include <utils/DataParsing.hpp>
 #include <main.h>
+#include <resource.h>
+#include <file_access.h>
 #include "Message.hpp"
 
 Entity::Id AITDEngine::player_entity;
+std::map<int, int16> AITDEngine::globals;
+std::map<int, int16> AITDEngine::C_globals;
 
 AITDEngine::AITDEngine() {	
 }
@@ -34,7 +38,9 @@ void AITDEngine::init() {
 
 	// Order matters!!
 	add<InputSystem>(std::make_shared<InputSystem>());
+	add<ScriptingSystem>(std::make_shared<ScriptingSystem>(scripting_manager));
 	add<RenderSystem>(std::make_shared<RenderSystem>(world));
+	add<CollisionSystem>(std::make_shared<CollisionSystem>());
 	add<UpdateSystem>(update_sys);
 
 }
@@ -54,7 +60,27 @@ void AITDEngine::loadGameData() {
 	ColorPalette::loadPalette();
 	ObjectManager::loadObjects();
 
-	scripting_manager->loadScriptsFromObjects(ObjectManager::object_map);
+	//load variables
+	int16* var_buffer = (int16*)Fitd::g_resourceLoader->loadFromItd("VARS.ITD");
+	int num_vars = Fitd::g_resourceLoader->getFileSize("VARS.ITD")/2;
+	for (int i = 0; i < num_vars; i++) {
+		globals[i] = var_buffer[i];
+	}
+
+	//load defines
+	Common::SeekableReadStream *stream = Fitd::g_resourceLoader->getFile("DEFINES.ITD");
+	if(!stream) {
+		Fitd::theEnd(0, "DEFINES.ITD");
+	}
+	for (int i = 0; i < Fitd::g_fitd->getNumCVars(); i++) {
+		C_globals[i] = stream->readUint16LE();
+	}
+	delete stream;
+
+	for(int i = 0; i < Fitd::g_fitd->getNumCVars(); i++) {
+	 	C_globals[i] = ((C_globals[i] & 0xFF) << 8) | ((C_globals[i] & 0xFF00) >> 8);
+	}
+
 	
 	int actor_idx = 45;
 

@@ -116,6 +116,16 @@ Actor::Ptr ActorLoader::load(int actor_idx) {
 	// 2 bytes: flags
 	int flags = (int16)READ_LE_UINT16(ptr + idx);
 
+	//bounding box here as 6 short ints
+	short int *ptr_bb = (short int *)(ptr + 2);
+	short int ZVX1 = *(ptr_bb++);
+	short int ZVX2 = *(ptr_bb++);
+	short int ZVY1 = *(ptr_bb++);
+	short int ZVY2 = *(ptr_bb++);
+	short int ZVZ1 = *(ptr_bb++);
+	short int ZVZ2 = *(ptr_bb++);
+	actor->bounding_box = Geometry::BBox(Vec3f(ZVX1, -ZVY2, ZVZ1), Vec3f(ZVX2, -ZVY1, ZVZ2));
+	
 	// Jump 0xE(14)
 	idx += 0xE;
 

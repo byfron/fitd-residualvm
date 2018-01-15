@@ -6,6 +6,7 @@
 #include "entities/System.hpp"
 #include <map>
 
+
 class AITDEngine {
 public:
 	
@@ -26,6 +27,10 @@ public:
 	}
 
 	static Entity::Id player_entity;
+
+	//TODO: hopefully we can get rid of those after migrating the logic
+	static std::map<int, int16> globals;
+	static std::map<int, int16> C_globals;
 	
 protected:
 
@@ -37,5 +42,7 @@ protected:
 	ScriptingManager::Ptr scripting_manager;
 	
 	World::Ptr world;
+
+
 	
 };

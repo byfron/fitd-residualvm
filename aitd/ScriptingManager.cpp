@@ -190,8 +190,7 @@ void ScriptingManager::loadObjectCommand(CommandId command, char* life_ptr) {
 }
 
 void ScriptingManager::loadActionCommand(CommandId command, char* life_ptr) {
-
-	/*
+	
 	switch(command) {
 	case LM_BODY: //body = var
 		return ACmdSetBody(VAR);
@@ -418,17 +417,59 @@ void ScriptingManager::loadActionCommand(CommandId command, char* life_ptr) {
 	case LM_SET_INVENTORY:
 		return ACmdSetInventory(ARG);
 		break;
-		
-
-			
-		
-			
-
+	case LM_SET_GROUND:
+		return ACmdSetGround(ARG);
+		break;
+	case LM_MESSAGE:
+		return ACmdMessage(ARG);
+		break;
+	case LM_MESSAGE_VALUE:
+		return ACmdMessageValue(ARG, ARG);
+		break;
+	case LM_END_SEQUENCE: //TODO
+		break;
+	case LM_VAR:
+		break;
+	case LM_INC:
+		break;
+	case LM_DEC:
+		break;
+	case LM_ADD:
+		break;  
+	case LM_SUB:
+		break;			
+	case LM_MODIF_C_VAR:
+	case LM_C_VAR:
+		break;			
+	case LM_IF_EGAL:
+		break;
+	case LM_IF_DIFFERENT:
+		break;
+	case LM_IF_SUP_EGAL:
+		break;
+	case LM_IF_SUP:
+		break;
+	case LM_IF_INF_EGAL:
+		break;
+	case LM_IF_INF:
+		break;
+	case LM_GOTO:
+		break;
+	case LM_SWITCH:
+		break;
+	case LM_CASE: 
+		break;
+	case LM_MULTI_CASE:
+		break;
+	case LM_RETURN:
+		break;
+	case LM_END:
+		break;
 	default:
 		std::cout << "Unsupported opcode" << std::endl;
 		break;
 	}	
-	*/
+	
 }
 
 

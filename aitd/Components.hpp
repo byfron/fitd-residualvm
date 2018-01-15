@@ -24,7 +24,6 @@ public:
 			//next frame
 			elapsed_time = 0.0f;
 
-
 			next_frame += frame_inc;
 			if (next_frame == anim->keyframes.size() || next_frame == -1) {
 				frame_inc *= -1;
@@ -37,8 +36,6 @@ public:
 			
 			
 		}
-
-		std::cout << "num kfr:" << current_frame << "," << next_frame << "/" << anim->keyframes.size() << std::endl;
 		
 		return interpolateSkeletons(anim->keyframes[current_frame]->skeleton,
 									anim->keyframes[next_frame]->skeleton,

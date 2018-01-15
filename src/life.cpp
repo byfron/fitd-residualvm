@@ -423,6 +423,9 @@ void processLife(int lifeNum) {
 
 		warning("%d:opcode: %04X\n", lifeNum, currentOpcode);
 
+
+		std::cout << "opcode:" << currentOpcode << std::endl;
+		
 		if(currentOpcode & 0x8000) {
 			var_6 = *(int16 *)(currentLifePtr); // argument of command?
 			currentLifePtr += 2;
@@ -1819,7 +1822,7 @@ processOpcode:
 				break;
 			}
 			////////////////////////////////////////////////////////////////////////
-			case LM_IF_EGAL: {
+			case LM_IF_EGAL: { //A, B, (num bytes to jump if false)
 				lifeTempVar1 = evalVar();
 				lifeTempVar2 = evalVar();
 

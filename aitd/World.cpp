@@ -129,10 +129,12 @@ void World::createObjectEntities(const ObjectData& object) {
 		//check if actor is created (create it otherwise)?
 		Actor::Ptr actor_data = ActorLoader::load(object.body);		
 		entity_manager->assign<MeshComponent>(object_entity.id(), actor_data);
-
+		
 		// is animated? TODO: We should include all animations (deep copies!)
-		Animation::Ptr anim_data = ActorLoader::loadAnimation(actor_data->skeleton, 11);
-		entity_manager->assign<Components::AnimationComponent>(object_entity.id(), anim_data);
+		if (object.anim >= 0) {
+			Animation::Ptr anim_data = ActorLoader::loadAnimation(actor_data->skeleton, object.anim);
+			entity_manager->assign<Components::AnimationComponent>(object_entity.id(), anim_data);
+		}
 	}	
 }
 

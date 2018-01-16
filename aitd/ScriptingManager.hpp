@@ -93,7 +93,28 @@ enum CommandId {
 	LM_COPY_ANGLE,
 	LM_END_SEQUENCE,
 	LM_SAMPLE_THEN_REPEAT,
-	LM_WAIT_GAME_OVER
+	LM_WAIT_GAME_OVER,
+	LM_GET_MATRICE,
+	LM_STAGE_LIFE,
+	LM_CONTINUE_TRACK,
+	LM_ANIM_RESET,
+	LM_RESET_MOVE_MANUAL,
+	LM_RAIN,
+	LM_ANIM_HYBRIDE_ONCE,
+	LM_ANIM_HYBRIDE_REPEAT,
+	LM_MODIF_C_VAR,
+	LM_CALL_INVENTORY, // 0x60
+	LM_BODY_RESET,
+	LM_DEL_INVENTORY,
+	LM_SET_INVENTORY,
+	LM_PLAY_SEQUENCE,
+	LM_2D_ANIM_SAMPLE,
+	LM_SET_GROUND,
+	LM_PROTECT,
+	LM_DEF_ABS_ZV,
+	LM_DEF_SEQUENCE_SAMPLE,
+	LM_READ_ON_PICTURE,
+	LM_FIRE_UP_DOWN, // AITD3 only
 };
 
 
@@ -127,12 +148,10 @@ class ScriptingManager {
 public:
 	typedef std::shared_ptr<ScriptingManager> Ptr;
 	ScriptingManager(EntityManager::Ptr em, World::Ptr w);
-	void loadScriptsFromObjects(const std::map<int, ObjectData> &object_map);
-	Script loadScript(char *life_ptr);
+	void runScript(int script_id, Entity::Id entity_id, const EntityManager& em);
 	void loadObjectCommand(CommandId command, char* life_ptr);
-	void loadActionCommand(CommandId command, char* life_ptr);
+	void loadActionCommand(CommandId command, Entity::Id, char* life_ptr);
 	int evalVar(char* life_ptr);
-	void runScript(int idx);
 
 protected:
 	
@@ -140,5 +159,4 @@ protected:
 	World::Ptr world;
 	Fitd::hqrEntryStruct* listLife;
 	bool finished_loading = false;
-	std::map<int, Script> script_map;
 };

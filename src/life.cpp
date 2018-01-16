@@ -713,7 +713,7 @@ processOpcode:
 				}
 				break;
 			}
-			case LM_DO_REAL_ZV: {
+			case LM_DO_REAL_ZV: { // depth test?
 				doRealZv(currentProcessedActorPtr);
 				break;
 			}

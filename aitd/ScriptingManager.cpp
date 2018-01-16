@@ -1,5 +1,7 @@
 #include "ScriptingManager.hpp"
+#include "AITDEngine.hpp"
 #include "ObjectManager.hpp"
+#include "Components.hpp"
 #include <hqr.h>
 
 
@@ -90,7 +92,28 @@ CommandId CommandMacroTable[] = {
 	LM_COPY_ANGLE,
 	LM_END_SEQUENCE,
 	LM_SAMPLE_THEN_REPEAT,
-	LM_WAIT_GAME_OVER
+	LM_WAIT_GAME_OVER,
+	LM_GET_MATRICE,
+	LM_STAGE_LIFE,
+	LM_CONTINUE_TRACK,
+	LM_ANIM_RESET,
+	LM_RESET_MOVE_MANUAL,
+	LM_RAIN,
+	LM_ANIM_HYBRIDE_ONCE,
+	LM_ANIM_HYBRIDE_REPEAT,
+	LM_MODIF_C_VAR,
+	LM_CALL_INVENTORY, // 0x60
+	LM_BODY_RESET,
+	LM_DEL_INVENTORY,
+	LM_SET_INVENTORY,
+	LM_PLAY_SEQUENCE,
+	LM_2D_ANIM_SAMPLE,
+	LM_SET_GROUND,
+	LM_PROTECT,
+	LM_DEF_ABS_ZV,
+	LM_DEF_SEQUENCE_SAMPLE,
+	LM_READ_ON_PICTURE,
+	LM_FIRE_UP_DOWN
 };
 
 ScriptingManager::ScriptingManager(EntityManager::Ptr em, World::Ptr w) :
@@ -100,24 +123,24 @@ ScriptingManager::ScriptingManager(EntityManager::Ptr em, World::Ptr w) :
 	listLife = new Fitd::hqrEntryStruct("LISTLIFE", 10000, 100);
 }
 
-void ScriptingManager::loadScriptsFromObjects(const std::map<int, ObjectData> &object_map) {
+// void ScriptingManager::loadScriptsFromObjects(const std::map<int, ObjectData> &object_map) {
 
-	//pre-load all script indices
-	std::vector<int16> life_ids;
-	for (auto& obj : object_map) {
-		if (obj.second.life != -1) {
-			life_ids.push_back(obj.second.life);
-		}
-	}
+// 	//pre-load all script indices
+// 	std::vector<int16> life_ids;
+// 	for (auto& obj : object_map) {
+// 		if (obj.second.life != -1) {
+// 			life_ids.push_back(obj.second.life);
+// 		}
+// 	}
 
-	//remove duplicates and load
-	std::unique(life_ids.begin(), life_ids.end());	
-	for (auto idx : life_ids) {
-		std::cout << "loading " << idx << std::endl;
-		char *life_ptr = listLife->get(idx);
-	 	script_map[idx] = loadScript(life_ptr);
-	}
-}
+// 	//remove duplicates and load
+// 	std::unique(life_ids.begin(), life_ids.end());	
+// 	for (auto idx : life_ids) {
+// 		std::cout << "loading " << idx << std::endl;
+// 		char *life_ptr = listLife->get(idx);
+// 	 	script_map[idx] = loadScript(life_ptr);
+// 	}
+// }
 
 int16 getArg(char *life_ptr) {
 	int16 arg = *life_ptr;
@@ -125,8 +148,7 @@ int16 getArg(char *life_ptr) {
 	return arg;
 }
 
-#define ARG getArg(life_ptr);
-
+#define ARG getArg(life_ptr)
 
 /* Access to attributes of the current processed actor*/
 int ScriptingManager::evalVar(char* life_ptr) {
@@ -145,6 +167,7 @@ int ScriptingManager::evalVar(char* life_ptr) {
 	else if (var1 == 0) {
 		int16 var2 = getArg(life_ptr);
 //		return varTable[var2];
+		return 0;
 	}
 	else {
 
@@ -242,6 +265,7 @@ int ScriptingManager::evalVar(char* life_ptr) {
 			
 		}
 		case 0x12: { // POSREL: get relative pos between two actors
+			int16 object_idx = getArg(life_ptr);
 
 		}
 		case 0x13: { // User input
@@ -295,7 +319,8 @@ int ScriptingManager::evalVar(char* life_ptr) {
 			break;
 		}
 		case 0x24: { // Returns value of global variable
-//			return globals[getArg(life_ptr)];
+			int16 g_var = getArg(life_ptr);
+//			return globals[g_var];
 			break;
 		}
 		case 0x25: { // etage
@@ -318,10 +343,12 @@ void ScriptingManager::loadObjectCommand(CommandId command, char* life_ptr) {
 
 
 	std::cout << "obj: " << command << std::endl;
+
 	
-/*	switch(command) {
+	switch(command) {
+		/*
 	case LM_BODY: //body = var
-		return OCmdSetBody(var);
+		return OCmdSetBody(evalVar());
 		break;
 	case LM_BODY_RESET: //body = var, anim = var
 		return OCmdResetBody(arg1, arg2);
@@ -368,345 +395,641 @@ void ScriptingManager::loadObjectCommand(CommandId command, char* life_ptr) {
 	case LM_FOUND_WEIGHT:
 		return OCmdSetPosInTrack(ARG);
 		break;
-	case LM_START_CHRONO:
+		case LM_START_CHRONO:
 		break;
 	default:
 		std::cout << "Unsupported opcode" << std::endl;
 		break;
-	}	
-	*/
+		*/
+	}
 }
 
-void ScriptingManager::loadActionCommand(CommandId command, char* life_ptr) {
+void ScriptingManager::loadActionCommand(CommandId command, Entity::Id entity_id, char* life_ptr) {
 
 	std::cout << "action: " << command << std::endl;
+
+	Components::MetaDataComponent *mdc =
+		entity_manager->getComponentPtr<Components::MetaDataComponent>(entity_id);
+
+	static int switch_val;
 	
 	switch(command) {
-/*	case LM_BODY: //body = var
-		return ACmdSetBody(VAR);
+	case LM_BODY: { //body = var
+
+		int new_object_id = evalVar(life_ptr);
+		if (mdc->body_num != new_object_id) {
+			mdc->body_num = new_object_id;
+
+			//assign new mesh/body/animation in the current frame
+			
+		}								
 		break;
-	case LM_BODY_RESET: //body = var, anim = var
-		return ACmdResetBody(VAR, VAR);
+	}	
+	case LM_BODY_RESET: { //body = var, anim = var
+
+		//assign new mesh/body/animation in the frame zero
+		int new_object_id = evalVar(life_ptr);
+		int new_anim_id = evalVar(life_ptr);
+		
+
 		break;
-	case LM_DO_REAL_ZV:
-		return ACmdDoRealZV();
+	}
+	case LM_DO_REAL_ZV: { // defines actor bounding box from mesh points?
+
 		break;
-	case LM_DEF_ZV:
-		return ACMdDefineZV();
+	}
+	case LM_DEF_ZV: { // loads actor bounding box from data (in global coords)
+
+		int x1 = getArg(life_ptr);
+		int x2 = getArg(life_ptr);
+		int y1 = getArg(life_ptr);
+		int y2 = getArg(life_ptr);
+		int z1 = getArg(life_ptr);
+		int z2 = getArg(life_ptr);
+		
 		break;
-	case LM_DEF_ABS_ZV:
-		return ACmdDefineAbsZV();
+	}
+	case LM_DEF_ABS_ZV: { // loads actor bounding box (local coords)?
+
+		int x1 = getArg(life_ptr);
+		int x2 = getArg(life_ptr);
+		int y1 = getArg(life_ptr);
+		int y2 = getArg(life_ptr);
+		int z1 = getArg(life_ptr);
+		int z2 = getArg(life_ptr);
+		
 		break;
-	case LM_DO_ROT_ZV:
-		return ACmdDoRotZV();
+	}
+	case LM_DO_ROT_ZV: { // rotates actor bb
+
 		break;
-	case LM_CARRE_ZV:
-		return ACmdCarreZV();
+	}
+	case LM_DO_CARRE_ZV: { // translates actor bb
+
 		break;
-	case LM_TYPE: //flags = flags & (data1 & TYPE_MASK)
-		return ACmdSetType(ARG);
+	}
+	case LM_TYPE: { //flags = flags & (data1 & TYPE_MASK) modifies actor flags
+
+		int flags = getArg(life_ptr);
+		int current_flags = mdc->flags;
+		mdc->flags = (mdc->flags & 0xFE2E) + flags;
+
+		// top anim??? deleteSub???
+		
 		break;
-	case LM_GET_HARD_CLIP:
-		return ACmdGetHardClip();
+	}
+	case LM_GET_HARD_CLIP: { // 
+
 		break;
-	case LM_ANIM_ONCE:
-		return ACmdAnimOnce(ARG, ARG);
+	}
+	case LM_ANIM_ONCE: { //loads anim info/state
+
+		int anim_id = getArg(life_ptr);
+		int anim_id2 = getArg(life_ptr); // no idea what this is (field_44?)				
 		break;
-	case LM_ANIM_REPEAT:
-		return ACmdAnimRepeat(ARG);
+	}
+		
+	case LM_ANIM_REPEAT: { //loads anim info/state
+		int anim_id = getArg(life_ptr);		
 		break;
-	case LM_ANIM_ALL_ONCE: //anim = data1, animInfo = data2, animType = ANIM_ONCE
-		return ACmdAnimAllOnce(ARG, ARG);
+	}
+		
+	case LM_ANIM_ALL_ONCE: { //anim = data1, animInfo = data2, animType = ANIM_ONCE
+		int anim_id = getArg(life_ptr);
+		int next_anim_id = getArg(life_ptr); //(field_44)		
 		break;
-	case LM_ANIM_RESET:
-		return ACmdAnimReset(ARG, ARG);
+	}
+		
+	case LM_ANIM_RESET: {
+		int anim_id = getArg(life_ptr);
+		int next_anim_id = getArg(life_ptr); //(field_44)		
 		break;
-	case LM_HYBRID_ONCE: //TODO
+	}
+		
+	case LM_ANIM_HYBRIDE_ONCE: { //TODO
 		life_ptr += 4;
 		break;
-	case LM_HYBRID_REPEAT: //TODO
+	}
+		
+	case LM_ANIM_HYBRIDE_REPEAT: { //TODO
 		life_ptr += 4;
 		break;
-    case LM_HIT:
-		return ACmdHit(ARG, ARG, ARG, ARG, VAR, ARG);
+	}
+    case LM_HIT: {
+		int v1 = getArg(life_ptr); //anim_id
+		int v2 = getArg(life_ptr); //frame
+		int v3 = getArg(life_ptr); //?
+		int v4 = getArg(life_ptr); //anim param
+		int v5 = evalVar(life_ptr);//force
+		int v6 = getArg(life_ptr); //next_anim
 		break;
-	case LM_FIRE:
-		return ACmdFire(ARG, ARG, ARG, ARG, ARG, ARG);
+	}
+		
+	case LM_FIRE: {
+		int fire_anim = getArg(life_ptr); //anim_id
+		int shoot_frame = getArg(life_ptr); //frame
+		int emit_point = getArg(life_ptr); //?
+		int zv_size = getArg(life_ptr); 
+		int hit_force = evalVar(life_ptr);//force
+		int next_anim = getArg(life_ptr); //next_anim
 		break;
-	case LM_HIT_OBJECT:
-		return ACmdHitObject(ARG, ARG);
+	}
+		
+	case LM_HIT_OBJECT: {
+		int action_param = getArg(life_ptr);
+		int hit_force = getArg(life_ptr);
 		break;
-	case LM_STOP_HIT_OBJECT:
-		return ACmdStopHitObject();		
+	}
+		
+	case LM_STOP_HIT_OBJECT: {	
 		break;
-	case LM_THROW:
-		return ACmdThrow(ARG, ARG, ARG, ARG, ARG, ARG, ARG);
+	}
+		
+	case LM_THROW: {
+		int v1 = getArg(life_ptr); //anim_id
+		int v2 = getArg(life_ptr); //frame
+		int v3 = getArg(life_ptr); //?
+		int v4 = getArg(life_ptr); //object to throw
+		int v5 = evalVar(life_ptr);//rotated
+		int v6 = getArg(life_ptr); //force
+		int v7 = getArg(life_ptr); //next anim		
 		break;
-	case LM_MOVE:
-		//etage, room
-		return ACmdMove(ARG, ARG);
+	}
+		
+	case LM_MOVE: {
+		int track_mode = getArg(life_ptr);
+		int track_num = getArg(life_ptr);		
 		break;
-	case LM_RESET_MOVE_MANUAL:
-		return ACmdResetMoveManual();
+	}
+		
+	case LM_RESET_MOVE_MANUAL: {
 		break;
-	case LM_CONTINUE_TRACK:
-		return ACmdContinueTrack(ARG);
+	}
+		
+	case LM_CONTINUE_TRACK: {
 		break;
-	case LM_DO_MOVE:
-		return ACmdDoMove();
+	}
+		
+	case LM_DO_MOVE: {
 		break;
-	case LM_ANIM_MOVE:
-		return ACmdAnimMove(ARG, ARG, ARG, ARG, ARG, ARG, ARG);
+	}
+		
+	case LM_ANIM_MOVE: {
+		int v1 = getArg(life_ptr); //anim_id1
+		int v2 = getArg(life_ptr); //anim_id2
+		int v3 = getArg(life_ptr); //anim_id3
+		int v4 = getArg(life_ptr); //anim_id4
+		int v5 = evalVar(life_ptr);//anim_id5
+		int v6 = getArg(life_ptr); //?
+		int v7 = getArg(life_ptr); //?
 		break;
-	case LM_MANUAL_ROT:
-		return ACmdManualRot();
+	}
+		
+	case LM_MANUAL_ROT: {
 		break;
-	case LM_SET_BETA:
-		return ACmdSetBetaRot(ARG, ARG);
+	}
+		
+	case LM_SET_BETA: {
+		int beta = getArg(life_ptr);
+		int param = getArg(life_ptr);
 		break;
-	case LM_SET_ALPHA:
-		return ACmdSetAlphaRot(ARG, ARG);
+	}
+		
+	case LM_SET_ALPHA: {
+		int alpha = getArg(life_ptr);
+		int param = getArg(life_ptr);
 		break;
-	case LM_ANGLE:
+	}
+		
+	case LM_ANGLE: {
 		//alpha, beta, gamma
-		return ACmdAngle(ARG, ARG, ARG);
+		int alpha = getArg(life_ptr);
+		int beta = getArg(life_ptr);
+		int gamma = getArg(life_ptr);
 		break;
-	case LM_COPY_ANGLE: //TODO
+	}
+		
+	case LM_COPY_ANGLE: { //TODO
 		life_ptr += 2;
 		break;
-	case LM_STAGE:
+	}
+		
+	case LM_STAGE: {
 		//stage, room, x, y, z
-		return ACmdStage(ARG, ARG, ARG, ARG, ARG);
+		int etage = getArg(life_ptr);
+		int room = getArg(life_ptr);
+		int x = getArg(life_ptr);
+		int y = getArg(life_ptr);
+		int z = getArg(life_ptr);		
 		break;
-	case LM_TEST_COL:
-		return ACmdTestCol(ARG);
+	}
+		
+	case LM_TEST_COL: {
+		int flags = getArg(life_ptr);
 		break;
-	case LM_UP_COOR_Y:
-		return ACmdUpCoorY();
+	}
+		
+	case LM_UP_COOR_Y: {
 		break;
-	case LM_LIFE:
-		return ACmdSetLife(ARG);
+	}
+		
+	case LM_LIFE: {
+		int life = getArg(life_ptr);
+		mdc->life = life;
 		break;
-	case LM_STAGE_LIFE:
-		return ACmdSetStageLife(ARG);
+	}
+		
+	case LM_STAGE_LIFE: {
+		int life = getArg(life_ptr); //set life on the object structure? (default life?)
 		break;
-	case LM_LIFE_MODE:
-		return ACmdSetLifeMode(ARG);
+	}
+	case LM_LIFE_MODE: {
+		int life_mode = getArg(life_ptr);
+		mdc->life_mode = life_mode;
 		break;
-	case LM_DELETE:
-		return ACmdDelete(ARG);
+	}
+	case LM_DELETE: {
+		int object_id = getArg(life_ptr);
+		//delete object
 		break;
-	case LM_SPECIAL:
-		return ACmdSpecial(ARG);
+	}
+	case LM_SPECIAL: {
+		int special = getArg(life_ptr);
 		break;
-	case LM_START_CHRONO:
-		return ACmdStartChrono();
+	}
+	case LM_START_CHRONO: {
 		break;
-	case LM_FOUND:
-		return ACmdFound(ARG);
+	}
+	case LM_FOUND: {
+		int object_id = getArg(life_ptr); //found object
 		break;
-	case LM_TAKE:
-		return ACmdTake(ARG);
+	}
+	case LM_TAKE: {
+		int object_id = getArg(life_ptr); //take object
 		break;
-	case LM_IN_HAND:
-		return ACmdInHand(ARG);
+	}		
+	case LM_IN_HAND: {
+		int object_id = getArg(life_ptr); //put obj in hand
 		break;
-	case LM_DROP:
-		return ACmdDrop(ARG);
+	}
+	case LM_DROP: {
+		int object_id = getArg(life_ptr); //drop obj
 		break;
-	case LM_PUT:
-		return ACmdPut(ARG, ARG, ARG, ARG, ARG, ARG, ARG, ARG, ARG);
+	}
+	case LM_PUT: {
+		int object_id = getArg(life_ptr);
+		int x = getArg(life_ptr);
+		int y = getArg(life_ptr);
+		int z = getArg(life_ptr);
+		int room = getArg(life_ptr);
+		int stage = getArg(life_ptr);
+		int alpha = getArg(life_ptr);
+		int beta = getArg(life_ptr);
+		int gamma = getArg(life_ptr);		
 		break;
-	case LM_PUT_AT:
-		return ACmdPutAt(ARG, ARG);
+	}		
+	case LM_PUT_AT: {
+		int object_id1 = getArg(life_ptr);
+		int object_id2 = getArg(life_ptr);
 		break;
-	case LM_FOUND_NAME:
-		return ACmdSetFoundName(ARG);
+	}
+	case LM_FOUND_NAME: {
+		int text_id = getArg(life_ptr);
 		break;
-	case LM_FOUND_BODY:
-		return ACmdSetFoundBody(ARG);
+	}
+	case LM_FOUND_BODY: {
+		int object_id = getArg(life_ptr);
 		break;
-	case LM_FOUND_FLAG:
-		return ACmdSetFoundFlag(ARG);
+	}
+	case LM_FOUND_FLAG: {
+		int flags = getArg(life_ptr);
 		break;
-	case LM_FOUND_WEIGHT:
-		return ACmdSetPosInTrack(ARG);
+	}
+	case LM_FOUND_WEIGHT: {
+		int pos_in_track = getArg(life_ptr);
 		break;
-	case LM_FOUND_LIFE:
-		return ACmdSetFoundLife(ARG);
+	}
+	case LM_FOUND_LIFE: {
+		int life_id = getArg(life_ptr);
 		break;
-	case LM_READ:
-		return ACmdRead(ARG, ARG);
+	}
+	case LM_READ: {
+		int v1 = getArg(life_ptr); //read book
+		int v2 = getArg(life_ptr);		
 		break;
-	case LM_READ_ON_PICTURE:
+	}
+	case LM_READ_ON_PICTURE: { //TODO
+		life_ptr += 16;
+		break;
+	}
+	case LM_ANIM_SAMPLE: {
+		int sound_id = evalVar(life_ptr);
+		int anim_id = getArg(life_ptr);
+		int frame = getArg(life_ptr);		
+		break;
+	}
+	case LM_2D_ANIM_SAMPLE: {
+		int sound_id = evalVar(life_ptr);
+		int anim_id = getArg(life_ptr);
+		int frame = getArg(life_ptr);	
+		break;
+	}
+	case LM_REP_SAMPLE: {
+		int sound_id = evalVar(life_ptr);
 		life_ptr += 2;
 		break;
-	case LM_ANIM_SAMPLE:
-		return ACmdAnimSample(VAR, ARG, ARG);
-		break;
-	case LM_2D_ANIM_SAMPLE:
-		return ACmd2DAnimSample(VAR);
-		break;
-	case LM_REP_SAMPLE:
-		return ACmdRepSample(VAR, ARG);
-		break;
-	case LM_STOP_SAMPLE:
+	}
+	case LM_STOP_SAMPLE: {		
 		//TODO
 		break;
-	case LM_SAMPLE_THEN:
-		return AcmdSampleThen(VAR, VAR);
+	}
+	case LM_SAMPLE_THEN: {
+		int sound_id = evalVar(life_ptr);
+		int var = evalVar(life_ptr);
 		break;
-	case LM_SAMPLE_THEN_REPEAT:
-		return ACmdSampleThenRepeat(VAR, VAR);
+	}
+	case LM_SAMPLE_THEN_REPEAT: {
+		int sound_id = evalVar(life_ptr);
+		int var = evalVar(life_ptr);
 		break;
-	case LM_MUSIC:
-		return ACmdMusic(ARG);
+	}
+	case LM_MUSIC: {
+		int music_id = getArg(life_ptr);
 		break;
-	case LM_NEXT_MUSIC:
-		return ACmdNextMusic(ARG);
+	}
+	case LM_NEXT_MUSIC: {
+		int music_id = getArg(life_ptr);
 		break;
-	case LM_FADE_MUSIC:
-		return ACmdFaceMusic(ARG);
+	}
+	case LM_FADE_MUSIC: {
+		int music_id = getArg(life_ptr);
 		break;
-	case LM_RND_FREQ: //TODO
+	}
+	case LM_RND_FREQ: { //TODO
 		life_ptr += 2;
 		break;
-	case LM_LIGHT:
-		return ACmdLight(ARG);
+	}
+	case LM_LIGHT: {
+		int light = getArg(life_ptr);
 		break;
-	case LM_SHAKING:
-		return ACmdShaking(ARG);
+	}
+	case LM_SHAKING: {
+		life_ptr += 2;
 		break;
-	case LM_RAIN:
+	}
+	case LM_RAIN: {
 		break;
-	case LM_WATER:
-		ARG; //TODO
+	}
+	case LM_WATER: {
+		life_ptr += 2;
 		break;
-	case LM_CAMERA_TARGET:
-		return ACmdCameraTarget(ARG);
+	}
+	case LM_CAMERA_TARGET: {
+		int camera_id = getArg(life_ptr);
 		break;
-	case LM_PICTURE:
-		return ACmdPicture(ARG, ARG, ARG);
+	}
+	case LM_PICTURE: {
+		int picture_id = getArg(life_ptr);
+		int max_time = getArg(life_ptr);
+		int sound_id = getArg(life_ptr);
 		break;
-	case LM_PLAY_SEQUENCE:
-		return ACmdPlaySequence(ARG, ARG, ARG);
+	}
+	case LM_PLAY_SEQUENCE: {
+		int seq_id = getArg(life_ptr);
+		int fade_in = getArg(life_ptr);
+		int fade_out = getArg(life_ptr);
 		break;
-	case LM_DEF_SEQ_SAMPLE:
-		int16 num_params = ARG;
-		std::vector<int16> params;
+	}
+	case LM_DEF_SEQUENCE_SAMPLE: {
+		int num_params = ARG;
+		std::vector<int> params;
 		for (int i = 0; i < num_params; i++) {
 			params.push_back(ARG);
 		}
-		return ACmdDefSeqSample(params);
 		break;
-	case LM_PROTECT: //TODO
+	}
+	case LM_PROTECT: { //TODO
 		break;
-	case LM_INVENTORY:
-		return ACmdInventory(ARG);
+	}
+	case LM_INVENTORY: {
+		int status_screen_flag = getArg(life_ptr);
 		break;
-	case LM_SET_INVENTORY:
-		return ACmdSetInventory(ARG);
+	}
+	case LM_SET_INVENTORY: {
+		int inventory_id = getArg(life_ptr);
 		break;
-	case LM_SET_GROUND:
-		return ACmdSetGround(ARG);
+	}
+	case LM_SET_GROUND: {
+		int ground_level = getArg(life_ptr);
 		break;
-	case LM_MESSAGE:
-		return ACmdMessage(ARG);
+	}
+	case LM_MESSAGE: {
+		int message_id = getArg(life_ptr);
 		break;
-	case LM_MESSAGE_VALUE:
-		return ACmdMessageValue(ARG, ARG);
+	}
+	case LM_MESSAGE_VALUE: {
+		int message_id = getArg(life_ptr);
+		int message_value = getArg(life_ptr);
 		break;
-	case LM_END_SEQUENCE: //TODO
+	}
+	case LM_END_SEQUENCE: { //TODO
 		break;
-	case LM_VAR:
+	}
+	case LM_VAR: {
+		int var_id = getArg(life_ptr);
+		AITDEngine::globals[var_id] = evalVar(life_ptr);
 		break;
-	case LM_INC:
+	}
+	case LM_INC: {
+		int var_id = getArg(life_ptr);
+		AITDEngine::globals[var_id]++;
 		break;
-	case LM_DEC:
+	}
+	case LM_DEC: {
+		int var_id = getArg(life_ptr);
+		AITDEngine::globals[var_id]--;
 		break;
-	case LM_ADD:
-		break;  
-	case LM_SUB:
-		break;			
-	case LM_MODIF_C_VAR:
-	case LM_C_VAR:
-		break;			
-	case LM_IF_EGAL:
+	}
+	case LM_ADD: {
+		int var_id = getArg(life_ptr);
+		AITDEngine::globals[var_id] += evalVar(life_ptr);
 		break;
-	case LM_IF_DIFFERENT:
+	}  
+	case LM_SUB: {
+		int var_id = getArg(life_ptr);
+		AITDEngine::globals[var_id] -= evalVar(life_ptr);
 		break;
-	case LM_IF_SUP_EGAL:
+	}
+	case LM_C_VAR: {
+		int var_id = getArg(life_ptr);
+		AITDEngine::C_globals[var_id] = evalVar(life_ptr);
 		break;
-	case LM_IF_SUP:
-		break;
-	case LM_IF_INF_EGAL:
-		break;
-	case LM_IF_INF:
-		break;
-	case LM_GOTO:
-		break;
-	case LM_SWITCH:
-		break;
-	case LM_CASE: 
-		break;
-	case LM_MULTI_CASE:
-	break;*/
-	case LM_RETURN:
-		finished_loading = true;
-	 	break;
-	case LM_END:
-		finished_loading = true;
-	 	break;
-	 default:
-	 	std::cout << "Unsupported opcode" << std::endl;
-	 	break;
-	 }
-}
-
-Script ScriptingManager::loadScript(char *life_ptr_src) {
-
-	Script script;
-	char* life_ptr = life_ptr_src;
-	
-	finished_loading = false;
-	while(!finished_loading) {
-	
-		int16 current_opcode = *(int16 *)(life_ptr);
-		life_ptr += 2;
-		
-		CommandId command = CommandMacroTable[current_opcode & 0x7FFF];
-
-		if(current_opcode & 0x8000) {
-			int16 object_idx = *(int16 *)life_ptr;
+	}
+	case LM_IF_EGAL: {
+		int valueA = evalVar(life_ptr);
+		int valueB = evalVar(life_ptr);
+		if (valueA == valueB) {
 			life_ptr += 2;
-
-			//	assert(object_idx != -1);
-			if (object_idx != -1) {
-
-				// if the object has owner, run as actorCommand instead
-				int16 actor_idx = ObjectManager::object_map[object_idx].ownerIdx;
-
-				std::cout << "actor:" << actor_idx << std::endl;
-				
-				if (actor_idx != -1) {
-					loadObjectCommand(command, life_ptr);
-				}
-				else {
-					loadActionCommand(command, life_ptr);
-				}
-			}
 		}
 		else {
-			loadObjectCommand(command, life_ptr);
+			int jump = getArg(life_ptr);
+			life_ptr += jump*2 + 2;			
+		}		
+		break;
+	}
+	case LM_IF_DIFFERENT: {
+		int valueA = evalVar(life_ptr);
+		int valueB = evalVar(life_ptr);
+		if (valueA != valueB) {
+			life_ptr += 2;
 		}
-
-		getchar();
-//		script.command_vector.push_back();
+		else {
+			int jump = getArg(life_ptr);
+			life_ptr += jump*2 + 2;			
+		}
+		break;
+	}
+	case LM_IF_SUP_EGAL: {
+		int valueA = evalVar(life_ptr);
+		int valueB = evalVar(life_ptr);
+		if (valueA >= valueB) {
+			life_ptr += 2;
+		}
+		else {
+			int jump = getArg(life_ptr);			
+			life_ptr += jump*2 + 2;			
+		}
+		break;
+	}
+	case LM_IF_SUP: {
+		int valueA = evalVar(life_ptr);
+		int valueB = evalVar(life_ptr);
+		if (valueA > valueB) {
+			life_ptr += 2;
+		}
+		else {
+			int jump = getArg(life_ptr);
+			life_ptr += jump*2 + 2;			
+		}
+		break;
+	}
+	case LM_IF_INF_EGAL: {
+		int valueA = evalVar(life_ptr);
+		int valueB = evalVar(life_ptr);
+		if (valueA <= valueB) {
+			life_ptr += 2;
+		}
+		else {
+			int jump = getArg(life_ptr);
+			life_ptr += jump*2 + 2;			
+		}
+		break;
+	}
+	case LM_IF_INF: {
+		int valueA = evalVar(life_ptr);
+		int valueB = evalVar(life_ptr);		
+		if (valueA < valueB) {
+			life_ptr += 2;
+		}
+		else {
+			int jump = getArg(life_ptr);
+			life_ptr += jump*2 + 2;			
+		}
+		break;
+	}
+	case LM_GOTO: {
+		int jump = getArg(life_ptr);
+		life_ptr += jump*2 + 2;
+		break;
+	}
+	case LM_SWITCH: {
+		switch_val = evalVar(life_ptr);
+		break;
+	}
+	case LM_CASE: {
+		int case_val = getArg(life_ptr);
+		if (case_val == switch_val) {
+			life_ptr += 2;
+		}
+		else {
+			int jump = getArg(life_ptr);
+			life_ptr += jump*2 + 2;
+		}
+		break;
+	}
+	case LM_MULTI_CASE: {
+		int num_cases = getArg(life_ptr);
+		bool switch_flag = false;
+		for (int i = 0; i < num_cases; i++) {
+			int case_val = getArg(life_ptr);
+			if (case_val == switch_val) {
+				switch_flag = true;
+			}
+			life_ptr += 2;
+		}
+		
+		if (switch_flag) {
+			int jump = getArg(life_ptr);
+			life_ptr += jump*2 + 2;
+		}
+		life_ptr += 2;		
+		break;
+	}
+	case LM_RETURN: {		
+		finished_loading = true;
+		break;
+	}
+	case LM_END: {
+		finished_loading = true;
+		break;
+	}
+	default: {
+		std::cout << "Unsupported opcode" << std::endl;
+		break;
 	}
 
-	return script;
+	}
 }
 
-void ScriptingManager::runScript(int idx) {
-	std::cout << "Trying to run script: " << idx << std::endl;
-}
+void ScriptingManager::runScript(int script_id, Entity::Id entity_id, const EntityManager& em) {
+
+			char *life_ptr = listLife->get(script_id);
+	
+			finished_loading = false;
+			while(!finished_loading) {
+	
+				int16 current_opcode = *(int16 *)(life_ptr);
+				life_ptr += 2;
+		
+				CommandId command = CommandMacroTable[current_opcode & 0x7FFF];
+
+				if(current_opcode & 0x8000) {
+					int16 object_idx = *(int16 *)life_ptr;
+					life_ptr += 2;
+
+					//	assert(object_idx != -1);
+					if (object_idx != -1) {
+
+						// if the object has owner, run as actorCommand instead
+						// getEntityOwner(object_idx) <- return entity (actor) corresponding to object
+						int16 actor_idx = ObjectManager::object_map[object_idx].ownerIdx;
+
+						std::cout << "actor:" << actor_idx << std::endl;
+				
+						if (actor_idx != -1) {
+							loadObjectCommand(command, life_ptr);
+						}
+						else {
+							loadActionCommand(command, entity_id, life_ptr);
+						}
+					}
+				}
+				else {
+					loadActionCommand(command, entity_id, life_ptr);
+				}
+
+				getchar();
+//		script.command_vector.push_back();
+			}
+
+		}

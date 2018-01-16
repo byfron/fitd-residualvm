@@ -4,6 +4,14 @@
 
 using namespace Components;
 
+void ScriptingSystem::update(EntityManager & em, EventManager &evm, float delta) {
+	em.each<ScriptComponent>(
+		[delta, this, em](Entity entity,
+				ScriptComponent& sc) {
+			scripting_manager->runScript(sc.script_id, entity.id(), em);
+		});
+}
+
 void InputSystem::update(EntityManager & em, EventManager &evm, float delta) {
 
 	em.each<MoveComponent, UserInputComponent>(

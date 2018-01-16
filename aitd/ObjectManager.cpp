@@ -22,7 +22,7 @@ void ObjectData::readFromStream(Common::SeekableReadStream *stream) {
 	this->gamma = stream->readUint16LE();
 	this->stage = stream->readUint16LE();
 	this->room = stream->readUint16LE();
-	this->lifeMode = stream->readUint16LE();
+	this->life_mode = stream->readUint16LE();
 	this->life = stream->readUint16LE();	
 	this->field_24 = stream->readUint16LE();
 	this->anim = stream->readUint16LE();

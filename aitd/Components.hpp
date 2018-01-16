@@ -4,10 +4,43 @@
 
 namespace Components {
 
+class ScriptComponent {
+public:
+	ScriptComponent(int id) : script_id(id) {
+	}
+
+	int script_id = 0;
+	
+protected:
+
+};
+	
 class UserInputComponent {
 public:
 };
 
+//This is a temporary component until we figure out each data field
+//so that we can store it properly in components (we could also have a global table)
+class MetaDataComponent {
+public:
+
+	MetaDataComponent(int16 f, int16 body, int16 l, int16 lm) :
+		flags(f),
+		body_num(body),
+		life(l),
+		life_mode(lm) {
+			
+	}
+
+//	int16 object_id; // corresponding object/body in the table of bodies pre-loaded
+	
+	int16 flags; //
+	int16 body_num;
+	int16 life;
+	int16 life_mode;
+	
+};	
+	
 class AnimationComponent {
 public:   	
 	AnimationComponent(Animation::Ptr a) : anim(a) {

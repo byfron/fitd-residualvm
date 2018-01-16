@@ -113,6 +113,8 @@ void World::createObjectEntities(const ObjectData& object) {
 	// can move?
 	entity_manager->assign<MoveComponent>(object_entity.id(), 1000.0, 2.0);
 
+
+	
 	// is displayed in screen?
 	entity_manager->assign<TransformComponent>(
 		object_entity.id(),
@@ -124,6 +126,19 @@ void World::createObjectEntities(const ObjectData& object) {
 										object.gamma)
 		);
 
+	if (object.life != -1) {
+		// is scripted?
+		entity_manager->assign<ScriptComponent>(object_entity.id(), object.life);
+
+		// metadata used by the scripting/logic
+		// I put it temporarily in the component but we should probably split it		
+		entity_manager->assign<MetaDataComponent>(object_entity.id(),
+												  object.flags,
+												  object.body,
+												  object.life,
+												  object.life_mode);
+	}
+	
 	if (object.body != -1) {	
 	
 		//check if actor is created (create it otherwise)?

@@ -10,6 +10,8 @@
 #include "Message.hpp"
 
 Entity::Id AITDEngine::player_entity;
+std::map<int, int> AITDEngine::globals;
+std::map<int, int> AITDEngine::C_globals;
 
 AITDEngine::AITDEngine() {	
 }
@@ -54,7 +56,7 @@ void AITDEngine::loadGameData() {
 	ColorPalette::loadPalette();
 	ObjectManager::loadObjects();
 
-	scripting_manager->loadScriptsFromObjects(ObjectManager::object_map);
+//	scripting_manager->loadScriptsFromObjects(ObjectManager::object_map);
 	
 	int actor_idx = 45;
 

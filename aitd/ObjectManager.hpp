@@ -43,7 +43,7 @@ struct ObjectData {
 	int16 gamma;
 	int16 stage;
 	int16 room;
-	int16 lifeMode;
+	int16 life_mode;
 	int16 life;
 	int16 field_24; //what?
 	int16 anim; //index in the anim buffer

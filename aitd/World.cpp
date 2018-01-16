@@ -98,12 +98,17 @@ void World::loadFloor(int floor_id) {
 
 void World::createObjectEntities(const ObjectData& object) {
 
+
+	//TODO
+	//keep a global map that relates objects to entities????
+	//not sure we needed but the legacy code uses this
+	
 	//Create all entities at this floor
 	Entity object_entity = entity_manager->createLocal();
 
 	// if track mode is user input, this is the player entity
 	// TODO: we should find a better way to figure this out?
-	if (object.trackMode == 1) {
+	if (object.track_mode == 1) {
 		entity_manager->assign<UserInputComponent>(object_entity.id());
 	}
 
@@ -113,7 +118,8 @@ void World::createObjectEntities(const ObjectData& object) {
 	// can move?
 	entity_manager->assign<MoveComponent>(object_entity.id(), 1000.0, 2.0);
 
-
+	// can collide?
+	entity_manager->assign<CollisionComponent>(object_entity.id());
 	
 	// is displayed in screen?
 	entity_manager->assign<TransformComponent>(
@@ -136,7 +142,8 @@ void World::createObjectEntities(const ObjectData& object) {
 												  object.flags,
 												  object.body,
 												  object.life,
-												  object.life_mode);
+												  object.life_mode,
+												  object.track_mode);
 	}
 	
 	if (object.body != -1) {	
@@ -149,7 +156,7 @@ void World::createObjectEntities(const ObjectData& object) {
 		if (object.anim >= 0) {
 			if (object.body == 12) {
 				Animation::Ptr anim_data = ActorLoader::loadAnimation(actor_data->skeleton, 254);
-				entity_manager->assign<Components::AnimationComponent>(object_entity.id(), anim_data);
+				entity_manager->assign<Components::AnimationComponent>(object_entity.id(), object.anim, anim_data);
 			}
 		}
 	}	

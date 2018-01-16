@@ -745,7 +745,7 @@ void initEngine() {
 	//
 
 	vars = (int16 *)g_resourceLoader->loadFromItd("VARS.ITD");
-
+   
 	varSize = g_resourceLoader->getFileSize("VARS.ITD");
 
 	if(g_fitd->getGameType() == GType_AITD1) {

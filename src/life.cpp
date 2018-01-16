@@ -332,7 +332,6 @@ void setStage(int newStage, int newRoomLocal, int X, int Y, int Z) {
 	}
 
 	std::cout << "stage" << newStage << std::endl;
-	getchar();
 }
 
 void setupRealZv(ZVStruct *zvPtr) {
@@ -395,6 +394,9 @@ void doRealZv(actorStruct *actorPtr) {
 }
 
 void processLife(int lifeNum) {
+
+	std::cout << "processing life:" << lifeNum << std::endl;
+
 	int exitLife = 0;
 	//int switchVal = 0;
 	int var_6;
@@ -450,6 +452,8 @@ void processLife(int lifeNum) {
 						opcodeLocated = AITD2LifeMacroTable[currentOpcode & 0x7FFF];
 					}
 
+					std::cout << "switch object" << opcodeLocated << std::endl;
+					
 					switch(opcodeLocated) {
 						////////////////////////////////////////////////////////////////////////
 					case LM_BODY: {
@@ -626,7 +630,9 @@ void processLife(int lifeNum) {
 					}
 					////////////////////////////////////////////////////////////////////////
 					default: {
+						std::cout << "Unsupported opcode" << std::endl;
 						error("Unsupported opcode %X when actor isn't in floor\n", currentOpcode & 0x7FFF);
+						getchar();
 						break;
 					}
 					}
@@ -645,6 +651,7 @@ processOpcode:
 				opcodeLocated = AITD2LifeMacroTable[currentOpcode & 0x7FFF];
 			}
 
+			std::cout << "switch action" << opcodeLocated << std::endl;
 			switch(opcodeLocated) {
 			case LM_BODY: {
 				std::cout << "LM_BODY ->";
@@ -1762,6 +1769,7 @@ processOpcode:
 			}
 			////////////////////////////////////////////////////////////////////////
 			case LM_INVENTORY: { // INVENTORY
+				std::cout << "LM_INVENTORY" << std::endl;
 				statusScreenAllowed = *(int16 *)currentLifePtr;
 				currentLifePtr += 2;
 				break;
@@ -1787,6 +1795,7 @@ processOpcode:
 				break;
 			}
 			case LM_SET_GROUND: {
+				std::cout << "SET GROUND: ";
 				groundLevel = *(int16 *)currentLifePtr;
 				currentLifePtr += 2;
 				break;
@@ -1823,6 +1832,7 @@ processOpcode:
 				break;
 			}
 			case LM_INC: { // INC_VAR
+				std::cout << "INCVAR ->";
 				lifeTempVar1 = *(int16 *)(currentLifePtr);
 				currentLifePtr += 2;
 
@@ -1830,6 +1840,7 @@ processOpcode:
 				break;
 			}
 			case LM_DEC: { // DEC_VAR
+				std::cout << "DEC_VAR ->";
 				lifeTempVar1 = *(int16 *)(currentLifePtr);
 				currentLifePtr += 2;
 
@@ -1867,6 +1878,8 @@ processOpcode:
 				lifeTempVar1 = evalVar();
 				lifeTempVar2 = evalVar();
 
+				std::cout << "IF " << lifeTempVar1 << "==" << lifeTempVar2 << std::endl;
+						
 				if(lifeTempVar1 == lifeTempVar2) {
 					currentLifePtr += 2;
 				} else {
@@ -1954,6 +1967,7 @@ processOpcode:
 			}
 			case LM_GOTO: {
 				lifeTempVar1 = *(int16 *)(currentLifePtr);
+				std::cout << "GOTO " << lifeTempVar1 << ": ";
 				currentLifePtr += lifeTempVar1 * 2;
 				currentLifePtr += 2;
 				break;
@@ -1965,10 +1979,10 @@ processOpcode:
 				break;
 			}
 			case LM_CASE: { // CASE
-				std::cout << "CASE->";
 				lifeTempVar1 = *(int16 *)(currentLifePtr);
 				currentLifePtr += 2;
-
+				std::cout << "LM_CASE " << lifeTempVar1 << "==" << switchVal;
+				
 				if(lifeTempVar1 == switchVal) {
 					currentLifePtr += 2;
 				} else {
@@ -2012,7 +2026,9 @@ processOpcode:
 				break;
 			}
 			default: {
+				std::cout << "Unsupported opcode" << std::endl;
 				error("Unknown opcode %X in processLife\n", currentOpcode & 0x7FFF);
+				getchar();
 			}
 			}
 		}
@@ -2021,8 +2037,11 @@ processOpcode:
 			currentProcessedActorIdx = currentLifeActorIdx;
 			currentProcessedActorPtr = currentLifeActorPtr;
 		}
-		
+
 		std::cout << std::endl;
+		if (lifeNum != 547) {
+			getchar();
+		}
 	}
 	
 	std::cout << std::endl;

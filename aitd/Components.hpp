@@ -4,10 +4,24 @@
 
 namespace Components {
 
+class CollisionComponent {
+public:
+
+	bool isCollidingWithActor() {}
+	bool isCollidingWithScene() {}
+	bool isHittingActor() {}
+
+	int getCollidingActorIdx() { return 0; }
+	int getCollidingWithSceneIdx() { return 0; }
+	int getHittingActorIdx() { return 0; }		
+	
+	
+};
+	
 class ScriptComponent {
 public:
 	ScriptComponent(int id) : script_id(id) {
-	}
+	}   
 
 	int script_id = 0;
 	
@@ -24,11 +38,12 @@ public:
 class MetaDataComponent {
 public:
 
-	MetaDataComponent(int16 f, int16 body, int16 l, int16 lm) :
+	MetaDataComponent(int16 f, int16 body, int16 l, int16 lm, int16 tm) :
 		flags(f),
 		body_num(body),
 		life(l),
-		life_mode(lm) {
+		life_mode(lm),
+		track_mode(tm) {
 			
 	}
 
@@ -38,12 +53,13 @@ public:
 	int16 body_num;
 	int16 life;
 	int16 life_mode;
+	int16 track_mode;
 	
 };	
 	
 class AnimationComponent {
 public:   	
-	AnimationComponent(Animation::Ptr a) : anim(a) {
+	AnimationComponent(int id, Animation::Ptr a) : anim_id(id), anim(a) {
 		//TODO: we should instead deep copy the data here otherwise we break our cache-friendly design
 
 		current_skeleton = Skeleton::Ptr(new Skeleton());
@@ -83,6 +99,9 @@ public:
 	// std::vector<Frame> frames;
 
 	Skeleton::Ptr current_skeleton;
+	
+
+	int anim_id = -1; //animation id (related to the game logic)
 	Animation::Ptr anim;
 
 };

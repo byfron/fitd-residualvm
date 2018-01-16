@@ -187,7 +187,7 @@ void mainLoop(int allowSystemMenu) {
 							if(currentProcessedActorPtr->life != -1)
 								if(currentProcessedActorPtr->lifeMode != -1)
 
-//									std::cout << "Processing life: " << currentProcessedActorPtr->life << std::endl;
+									std::cout << "Processing life: " << currentProcessedActorPtr->life << std::endl;
 									
 									processLife(currentProcessedActorPtr->life);
 									

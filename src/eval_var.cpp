@@ -160,6 +160,8 @@ int32 testZvEndAnim(actorStruct *actorPtr, char *animPtr, int32 param) {
 int evalVar(void) {
 	int var1;
 
+	std::cout << "RUN EVAL: "; 
+	
 	if(g_fitd->getGameType() >= GType_JACK) {
 		return evalVar2();
 	}
@@ -167,18 +169,20 @@ int evalVar(void) {
 	var1 = *(int16 *)(currentLifePtr);
 	currentLifePtr += 2;
 
+	std::cout << "var1=" << var1 << " ";
+	
 	if(var1 == -1) {
 		int temp = *(int16 *)(currentLifePtr);
 		currentLifePtr += 2;
 
-		std::cout << "| -1 |";
+		std::cout << "|" << temp;
 
 		return(temp);
 	} else if(var1 == 0) {
 		int temp = *(int16 *)(currentLifePtr);
 		currentLifePtr += 2;
 
-		std::cout << "| 0 |";
+		std::cout << "| vars[" << temp << "] = " << vars[temp];
 		
 		return(vars[temp]);
 	} else {
@@ -222,6 +226,8 @@ int evalVar(void) {
 
 			var1--;
 
+			std::cout << "evalVar switch: " << var1 << std::endl;
+			
 			switch(var1) {
 			case 0x0: {
 				int temp1 = actorPtr->COL[0];

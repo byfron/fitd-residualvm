@@ -1033,6 +1033,8 @@ processOpcode:
 				break;
 			}
 			case LM_ANIM_MOVE: {
+				std::cout << "LM_ANIM_MOVE:";
+
 				lifeTempVar1 = *(int16 *)(currentLifePtr);
 				currentLifePtr += 2;
 				lifeTempVar2 = *(int16 *)(currentLifePtr);
@@ -1048,6 +1050,9 @@ processOpcode:
 				lifeTempVar7 = *(int16 *)(currentLifePtr);
 				currentLifePtr += 2;
 
+				std::cout << lifeTempVar1 << "," << lifeTempVar2 << "," << lifeTempVar3;
+
+				
 				animMove(lifeTempVar1, lifeTempVar2, lifeTempVar3, lifeTempVar4, lifeTempVar5, lifeTempVar6, lifeTempVar7);
 
 				break;
@@ -1399,12 +1404,16 @@ processOpcode:
 			}
 			////////////////////////////////////////////////////////////////////////
 			case LM_ANIM_SAMPLE: { // ANIM_SAMPLE
+				std::cout << "LM_ANIM_SAMPLE:";
+				
 				lifeTempVar1 = evalVar();
 
 				lifeTempVar2 = *(int16 *)(currentLifePtr);
 				currentLifePtr += 2;
 				lifeTempVar3 = *(int16 *)(currentLifePtr);
 				currentLifePtr += 2;
+
+				std::cout << lifeTempVar1 << "," << lifeTempVar2 << "," << lifeTempVar3;
 
 				if(currentProcessedActorPtr->END_FRAME != 0) {
 					if(currentProcessedActorPtr->ANIM == lifeTempVar2) {
@@ -1744,6 +1753,7 @@ processOpcode:
 				break;
 			}
 			case LM_DEF_SEQUENCE_SAMPLE: {
+				std::cout << "LM_DEF_SEQ" << std::endl;
 				uint16 numParams;
 				int i;
 

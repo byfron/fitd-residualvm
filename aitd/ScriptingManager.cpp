@@ -123,8 +123,8 @@ ScriptingManager::ScriptingManager(EntityManager::Ptr em, World::Ptr w) :
 // }
 
 int16 getArg(char **life_ptr) {
-	int16 arg = **life_ptr;
-	*life_ptr += 2;
+	int16 arg = **(int16 **)(life_ptr);
+	(*life_ptr) += 2;
 	return arg;
 }
 
@@ -648,6 +648,8 @@ void ScriptingManager::loadActionCommand(CommandId command, Entity::Id entity_id
 	}
 		
 	case LM_ANIM_MOVE: {
+		std::cout << "LM_ANIM_MOVE:";
+		
 		int v1 = getArg(life_ptr); //anim_id1
 		int v2 = getArg(life_ptr); //anim_id2
 		int v3 = getArg(life_ptr); //anim_id3
@@ -655,6 +657,9 @@ void ScriptingManager::loadActionCommand(CommandId command, Entity::Id entity_id
 		int v5 = getArg(life_ptr); //anim_id5
 		int v6 = getArg(life_ptr); //?
 		int v7 = getArg(life_ptr); //?
+
+		std::cout << v1 << "," << v2 << "," << v3;
+		
 		break;
 	}
 		
@@ -796,9 +801,11 @@ void ScriptingManager::loadActionCommand(CommandId command, Entity::Id entity_id
 		break;
 	}
 	case LM_ANIM_SAMPLE: {
+		std::cout << "LM_ANIM_SAMPLE:";
 		int sound_id = evalVar(life_ptr, entity_id);
 		int anim_id = getArg(life_ptr);
-		int frame = getArg(life_ptr);		
+		int frame = getArg(life_ptr);
+		std::cout << sound_id << "," << anim_id << "," << frame;
 		break;
 	}
 	case LM_2D_ANIM_SAMPLE: {
@@ -874,10 +881,12 @@ void ScriptingManager::loadActionCommand(CommandId command, Entity::Id entity_id
 		break;
 	}
 	case LM_DEF_SEQUENCE_SAMPLE: {
+		std::cout << "LM_DEF_SEQ" << std::endl;
 		int num_params = ARG;
-		std::vector<int> params;
+		std::vector<int> frame_params, sample_params;
 		for (int i = 0; i < num_params; i++) {
-			params.push_back(ARG);
+			frame_params.push_back(ARG);
+			sample_params.push_back(ARG);
 		}
 		break;
 	}
@@ -1045,14 +1054,15 @@ void ScriptingManager::loadActionCommand(CommandId command, Entity::Id entity_id
 			if (case_val == switch_val) {
 				switch_flag = true;
 			}
-			*life_ptr += 2;
 		}
 		
-		if (switch_flag) {
+		if (!switch_flag) {
 			int jump = getArg(life_ptr);
 			*life_ptr += jump*2;
 		}
-		*life_ptr += 2;		
+		else {
+			*life_ptr += 2;
+		}
 		break;
 	}
 	case LM_RETURN: {

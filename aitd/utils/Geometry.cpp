@@ -146,25 +146,5 @@ bool doIntersect(const Eigen::Vector2i& p1, const Eigen::Vector2i& q1,
 
 	return false;
 }
-bool Polygon::isWithin(const Eigen::Vector2i& point) {
-
-	size_t n = points.size();
-	bool result = false;
-	for (size_t i = 0; i < n; ++i) {
-		size_t j = (i + 1) % n;
-
-		if (
-			// Does p0(1) lies in half open y range of edge.
-			// N.B., horizontal edges never contribute
-			( (points[j](2) <= point(1) && point(1) < points[i](2)) || 
-			  (points[i](2) <= point(1) && point(1) < points[j](2)) ) &&
-			// is p to the left of edge?
-			( point(0) < points[j](0) + (points[i](0) - points[j](0)) *
-			  float(point(1) - points[j](2)) / (points[i](2) - points[j](2)) )
-			)
-			result = !result;
-	}
-	return result;
-}
 	
 }

@@ -197,7 +197,11 @@ void RenderSystem::update(EntityManager & em, EventManager &evm, float delta) {
 		[](Entity entity,
 		   CameraZoneComponent &czc) {
 			for (auto poly : czc.zones) {
-			 	DebugManager::push_polygon(poly.points);
+				std::vector<Vec3f> points;
+				for (auto p : poly.points) {
+					points.push_back(Vec3f(p(0), 0, p(1)));
+				}
+			 	DebugManager::push_polygon(points);
 			}			
 		});
 		

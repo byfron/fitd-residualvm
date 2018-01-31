@@ -137,7 +137,7 @@ void UpdateSystem::update(EntityManager & em, EventManager &evm, float delta ) {
 			//check if it's inside any of this zones
 			for (auto zone : czc.zones) {			
 				Eigen::Vector2i location(tc_ptr->getPosition()(0), tc_ptr->getPosition()(2));
-				if (zone.isWithin(location)) {
+				if (zone.isWithin(location.cast<float>())) {
 					//change camera if different than current
 					if (world->getCurrentCameraId() != entity.id()) {
 

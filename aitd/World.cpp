@@ -32,10 +32,10 @@ Entity World::createCameraEntity(Floor::Ptr floor_data, int room_index, int came
 											transform.inverse()); 
 	entity_manager->assign<BgImageComponent>(camera.id(), room_cam->getBackgroundImagePtr());
 
-	std::vector<Geometry::Polygon> polygons;
+	std::vector<Geometry::Polygon<Vec2f> > polygons;
 	for (auto z : room_cam->zone_vector) {
 		for (auto e : z->entry_vector) {
-			polygons.push_back(Geometry::Polygon(e->points));
+			polygons.push_back(Geometry::Polygon<Vec2f>(e->points));
 		}
 	}
 	entity_manager->assign<CameraZoneComponent>(camera.id(), polygons);
@@ -71,48 +71,6 @@ void World::loadFloor(int floor_id) {
 		}
 	}
 
-
-	
-//	current_camera_id = camera.id();
-	
-	
-
-
-	//create all camera entities for the room
-	
-	
-	///createCameraEntity(camera_inde)
-	
-	
-	//TODO: refactor in createCameraEntity()
-	//NOTE: The camera coordinates are expressed wrt the room (We can consider that is "attached" to
-	//the room node. We temporarily alter the location but in practice we should have a proper
-	// // scene-tree)
-	// Vec3f room_world = floor_data->getRoom(current_room_id)->world_pos.cast<float>();
-	// Vec3f cam_pos = room_cam->transform.col(3).head(3)/10;
-	// cam_pos(0) = (cam_pos(0) - room_world(0));
-	// cam_pos(1) = (room_world(1) - cam_pos(1));
-	// cam_pos(2) = (room_world(2) - cam_pos(2));
- 	// room_cam->transform.col(3).head(3) = cam_pos * 10;
-	///////////////////////////////////////////////////////////////////////////
-	
-	// Entity camera = entity_manager->createLocal();	
-	// // view matrix is the inverse of the camera trasnformation matrix;
-	// entity_manager->assign<CameraComponent>(camera.id(), room_cam->projection,
-	// 										room_cam->transform.inverse()); 
-	// entity_manager->assign<BgImageComponent>(camera.id(), room_cam->getBackgroundImagePtr());
-
-	// std::vector<Geometry::Polygon> polygons;
-	// for (auto z : room_cam->zone_vector) {
-	// 	for (auto e : z->entry_vector) {
-	// 		polygons.push_back(Geometry::Polygon(e->points));
-	// 	}
-	// }
-	// entity_manager->assign<CameraZoneComponent>(camera.id(), polygons);
-
-	// current_camera_id = camera.id();
-
-	
 	//maybe instead keep a map id/Entity
 	//Objects ==================================================================	
 	for (auto object_it : ObjectManager::object_map) {

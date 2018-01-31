@@ -145,8 +145,8 @@ public:
 
 class CameraZoneComponent {
 public:
-	CameraZoneComponent(std::vector<Geometry::Polygon>& z) : zones(z) {}
-	std::vector<Geometry::Polygon> zones;
+	CameraZoneComponent(std::vector<Geometry::Polygon< Vec2f > >& z) : zones(z) {}
+	std::vector<Geometry::Polygon<Vec2f> > zones;
 };
 	
 class MoveComponent {

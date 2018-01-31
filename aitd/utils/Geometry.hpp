@@ -45,16 +45,37 @@ public:
 	Vec3f normal;
 };
 
+
+template <class T>	
 class Polygon {
 public:
-	Polygon(const std::vector<Eigen::Vector2i>& _points) {
-		for (auto p : _points) {
-			points.push_back(Vec3f(p(0), 0.0, p(1)));
+	bool isWithin(const T& point) {		
+		size_t n = points.size();
+		bool result = false;
+		for (size_t i = 0; i < n; ++i) {
+			size_t j = (i + 1) % n;
+
+			if (
+				// Does p0(1) lies in half open y range of edge.
+				// N.B., horizontal edges never contribute
+				( (points[j](1) <= point(1) && point(1) < points[i](1)) || 
+				  (points[i](1) <= point(1) && point(1) < points[j](1)) ) &&
+				// is p to the left of edge?
+				( point(0) < points[j](0) + (points[i](0) - points[j](0)) *
+				  float(point(1) - points[j](1)) / (points[i](1) - points[j](1)) )
+				)
+				result = !result;
+		}
+		return result;
+	}
+
+	Polygon(std::vector<Eigen::Vector2i>& ipoints) {
+		for (auto ip : ipoints) {
+			points.push_back(T(ip(0), ip(1)));
 		}
 	}
-	bool isWithin(const Eigen::Vector2i& point);
-	Polygon(const std::vector<Vec3f>& p) : points(p) {}
-	std::vector<Vec3f> points;
+	Polygon(const std::vector<T>& p) : points(p) {}
+	std::vector<T> points;
 };
 
 class BBox {

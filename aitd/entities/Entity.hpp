@@ -41,6 +41,9 @@ public:
 		inline bool operator== (const Id& _id_) {
 			id == _id_.id;
 		}
+		inline bool operator!= (const Id& _id_) {
+			id != _id_.id;
+		}
 	};
 
 	/**

@@ -636,7 +636,6 @@ void processLife(int lifeNum) {
 					default: {
 						std::cout << "Unsupported opcode" << std::endl;
 						error("Unsupported opcode %X when actor isn't in floor\n", currentOpcode & 0x7FFF);
-						getchar();
 						break;
 					}
 					}
@@ -2046,7 +2045,6 @@ processOpcode:
 			default: {
 				std::cout << "Unsupported opcode" << std::endl;
 				error("Unknown opcode %X in processLife\n", currentOpcode & 0x7FFF);
-				getchar();
 			}
 			}
 		}

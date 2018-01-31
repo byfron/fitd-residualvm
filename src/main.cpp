@@ -1904,11 +1904,13 @@ int changeCameraSub1(int x1, int x2, int z1, int z2, cameraZoneDefStruct *pCamer
 			zoneX2 = pCameraZoneDef->cameraZoneEntryTable[i].pointTable[j+1].x;
 			zoneZ2 = pCameraZoneDef->cameraZoneEntryTable[i].pointTable[j+1].y;
 
-			if(changeCameraSub1Sub1(xMid, zMid, xMid - 10000, zMid, zoneX1, zoneZ1, zoneX2, zoneZ2)) {
+			if(changeCameraSub1Sub1(xMid, zMid, xMid - 10000, zMid,
+									zoneX1, zoneZ1, zoneX2, zoneZ2)) {
 				flag |= 1;
 			}
 
-			if(changeCameraSub1Sub1(xMid, zMid, xMid + 10000, zMid, zoneX1, zoneZ1, zoneX2, zoneZ2)) {
+			if(changeCameraSub1Sub1(xMid, zMid, xMid + 10000, zMid,
+									zoneX1, zoneZ1, zoneX2, zoneZ2)) {
 				flag |= 2;
 			}
 		}

@@ -15,6 +15,13 @@ public:
 	void loadFloor(int);
 
 	void createObjectEntities(const ObjectData& object);
+
+	//Maybe this should go to a factory class
+	Entity createCameraEntity(Floor::Ptr floor_data, int room_index, int camera_index);
+
+	void switchToCamera(Entity::Id camera_id);
+	
+	Entity::Id getCurrentCameraId() const { return current_camera_id; }
 	
 protected:
 

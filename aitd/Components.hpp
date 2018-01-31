@@ -142,6 +142,12 @@ public:
 	Animation::Ptr anim;
 
 };
+
+class CameraZoneComponent {
+public:
+	CameraZoneComponent(std::vector<Geometry::Polygon>& z) : zones(z) {}
+	std::vector<Geometry::Polygon> zones;
+};
 	
 class MoveComponent {
 public:
@@ -169,6 +175,10 @@ public:
 		rotation(rot) {
 	}
 
+	Eigen::Vector3f getPosition() {
+		return (getTransform().col(3).head(3));// * Eigen::Matrix<float, 4, 1>(0.0, 0.0, 0.0, 1.0)).head(3) ;
+	}
+	
 	Eigen::Matrix4f getTransform() {
 		Eigen::Matrix4f T = Eigen::Matrix4f::Identity();
 		T.col(3).head(3) = translation;

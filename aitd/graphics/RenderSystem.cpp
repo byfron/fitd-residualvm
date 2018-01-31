@@ -187,6 +187,21 @@ void RenderSystem::update(EntityManager & em, EventManager &evm, float delta) {
 									tb.p_max);
 		});
 
+
+	// Render actor position
+	auto tc_ptr = em.getComponentPtr<TransformComponent>(AITDEngine::player_entity_id);
+	DebugManager::push_sphere(Sphere{tc_ptr->getPosition()(0), tc_ptr->getPosition()(1), tc_ptr->getPosition()(2), 40.0});
+
+	// Render Camera Zones
+	em.each<CameraZoneComponent>(
+		[](Entity entity,
+		   CameraZoneComponent &czc) {
+			for (auto poly : czc.zones) {
+			 	DebugManager::push_polygon(poly.points);
+			}			
+		});
+		
+	
 	// // Render debug elements
 	// em.each<DebugComponent>(
 	// 	[delta](Entity entity,

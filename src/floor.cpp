@@ -54,7 +54,8 @@ void cameraDataStruct::load(const char *data) {
 	
 	const char *backupDataPtr = data;
 	data += 0x14;
-	
+
+	std::cout << "num zone def:" << _numCameraZoneDef << std::endl;
 	for(int k = 0; k < _numCameraZoneDef; k++) {
 		_cameraZoneDefTable[k].load(data, backupDataPtr);
 		
@@ -93,7 +94,7 @@ void cameraZoneDefStruct::load(const char *data, const char *basedata) {
 		pZoneData += 2;
 		
 		cameraZoneEntryTable = (cameraZoneEntryStruct *)malloc(sizeof(cameraZoneEntryStruct) * numZones);
-		
+
 		ASSERT(cameraZoneEntryTable);
 		
 		for(int j = 0; j < numZones; j++) {
@@ -108,7 +109,6 @@ void cameraZoneEntryStruct::load(const char *data) {
 	
 	numPoints = numOfPoints = READ_LE_UINT16(data);
 	data += 2;
-	
 	pointTable = new cameraZonePointStruct[numOfPoints + 1];
 	
 	for(int32 pointIdx = 0; pointIdx < numPoints; pointIdx++) {
@@ -117,7 +117,7 @@ void cameraZoneEntryStruct::load(const char *data) {
 		pointTable[pointIdx].y = READ_LE_UINT16(data);
 		data += 2;
 	}
-	
+
 	pointTable[numOfPoints].x = pointTable[0].x; // copy first point to last position
 	pointTable[numOfPoints].y = pointTable[0].y;
 }
@@ -136,21 +136,15 @@ void roomDataStruct::load(const char *data) {
 	worldY = (int16)READ_LE_UINT16(data + 6);
 	worldZ = (int16)READ_LE_UINT16(data + 8);
 
-	std::cout << "pos:" << worldX << "," << worldY << "," << worldZ << std::endl;
-	
 	numCameraInRoom = READ_LE_UINT16(data + 0xA);
 	
 	cameraIdxTable = new uint16[numCameraInRoom];
 
-	std::cout << "num cams in room:" << numCameraInRoom << std::endl;
-	
 	for(uint32 j = 0; j < numCameraInRoom; j++) {
 		cameraIdxTable[j] = READ_LE_UINT16(data + 0xC + 2 * j);
-		std::cout << "camera idx: " << cameraIdxTable[j] << std::endl;
 	}
 	
-	// hard col read
-	
+	// hard col read	
 	const char *hardColData = data + READ_LE_UINT16(data);
 	numHardCol = READ_LE_UINT16(hardColData);
 	hardColData += 2;
@@ -160,7 +154,6 @@ void roomDataStruct::load(const char *data) {
 		
 		for(uint32 j = 0; j < numHardCol; j++) {
 			hardColTable[j].zv.load(hardColData);
-
 			hardColTable[j].parameter = READ_LE_UINT16(hardColData + 0x0C);
 			hardColTable[j].type = READ_LE_UINT16(hardColData + 0x0E);
 
@@ -170,8 +163,7 @@ void roomDataStruct::load(const char *data) {
 		hardColTable = NULL;
 	}
 	
-	// sce zone read
-	
+	// sce zone read	
 	const char *sceZoneData = data + READ_LE_UINT16(data + 2);
 	numSceZone = READ_LE_UINT16(sceZoneData);
 	sceZoneData += 2;

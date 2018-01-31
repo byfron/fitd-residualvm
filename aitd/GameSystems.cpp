@@ -80,7 +80,8 @@ void CollisionSystem::update(EntityManager & em, EventManager &evm, float delta 
 			for (auto& sc : scene_collisions) {
 				if (sc.second.checkCollision(&this_col)) {
 
-					std::cout << "colliding with scene:" << sc.first.id << std::endl;
+//					std::cout << "colliding with scene:" << sc.first.id << std::endl;
+					
 					//color shape colliding
 
 					
@@ -101,17 +102,15 @@ void CollisionSystem::update(EntityManager & em, EventManager &evm, float delta 
 					std::cout << "colliding with " << ac.first.id << "!!" << std::endl;
 
 //					if(actorTouchedPtr->flags & 0x10) //can be pushed
-
 					
 				}
-			}
-			
+			}			
 	 	});
 }
 
 void UpdateSystem::update(EntityManager & em, EventManager &evm, float delta ) {
 
-	// Update collision components (TODO better... ue the updated transform to transform box)
+	// Update collision components (TODO better... use the updated transform to transform box)
 	em.each<MoveComponent, ActorCollisionComponent>(
 		[delta](Entity entity,
 				MoveComponent& mc,
@@ -127,4 +126,36 @@ void UpdateSystem::update(EntityManager & em, EventManager &evm, float delta ) {
 			tc.translation += mc.translation;
 			tc.rotation *= mc.rotation;
 	 	});
+ 
+	// For all cameras in the room, check if we have to change camera
+	em.each<CameraZoneComponent>(
+		[delta, &em, this](Entity entity,
+					 CameraZoneComponent& czc) {
+			assert(em.valid(AITDEngine::player_entity_id));
+			auto tc_ptr = em.getComponentPtr<TransformComponent>(AITDEngine::player_entity_id);
+			
+			//check if it's inside any of this zones
+			for (auto zone : czc.zones) {			
+				Eigen::Vector2i location(tc_ptr->getPosition()(0), tc_ptr->getPosition()(2));
+				if (zone.isWithin(location)) {
+					//change camera if different than current
+					if (world->getCurrentCameraId() != entity.id()) {
+
+						//changing camera
+						std::cout << "changing camera to " << entity.id().id << std::endl;
+
+						world->switchToCamera(entity.id());
+						
+					}
+					
+
+					// if (AITDEngine::current_camera_entity_index !=
+					// 	AITDEngine::CameraEntityToIndex[entity.id()]) {
+					// 	AITDEngine::current_camera_entity_index =
+					// 		AITDEngine::CameraEntityToIndex[entity.id()];
+					// }
+				}
+				
+			}
+		});
 }

@@ -11,7 +11,8 @@
 #include <file_access.h>
 #include "Message.hpp"
 
-Entity::Id AITDEngine::player_entity;
+Entity::Id AITDEngine::player_entity_id;
+std::map<uint32_t, int> AITDEngine::CameraEntityToIndex;
 std::map<int, int16> AITDEngine::globals;
 std::map<int, int16> AITDEngine::C_globals;
 
@@ -34,15 +35,14 @@ void AITDEngine::init() {
 	std::shared_ptr<UpdateSystem> update_sys = std::make_shared<UpdateSystem>(world);
 
 	// Suscribe for events
-//	event_manager->subscribe<Msg::Move>(*update_sys);
-
+	// event_manager->subscribe<Msg::Move>(*update_sys);
+	
 	// Order matters!!
 	add<InputSystem>(std::make_shared<InputSystem>());
 	add<ScriptingSystem>(std::make_shared<ScriptingSystem>(scripting_manager));
 	add<RenderSystem>(std::make_shared<RenderSystem>(world));
 	add<CollisionSystem>(std::make_shared<CollisionSystem>());
 	add<UpdateSystem>(update_sys);
-
 }
 
 void AITDEngine::createSubsystems() {
@@ -80,7 +80,6 @@ void AITDEngine::loadGameData() {
 	for(int i = 0; i < Fitd::g_fitd->getNumCVars(); i++) {
 	 	C_globals[i] = ((C_globals[i] & 0xFF) << 8) | ((C_globals[i] & 0xFF00) >> 8);
 	}
-
 	
 	int actor_idx = 45;
 

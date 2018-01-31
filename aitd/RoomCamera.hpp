@@ -25,7 +25,6 @@ public:
 	typedef std::shared_ptr<CameraZone> Ptr;
 	CameraZone(const char*, const char*);
 	void load(const char*, const char*);
-protected:
 	int16 dummy1;
 	int16 dummy2;
 	int16 dummy3;

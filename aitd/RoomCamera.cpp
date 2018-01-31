@@ -11,18 +11,46 @@ CameraZoneEntry::CameraZoneEntry(const char* data) {
 }
 
 void CameraZoneEntry::load(const char* data) {
-	int num_of_points = READ_LE_UINT16(data);
+
+	uint16 num_of_points = READ_LE_UINT16(data);
 	data += 2;
-	for(int32 point_idx = 0; point_idx < num_of_points; point_idx++) {
+
+	std::vector<Eigen::Vector2i> unsorted_points;
+	Vector2i center = Vector2i::Zero();
+	for(uint16 point_idx = 0; point_idx < num_of_points; point_idx++) {
 		Vector2i point;
-		point(0) = READ_LE_UINT16(data);
+		point(0) = (int16)READ_LE_UINT16(data);
 		data += 2;
-		point(1) = READ_LE_UINT16(data);
-		data += 2;
-		points.push_back(point);
+		point(1) = (int16)READ_LE_UINT16(data);
+		data += 2;		
+		unsorted_points.push_back(point * 10);
+		center += point;
 	}
+	      
+	//order points by angle
+	center /= num_of_points;
+	struct Pair {
+		float angle;
+		int idx;
+		bool operator<(const Pair& a) {
+			return angle < a.angle;
+		}
+	};
 	
+	std::vector<Pair> angle_vector(num_of_points);	
+	for(uint16 point_idx = 0; point_idx < num_of_points; point_idx++) {
+		Vector2i v1 = unsorted_points[point_idx] - center;
+		float angle = atan2(v1(0), v1(1));
+		angle_vector[point_idx] = Pair{angle, point_idx};
+	}
+	std::sort(angle_vector.begin(), angle_vector.end());
+	
+	points.clear();
+	for (auto p : angle_vector) {
+		points.push_back(unsorted_points[p.idx]);
+	}
 	points.push_back(points[0]);
+
 }
 
 CameraZone::CameraZone(const char* data, const char* base_data) {
@@ -30,7 +58,7 @@ CameraZone::CameraZone(const char* data, const char* base_data) {
 }
 
 void CameraZone::load(const char* data, const char* base_data) {
-	dummy1 = READ_LE_UINT16(data + 0x00);
+	dummy1 = READ_LE_UINT16(data + 0x00); //room num. 
 	dummy2 = READ_LE_UINT16(data + 0x02);
 	dummy3 = READ_LE_UINT16(data + 0x04);
 	dummy4 = READ_LE_UINT16(data + 0x06);
@@ -39,13 +67,13 @@ void CameraZone::load(const char* data, const char* base_data) {
 
 	const char *p_zone_data = base_data + dummy3;
 
-	int num_zones = READ_LE_UINT16(p_zone_data);
+	uint16 num_zones = READ_LE_UINT16(p_zone_data);
 	p_zone_data += 2;
-
+	
 	for(int j = 0; j < num_zones; j++) {
 		CameraZoneEntry::Ptr czentry =
 			CameraZoneEntry::Ptr(new CameraZoneEntry(p_zone_data));
-		p_zone_data += 2 + (4 * czentry->points.size());
+		p_zone_data += 2 + (4 * (czentry->points.size()-1));
 		entry_vector.push_back(czentry);
 	}
 }
@@ -131,10 +159,10 @@ void RoomCamera::load(const char *data) {
 	transform.topLeftCorner(3,3) = t;
 	transform.col(3).head(3) = position;
 	
-	int num_camera_zone_def = READ_LE_UINT16(data + 0x12);
+	int16 num_camera_zone_def = READ_LE_UINT16(data + 0x12);
 	const char* base_data = data;
 	data += 0x14;
-	
+
 	for(int k = 0; k < num_camera_zone_def; k++) {
 		CameraZone::Ptr zone = CameraZone::Ptr(new CameraZone(data, base_data));
 		zone_vector.push_back(zone);

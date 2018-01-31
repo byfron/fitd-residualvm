@@ -17,6 +17,12 @@ using namespace Eigen;
 namespace Geometry {
 
 #define MAX_FLOAT 0xFFFFFFFF
+
+struct Point {
+	Point(Eigen::Vector2i& p) : x(p(0)), y(p(1)) {}
+	float x;
+	float y;
+};
 	
 class Line {
 public:
@@ -38,7 +44,19 @@ public:
 	Vec3f point;
 	Vec3f normal;
 };
-	
+
+class Polygon {
+public:
+	Polygon(const std::vector<Eigen::Vector2i>& _points) {
+		for (auto p : _points) {
+			points.push_back(Vec3f(p(0), 0.0, p(1)));
+		}
+	}
+	bool isWithin(const Eigen::Vector2i& point);
+	Polygon(const std::vector<Vec3f>& p) : points(p) {}
+	std::vector<Vec3f> points;
+};
+
 class BBox {
 public:
 	BBox() {}
@@ -94,7 +112,7 @@ Eigen::Matrix3f getZRotMat(float, float);
 Vec3f computeVectorToCollision(const BBox&, const BBox&, const Vec3f&);	
 bool linePlaneIntersection(Vec3f ray, Vec3f rayOrigin, Vec3f normal,
 						   Vec3f planePoint, Vec3f & contact);
-	
+
 class DebugMesh {
 public:
 	typedef std::shared_ptr<DebugMesh> Ptr;

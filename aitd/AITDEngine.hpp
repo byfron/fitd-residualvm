@@ -26,11 +26,12 @@ public:
 		system_manager->update_all(dt);
 	}
 
-	static Entity::Id player_entity;
+	static Entity::Id player_entity_id;
 
 	//TODO: hopefully we can get rid of those after migrating the logic
 	static std::map<int, int16> globals;
 	static std::map<int, int16> C_globals;
+	static std::map<uint32_t, int> CameraEntityToIndex;
 	
 protected:
 

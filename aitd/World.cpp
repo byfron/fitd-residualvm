@@ -6,10 +6,43 @@
 
 using namespace Components;
 
+
 void World::load() {
 
 	loadFloor(0);
 }
+
+
+Entity World::createCameraEntity(Floor::Ptr floor_data, int room_index, int camera_index) {
+
+	RoomCamera::Ptr room_cam = floor_data->getCamera(camera_index);
+	Vec3f room_world = floor_data->getRoom(room_index)->world_pos.cast<float>();
+	Vec3f cam_pos = room_cam->transform.col(3).head(3)/10;
+	cam_pos(0) = (cam_pos(0) - room_world(0));
+	cam_pos(1) = (room_world(1) - cam_pos(1));
+	cam_pos(2) = (room_world(2) - cam_pos(2));
+ 	cam_pos *= 10;
+	
+	Entity camera = entity_manager->createLocal();
+	Eigen::Matrix4f transform = room_cam->transform;
+	transform.col(3).head(3) = cam_pos;
+	
+	// view matrix is the inverse of the camera trasnformation matrix;
+	entity_manager->assign<CameraComponent>(camera.id(), room_cam->projection,
+											transform.inverse()); 
+	entity_manager->assign<BgImageComponent>(camera.id(), room_cam->getBackgroundImagePtr());
+
+	std::vector<Geometry::Polygon> polygons;
+	for (auto z : room_cam->zone_vector) {
+		for (auto e : z->entry_vector) {
+			polygons.push_back(Geometry::Polygon(e->points));
+		}
+	}
+	entity_manager->assign<CameraZoneComponent>(camera.id(), polygons);
+
+	return camera;
+}
+
 
 //TODO: shall we preload the floors??
 void World::loadFloor(int floor_id) {
@@ -22,33 +55,64 @@ void World::loadFloor(int floor_id) {
 
 	current_floor_id = floor_id;
 	current_room_id = 0;
-	int camera_index = 0;
+	int current_camera_index = 0; //tmp
 
 	//create entities in this floor
 	//Cameras ==================================================================
 	std::vector<int> camera_indices = floor_data->getRoom(current_room_id)->camera_indices;
-	assert(camera_index < camera_indices.size());
-	RoomCamera::Ptr room_cam = floor_data->getCamera(camera_indices[camera_index]);
+	for (int camera_index : camera_indices) {
+		Entity camera = createCameraEntity(floor_data, current_room_id, camera_index);
+		AITDEngine::CameraEntityToIndex[camera.id().id] = camera_index;
+	}
 
+	for (auto cam : AITDEngine::CameraEntityToIndex) {
+		if (cam.second == current_camera_index) {
+			current_camera_id.id = cam.first;
+		}
+	}
+
+
+	
+//	current_camera_id = camera.id();
+	
+	
+
+
+	//create all camera entities for the room
+	
+	
+	///createCameraEntity(camera_inde)
+	
+	
 	//TODO: refactor in createCameraEntity()
 	//NOTE: The camera coordinates are expressed wrt the room (We can consider that is "attached" to
 	//the room node. We temporarily alter the location but in practice we should have a proper
-	// scene-tree)
-	Vec3f room_world = floor_data->getRoom(current_room_id)->world_pos.cast<float>();
-	Vec3f cam_pos = room_cam->transform.col(3).head(3)/10;
-	cam_pos(0) = (cam_pos(0) - room_world(0));
-	cam_pos(1) = (room_world(1) - cam_pos(1));
-	cam_pos(2) = (room_world(2) - cam_pos(2));
- 	room_cam->transform.col(3).head(3) = cam_pos * 10;
-	////////////////////////////////////////////////////////////////////////////////////////////////
-		
-	Entity camera = entity_manager->createLocal();	
-	// view matrix is the inverse of the camera trasnformation matrix;
-	entity_manager->assign<CameraComponent>(camera.id(), room_cam->projection,
-											room_cam->transform.inverse()); 
-	entity_manager->assign<BgImageComponent>(camera.id(), room_cam->getBackgroundImagePtr());
-	current_camera_id = camera.id();
+	// // scene-tree)
+	// Vec3f room_world = floor_data->getRoom(current_room_id)->world_pos.cast<float>();
+	// Vec3f cam_pos = room_cam->transform.col(3).head(3)/10;
+	// cam_pos(0) = (cam_pos(0) - room_world(0));
+	// cam_pos(1) = (room_world(1) - cam_pos(1));
+	// cam_pos(2) = (room_world(2) - cam_pos(2));
+ 	// room_cam->transform.col(3).head(3) = cam_pos * 10;
+	///////////////////////////////////////////////////////////////////////////
+	
+	// Entity camera = entity_manager->createLocal();	
+	// // view matrix is the inverse of the camera trasnformation matrix;
+	// entity_manager->assign<CameraComponent>(camera.id(), room_cam->projection,
+	// 										room_cam->transform.inverse()); 
+	// entity_manager->assign<BgImageComponent>(camera.id(), room_cam->getBackgroundImagePtr());
 
+	// std::vector<Geometry::Polygon> polygons;
+	// for (auto z : room_cam->zone_vector) {
+	// 	for (auto e : z->entry_vector) {
+	// 		polygons.push_back(Geometry::Polygon(e->points));
+	// 	}
+	// }
+	// entity_manager->assign<CameraZoneComponent>(camera.id(), polygons);
+
+	// current_camera_id = camera.id();
+
+	
 	//maybe instead keep a map id/Entity
 	//Objects ==================================================================	
 	for (auto object_it : ObjectManager::object_map) {
@@ -103,8 +167,14 @@ void World::loadFloor(int floor_id) {
 	}
 }
 
+void World::switchToCamera(Entity::Id camera_id) {
+	current_camera_id = camera_id;
+}
+
 void World::createObjectEntities(const ObjectData& object) {
 
+
+	//how do we know which one is the main character??
 
 	//TODO
 	//keep a global map that relates objects to entities????
@@ -117,6 +187,7 @@ void World::createObjectEntities(const ObjectData& object) {
 	// TODO: we should find a better way to figure this out?
 	if (object.track_mode == 1) {
 		entity_manager->assign<UserInputComponent>(object_entity.id());
+		AITDEngine::player_entity_id  = object_entity.id();
 	}
 
 	// TODO give objects a debug name that makes it easier to check

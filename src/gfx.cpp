@@ -200,6 +200,9 @@ void setupCamera() {
 
 bool isBgOverlayRequired(int X1, int X2, int Z1, int Z2, char *data, int param) {
 	int i;
+
+	std::cout << "num_params:" << param << std::endl;
+	
 	for(i = 0; i < param; i++) {
 		////////////////////////////////////// DEBUG
 		//  drawOverlayZone(data, 80);
@@ -240,6 +243,7 @@ void drawBgOverlaySub2(int size) {
 	int direction = 1;
 
 	int16 *data = (int16 *)cameraBuffer;
+	
 
 	overlaySize1 = size;
 	overlaySize2 = size;
@@ -247,8 +251,12 @@ void drawBgOverlaySub2(int size) {
 	bgOverlayVar1 = 0;
 
 	for(i = 0; i < size; i++) {
+
 		int temp = data[0];
 
+
+		std::cout << "data[0]= " << temp << std::endl;
+		
 		if(temp < bx)
 			bx = temp;
 		if(temp > dx)
@@ -406,10 +414,15 @@ void drawBgOverlay(actorStruct *actorPtr) {
 	numEntry = *(int16 *)(data);
 	data += 2;
 
+
+	std::cout << "num entry:" << numEntry << std::endl;
+	
 	while(numEntry > 0) {
 		if(actorPtr->room == *(int16 *)(data)) {
 			break;
 		}
+
+		std::cout << "t:" << *(uint16 *)(data) << std::endl;
 		data += 12;
 		numEntry--;
 	}
@@ -425,6 +438,9 @@ void drawBgOverlay(actorStruct *actorPtr) {
 
 	numOverlayZone = *(int16 *)(data2);
 
+	std::cout << "num overlay zones:" << numOverlayZone << std::endl;
+	getchar();
+
 	for(i = 0; i < numOverlayZone; i++) {
 		int numOverlay;
 		char *src = data2 + *(uint16 *)(data + 2);
@@ -436,11 +452,11 @@ void drawBgOverlay(actorStruct *actorPtr) {
 			int j;
 			numOverlay = *(int16 *)src;
 			src += 2;
-
+			std::cout << "num overlays: " << numOverlay << std::endl;
 			for(j = 0; j < numOverlay; j++) {
 				int param = *(int16 *)(src);
 				src += 2;
-
+				std::cout << "size:" << param << std::endl;
 				memcpy(cameraBuffer, src, param * 4);
 
 				src += param * 4;

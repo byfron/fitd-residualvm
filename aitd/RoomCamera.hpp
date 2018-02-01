@@ -1,5 +1,5 @@
 #pragma once
-
+#include <utils/Geometry.hpp>
 #include "math.hpp"
 #include <memory>
 #include <Eigen/Dense>
@@ -33,22 +33,34 @@ public:
 	int16 dummy6;
 	std::vector<CameraZoneEntry::Ptr> entry_vector;
 };
-	
+
+class CameraBackgroundLayer {
+public:
+	typedef std::shared_ptr<CameraBackgroundLayer> Ptr;
+	CameraBackgroundLayer(const char*);
+	void load(const char*);
+	void createOverlay(const int16* src, int size);
+protected:
+
+	std::vector<Geometry::Polygon<Vec2i> > overlays;
+};
+
 class RoomCamera {
 public:
 	~RoomCamera();
 	typedef std::shared_ptr<RoomCamera> Ptr;
-	RoomCamera(const char*);
-	void load(const char*);
+	RoomCamera(const char*);//, int index);
+	void load(const char*);//, int index);
 	void loadBackgroundImage(const char*);
-
+	void loadBackgroundLayers(const char *);
 	unsigned char* getBackgroundImagePtr() {
 		return background_image;
 	}
 	
 	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 	
-	std::vector<CameraZone::Ptr> zone_vector;	
+	std::vector<CameraZone::Ptr> zone_vector;
+	std::vector<CameraBackgroundLayer::Ptr> bglayer_vector;	
 
 	int16 focal1;
 	int16 focal2;

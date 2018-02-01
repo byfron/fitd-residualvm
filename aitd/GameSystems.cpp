@@ -1,5 +1,6 @@
 #include "GameSystems.hpp"
 #include "Components.hpp"
+#include <utils/CollisionUtils.hpp>
 #include "AITDEngine.hpp"
 
 using namespace Components;
@@ -75,20 +76,17 @@ void CollisionSystem::update(EntityManager & em, EventManager &evm, float delta 
 
 			ActorCollisionComponent this_col = cc;
 			this_col.bounding_box.translation += mc.translation;
+
+
+			auto entity_poly = this_col.bounding_box.getBasePolygon();
 			
 			//check collision with scene
 			for (auto& sc : scene_collisions) {
 				if (sc.second.checkCollision(&this_col)) {
-
-//					std::cout << "colliding with scene:" << sc.first.id << std::endl;
-					
-					//color shape colliding
-
-					
-					// Vec3f corrected_v = Geometry::computeVectorToCollision(cc.bounding_box,
-					// 													   sc.second.bounding_box,
-					// 													   mc.translation);
-					// mc.translation = corrected_v;
+					auto scene_poly = sc.second.bounding_box.getBasePolygon();
+					Vec2f MTD;
+					CollisionUtils::IntersectMTD(entity_poly, scene_poly, MTD);
+										mc.translation -= Vec3f(MTD(0), 0, MTD(1));
 				}
 			}
 
@@ -101,7 +99,16 @@ void CollisionSystem::update(EntityManager & em, EventManager &evm, float delta 
 				if (ac.second.checkCollision(&this_col)) {
 					std::cout << "colliding with " << ac.first.id << "!!" << std::endl;
 
-//					if(actorTouchedPtr->flags & 0x10) //can be pushed
+					auto actor_poly = ac.second.bounding_box.getBasePolygon();
+
+					Vec2f MTD;
+					CollisionUtils::IntersectMTD(entity_poly, actor_poly, MTD);
+					mc.translation -= Vec3f(MTD(0), 0, MTD(1));
+					
+					// if(actorTouchedPtr->flags & 0x10) { //can be pushed
+					// 	auto tc_ptr = em.getComponentPtr<TransformComponent>(ac.first);
+					// 	tc_ptr->translation += Vec3f(MTD(0), 0, MTD(1));
+					// }	
 					
 				}
 			}			

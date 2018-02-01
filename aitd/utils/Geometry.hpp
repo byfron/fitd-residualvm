@@ -69,6 +69,16 @@ public:
 		return result;
 	}
 
+	T centroid() {
+		T center = T::Zero();
+		for (auto p : points) {
+			center += p;
+		}
+		return center / points.size();
+	}
+
+	Polygon() {} 
+	
 	Polygon(std::vector<Eigen::Vector2i>& ipoints) {
 		for (auto ip : ipoints) {
 			points.push_back(T(ip(0), ip(1)));
@@ -89,6 +99,21 @@ public:
 
 		return BBox(p_min + translation,
 					p_max + translation);
+	}
+
+	Polygon<Vec2f> getBasePolygon() const {
+		BBox box = getTransformedBox();
+		std::vector<Vec2f> points;
+
+		float w = box.p_max(0) - box.p_min(0);
+		float h = box.p_max(2) - box.p_min(2);
+		
+		points.push_back(Vec2f(box.p_min(0), box.p_min(2)));
+		points.push_back(Vec2f(box.p_min(0) + w, box.p_min(2)));
+		points.push_back(Vec2f(box.p_min(0) + w, box.p_min(2) + h));
+		points.push_back(Vec2f(box.p_min(0), box.p_min(2) + h));
+		
+		return Polygon<Vec2f>(points);
 	}
 	
 	Vec3f getCentroid() const {

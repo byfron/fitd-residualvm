@@ -151,7 +151,7 @@ void World::createObjectEntities(const ObjectData& object) {
 	// TODO give objects a debug name that makes it easier to check
 	// to figure out properties
 	
-	// can move?
+	// can move. How to check this one?
 	entity_manager->assign<MoveComponent>(object_entity.id(), 1000.0, 2.0);
 	
 	// is displayed in screen?

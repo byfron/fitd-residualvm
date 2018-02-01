@@ -56,8 +56,7 @@ void Floor::load(int floor_idx) {
 	for (int i = 0; i < num_cameras; i++) {
 		uint32 offset = READ_LE_UINT32(camera_data + i * 4);
 		if (offset < camera_data_size) {
-			char *current_camera_data = camera_data + offset;
-			RoomCamera::Ptr camera = RoomCamera::Ptr(new RoomCamera(current_camera_data));
+			RoomCamera::Ptr camera = RoomCamera::Ptr(new RoomCamera(camera_data + offset));
 			
 			char camera_bg_data[65068];
 			if(!loadPakToPtr(camera_file, i, camera_bg_data)) {

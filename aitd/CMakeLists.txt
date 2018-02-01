@@ -78,6 +78,7 @@ target_link_libraries(AITDCore
   ${SDL_LIBRARY}
   ParsingUtils
   GeometryUtils
+  CollisionUtils
   GraphicsCore
   fitd
   pthread

@@ -177,6 +177,15 @@ void RenderSystem::update(EntityManager & em, EventManager &evm, float delta) {
 			Geometry::BBox tb = ac.bounding_box.getTransformedBox();
 			DebugManager::push_aabb(tb.p_min,
 									tb.p_max);
+
+
+			std::vector<Vec3f> points;
+			auto poly = ac.bounding_box.getBasePolygon();
+			for (auto p : poly.points) {
+				points.push_back(Vec3f(p(0), 0, p(1)));
+			}
+			DebugManager::push_polygon(points);
+			
 		});
 
 	em.each<SceneCollisionComponent>(

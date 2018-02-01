@@ -28,6 +28,7 @@ void CameraZoneEntry::load(const char* data) {
 	}
 	      
 	//order points by angle
+	assert(num_of_points > 0);
 	center /= num_of_points;
 	struct Pair {
 		float angle;
@@ -58,9 +59,11 @@ CameraZone::CameraZone(const char* data, const char* base_data) {
 }
 
 void CameraZone::load(const char* data, const char* base_data) {
+
+	//TODO: rename these puppies
 	dummy1 = READ_LE_UINT16(data + 0x00); //room num. 
-	dummy2 = READ_LE_UINT16(data + 0x02);
-	dummy3 = READ_LE_UINT16(data + 0x04);
+	dummy2 = READ_LE_UINT16(data + 0x02); //offset from base_data to the bg overlay
+	dummy3 = READ_LE_UINT16(data + 0x04); //offset from base_data to the zoneEntry data
 	dummy4 = READ_LE_UINT16(data + 0x06);
 	dummy5 = READ_LE_UINT16(data + 0x08);
 	dummy6 = READ_LE_UINT16(data + 0x0A);
@@ -78,16 +81,105 @@ void CameraZone::load(const char* data, const char* base_data) {
 	}
 }
 
-RoomCamera::RoomCamera(const char* data) {
+CameraBackgroundLayer::CameraBackgroundLayer(const char* data) {
 	load(data);
+}
+
+void CameraBackgroundLayer::load(const char* data) {
+	int num_overlay_zones = *(int16 *)(data);
+	std::cout << "num overlay zones:" << num_overlay_zones << std::endl;
+
+	const char *curr_data = data + 2;
+	
+	for (int i = 0; i < num_overlay_zones; i++) {
+
+		int num_params = *(uint16 *)(curr_data);		
+		const char *src = data + *(uint16 *)(curr_data + 2);
+
+		std::cout << "num params" << num_params << std::endl;
+
+		const char* param_data = curr_data + 4;
+		for (int j = 0; j < num_params; j++) {
+			int zoneX1 = *(int16 *)(param_data);
+			int zoneZ1 = *(int16 *)(param_data + 2);
+			int zoneX2 = *(int16 *)(param_data + 4);
+			int zoneZ2 = *(int16 *)(param_data + 6);
+			param_data += 0x8;
+		}		
+
+		int num_overlays = *(int16 *)src;
+
+		std::cout << "num overlays: " << num_overlays << std::endl;
+		
+		src += 2;
+
+		for (int j = 0; j < num_overlays; j++) {
+			int size = *(int16 *)(src);
+			std::cout << "size:" << size << std::endl;
+			src += 2;
+			createOverlay((int16*)src, size);			
+			src += size * 4;
+		}
+
+		curr_data += 2;
+		curr_data += ((num_params * 4) + 1) * 2;
+	}
+}
+
+void CameraBackgroundLayer::createOverlay(const int16* base_data, int size) {
+
+	int min1, min2;
+	int max1, max2;
+	const int16* data = base_data;
+	Geometry::Polygon<Vec2i> overlay;
+	for(int i = 0; i < size; i++) {
+		
+		int tmp1 = data[0];
+		int tmp2 = data[1];
+
+		if (tmp1 < min1) {
+			min1 = tmp1;
+		}
+		if (tmp1 > max1) {
+			max1 = tmp1;
+		}
+		if (tmp2 < min2) {
+			min2 = tmp2;
+		}
+		if (tmp2 > max2) {
+			max2 = tmp2;
+		}
+
+		overlay.points.push_back(Vec2i(tmp1, tmp2));
+		
+		data += 2;
+	}
+
+	overlays.push_back(overlay);
+	
+	// data = base_data;
+	// for(int i = 0; i < size; i++) {
+		
+	// 	int px = data[0];
+	// 	int py = data[1];
+
+	// }
+	
+}
+
+RoomCamera::RoomCamera(const char* data) {//, int index) {
+	load(data);//, index);
 }
 
 RoomCamera::~RoomCamera() {
 	delete [] background_image;
 }
 
-void RoomCamera::load(const char *data) {
+void RoomCamera::load(const char *base_data) {//, int index) {
 
+//	uint32 offset = READ_LE_UINT32(base_data + index * 4);
+	const char* data = base_data;// + offset;
+	
  	uint16 alpha = READ_LE_UINT16(data + 0x00);
 	uint16 beta  = READ_LE_UINT16(data + 0x02);
 	uint16 gamma = READ_LE_UINT16(data + 0x04);
@@ -160,12 +252,17 @@ void RoomCamera::load(const char *data) {
 	transform.col(3).head(3) = position;
 	
 	int16 num_camera_zone_def = READ_LE_UINT16(data + 0x12);
-	const char* base_data = data;
+	const char* base_zone_data = data;
 	data += 0x14;
 
+	// This is one camera zone per room!!?
 	for(int k = 0; k < num_camera_zone_def; k++) {
-		CameraZone::Ptr zone = CameraZone::Ptr(new CameraZone(data, base_data));
+		CameraZone::Ptr zone = CameraZone::Ptr(new CameraZone(data, base_zone_data));
 		zone_vector.push_back(zone);
+
+		CameraBackgroundLayer::Ptr bglayer =
+			CameraBackgroundLayer::Ptr(new CameraBackgroundLayer(base_zone_data + zone->dummy2));
+		bglayer_vector.push_back(bglayer);
 		data += 0x0C;
 	}
 }

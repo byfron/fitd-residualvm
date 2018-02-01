@@ -3,6 +3,8 @@
 #include <utils/Color.hpp>
 #include <utils/DataParsing.hpp>
 #include <utils/Geometry.hpp>
+//TODO: remove OpenCV when done debugging
+#include <opencv2/opencv.hpp>
 
 typedef Eigen::Matrix<int,2,1> Vector2i;
 
@@ -50,7 +52,7 @@ void CameraZoneEntry::load(const char* data) {
 	for (auto p : angle_vector) {
 		points.push_back(unsorted_points[p.idx]);
 	}
-	points.push_back(points[0]);
+ 	points.push_back(points[0]);
 
 }
 
@@ -97,6 +99,15 @@ void CameraBackgroundLayer::load(const char* data) {
 		const char *src = data + *(uint16 *)(curr_data + 2);
 
 		std::cout << "num params" << num_params << std::endl;
+
+		// This zone is used to determine if the overlay affects the actor
+		// For instance a monster behind a wall should be affected by the wall overlays,
+		// but not the main character walking within a camera room
+		// We will need multiple stencil buffers? or to sort out the rendering order?
+
+		// When rendering each actor if it's in a zone affected, build a stencil buffer
+		// and apply it 
+
 
 		const char* param_data = curr_data + 4;
 		for (int j = 0; j < num_params; j++) {
@@ -272,6 +283,8 @@ void RoomCamera::loadBackgroundImage(const char* data) {
 		ResourceManager::getResource<ColorPalette>(OBJECT_PALETTE_ID);
 	background_image = new unsigned char[320*200*3];
 
+	cv::Mat image = cv::Mat(200, 320, CV_8UC3);
+	
 	for (int i = 0; i < 320; i++) {
 		for (int j = 0; j < 200; j++) {
 
@@ -281,6 +294,28 @@ void RoomCamera::loadBackgroundImage(const char* data) {
 			background_image[(i*200 + j)*3 + 0] = c.r;
 			background_image[(i*200 + j)*3 + 1] = c.g;
 			background_image[(i*200 + j)*3 + 2] = c.b;
+
+			image.at<cv::Vec3b>(i*200 + j) = cv::Vec3b(c.b, c.g, c.r);
 		}
 	}
+
+	int r = 3;
+	for (auto layer : bglayer_vector) {
+//		for (auto over : layer->overlays)
+		{
+			auto over = layer->overlays[6];
+			for (auto p : over.points) {
+				int x = p(0);
+				int y = p(1);
+				cv::circle(image, cv::Point2d(x, y), r, cv::Scalar(255, 0, 0));
+			}
+			break;
+		}
+	}
+
+	cv::resize(image, image, cv::Size(320*4, 200*4));
+	cv::imshow("im" , image);
+	cv::waitKey(0);
+
+
 }

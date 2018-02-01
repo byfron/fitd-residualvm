@@ -40,8 +40,6 @@ public:
 	CameraBackgroundLayer(const char*);
 	void load(const char*);
 	void createOverlay(const int16* src, int size);
-protected:
-
 	std::vector<Geometry::Polygon<Vec2i> > overlays;
 };
 
